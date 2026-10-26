@@ -19,14 +19,17 @@
 
 ## Recitation Information
 
-<!-- TODO: The website below is an example and is to be changed to the actual recitation website after release on Page -->
-- Current website: [https://harryc919.github.io/STATS-401-Final-Project/](https://harryc919.github.io/STATS-401-Final-Project/)
-- Go through concepts
-- Work on some problems
-  - Problem sample solution provided in C, C++, Java, C#, Python and JavaScript
-  - Other languages are welcome, but not supported in sample solution
-- Answer questions
+- Current website: [https://harryc919.github.io/TA-CS301/](https://harryc919.github.io/TA-CS301/)
+- Introduction: 5–10 minutes (TA, website, session format, AI policy)
+- Concept review: 10–15 minutes (sorting ideas, stability, complexity)
+- Practice: 30 minutes; choose problems at your level, without an expectation to finish all six
+  - Problem 6 is optional exploration and is not covered in class
+  - Problem sample solutions provided in C, C++, Java, C#, Python and JavaScript
+  - Other languages are welcome, but not supported in sample solutions
+- Discuss approaches: 15 minutes (key ideas, correctness, complexity; no line-by-line code walkthrough)
+- Questions: remaining time; bring attempts, homework questions, or lecture topics to revisit
 - AI Policy: AI tool fully allowed **during the recitation**, but students should understand the solution and be able to explain it in their own words.
+- This permission applies to recitation practice. Follow the instructor's rules for assignments and exams; those rules are not changed by this policy.
 - Recommended AI tools:
   - US models (If accessible and not banned): GPT, Claude, Gemini, Grok, etc.
   - Chinese models: DeepSeek, Kimi, GLM, Qwen, etc.

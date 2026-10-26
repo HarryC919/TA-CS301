@@ -36,6 +36,16 @@ check([2, 1], 2, 1, "case [2,1] k=2")
 check([-1, -5, 3], 1, 3, "case [-1,-5,3]")
 check([3, 3, 3], 2, 3, "case [3,3,3]")
 
+# Regression: equal values must be removed as a band, without deep recursion.
+check([3] * 2000, 1000, 3, "duplicate recursion regression")
+for data, name in (([7] * 100000, "all equal"),
+                   ([i % 3 - 1 for i in range(100000)], "three values"),
+                   ([i // 5 - 10000 for i in range(100000)], "sorted"),
+                   ([9999 - i // 5 for i in range(100000)], "reverse sorted")):
+    oracle = sorted(data)
+    for k in (1, len(data) // 2, len(data)):
+        check(data, k, oracle[len(data) - k], name)
+
 # Seeded random cross-check against sorted(), n = 200,000
 n = 200000
 rng = random.Random(42)

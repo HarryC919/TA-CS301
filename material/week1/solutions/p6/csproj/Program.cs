@@ -27,6 +27,19 @@ Check(new[] { 2, 1 }, 2, 1, "case [2,1] k=2");
 Check(new[] { -1, -5, 3 }, 1, 3, "case [-1,-5,3]");
 Check(new[] { 3, 3, 3 }, 2, 3, "case [3,3,3]");
 
+// Regression cases: equal keys, few distinct keys, and ordered inputs.
+for (int scenario = 0; scenario < 4; scenario++)
+{
+    var input = new int[100000];
+    for (int i = 0; i < input.Length; i++)
+        input[i] = scenario == 0 ? 7 : scenario == 1 ? i % 3 - 1
+            : scenario == 2 ? i / 5 - 10000 : 9999 - i / 5;
+    var oracle = (int[])input.Clone();
+    Array.Sort(oracle);
+    foreach (int k in new[] {1, input.Length / 2, input.Length})
+        Check(input, k, oracle[input.Length - k], "duplicate/order regression");
+}
+
 // Seeded random cross-check against Array.Sort, n = 200,000
 {
     const int n = 200000;

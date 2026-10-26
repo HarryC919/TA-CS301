@@ -35,6 +35,20 @@ check([2, 1], 2, 1, 'case [2,1] k=2');
 check([-1, -5, 3], 1, 3, 'case [-1,-5,3]');
 check([3, 3, 3], 2, 3, 'case [3,3,3]');
 
+// Regression cases within the published 100,000-element limit.
+check(new Array(2000).fill(3), 1000, 3, 'duplicate recursion regression');
+for (const [name, data] of [
+  ['all equal', new Array(100000).fill(7)],
+  ['three values', Array.from({length: 100000}, (_, i) => i % 3 - 1)],
+  ['sorted', Array.from({length: 100000}, (_, i) => Math.floor(i / 5) - 10000)],
+  ['reverse sorted', Array.from({length: 100000}, (_, i) => 9999 - Math.floor(i / 5))]
+]) {
+  const oracle = data.slice().sort((a, b) => a - b);
+  for (const k of [1, data.length / 2, data.length]) {
+    check(data, k, oracle[data.length - k], name);
+  }
+}
+
 // Seeded random cross-check against Array.prototype.sort, n = 200,000
 const n = 200000;
 const nextRandom = makeRandom(42);

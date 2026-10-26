@@ -60,6 +60,29 @@ int main(void) {
         check(input, 3, 2, 3, "case [3,3,3]");
     }
 
+    // Regression cases: equal keys, few distinct keys, and ordered inputs.
+    {
+        const int size = 100000;
+        int* input = malloc(size * sizeof(int));
+        int* oracle = malloc(size * sizeof(int));
+        if (input == NULL || oracle == NULL) return 1;
+        for (int scenario = 0; scenario < 4; scenario++) {
+            for (int i = 0; i < size; i++) {
+                input[i] = scenario == 0 ? 7 : scenario == 1 ? i % 3 - 1
+                    : scenario == 2 ? i / 5 - 10000 : 9999 - i / 5;
+                oracle[i] = input[i];
+            }
+            qsort(oracle, size, sizeof(int), compareInts);
+            int ranks[] = {1, size / 2, size};
+            for (int j = 0; j < 3; j++) {
+                int k = ranks[j];
+                check(input, size, k, oracle[size - k], "duplicate/order regression");
+            }
+        }
+        free(input);
+        free(oracle);
+    }
+
     // Seeded random cross-check against a library sort, n = 200,000
     {
         const int n = 200000;

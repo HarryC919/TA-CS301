@@ -30,6 +30,20 @@ int main() {
     check({-1, -5, 3}, 1, 3, "case [-1,-5,3]");
     check({3, 3, 3}, 2, 3, "case [3,3,3]");
 
+    // Regression cases: equal keys, few distinct keys, and ordered inputs.
+    for (int scenario = 0; scenario < 4; scenario++) {
+        std::vector<int> input(100000);
+        for (int i = 0; i < 100000; i++) {
+            input[i] = scenario == 0 ? 7 : scenario == 1 ? i % 3 - 1
+                : scenario == 2 ? i / 5 - 10000 : 9999 - i / 5;
+        }
+        auto oracle = input;
+        std::sort(oracle.begin(), oracle.end());
+        for (int k : {1, 50000, 100000}) {
+            check(input, k, oracle[100000 - k], "duplicate/order regression");
+        }
+    }
+
     // Seeded random cross-check against a library sort, n = 200,000
     {
         const int n = 200000;

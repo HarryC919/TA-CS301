@@ -26,7 +26,12 @@ static void quickSortRange(int* arr, int left, int right) {
     }
 
     // 1. Pick the pivot uniformly at random and move it to position `left`.
-    int pivotIndex = left + rand() % (right - left + 1);
+    unsigned int width = (unsigned int)(right - left + 1);
+    unsigned int range = (unsigned int)RAND_MAX + 1U;
+    unsigned int limit = range - range % width;
+    unsigned int draw;
+    do { draw = (unsigned int)rand(); } while (draw >= limit);
+    int pivotIndex = left + (int)(draw % width);
     swapValues(&arr[left], &arr[pivotIndex]);
     int pivot = arr[left];
 

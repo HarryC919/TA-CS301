@@ -14,7 +14,7 @@ site/                            static site (the only folder that should be pub
   week1-exercises.html           6 LeetCode-style exercises with 6-language answers
   assets/style.css               shared design system
   assets/notes.css               notes-page additions only
-  assets/app.js                  language tabs (synced), copy buttons, keyboard support
+  assets/app.js                  local highlighting, temporary editors, synced tabs, copy/reset
   assets/favicon.svg
   assets/logos/                  brand marks for the AI tools shown on the introduction page
 material/week1/Intro.md           source text for site/intro.html (keep both in sync)
@@ -51,7 +51,13 @@ CLAUDE.md                        points Claude-style agents at AGENTS.md
   worked examples with input/output, constraints, the exact function signature, a
   starter template with a `TODO`, hints, and a collapsible reference solution in
   **C, C++, C#, Java, Python and JavaScript**. A single language choice is remembered
-  across every code block in the page.
+  across every code block in the page. Starter templates are editable in the browser with
+  lexical syntax highlighting. Drafts stay isolated by problem and language, survive
+  language switches, and reset on refresh. **Reset code** restores the current template;
+  **Copy code** copies the current draft. Tab indents, Shift+Tab removes current-line
+  indentation, and Escape then Tab leaves the editor. Code is never saved or run by
+  the website. Reference answers and notes pseudocode remain read-only and highlighted.
+  Highlighting is a lightweight lexical aid, not a compiler or error checker.
 
 | # | Problem | Difficulty | Target |
 |---|---------|------------|--------|
@@ -60,10 +66,13 @@ CLAUDE.md                        points Claude-style agents at AGENTS.md
 | 3 | Stable Sort by Word Length | Easy–Medium | stability by sort choice |
 | 4 | Count Inversions | Medium | merge sort's merge routine, 64-bit answers |
 | 5 | Quick Sort: Random Pivot, 3-Way Partition | Medium | partition, duplicates, worst case |
-| 6 | Kth Largest Element (Quickselect) | Medium+ | order statistics, partition reuse |
+| 6 | Kth Largest Element (Quickselect) | Medium+ | optional exploration, iterative 3-way partition |
 
 The exercises are optional, ungraded practice for an optional session with roughly
-5–15 students. Java is the default language because it is the CS201 language.
+5–15 students. Problem 6 is independent exploration and is not covered in class.
+The session uses 5–10 minutes for introductions, 10–15 for concepts, 30 for practice,
+15 for discussing approaches (not a line-by-line code walkthrough), and the remaining
+time for questions. Java is the default language because it is the CS201 language.
 
 ## Publish the site
 
@@ -130,6 +139,8 @@ $EDITOR material/week1/solutions/p4/py.solution.py
 python3 tools/site_src/build_exercises.py
 # 4. structural QA (fails on broken links or malformed HTML)
 python3 tools/site_src/check_site.py --strict-links
+# browser checks for editing, highlighting, refresh reset, copy, and no-JS fallback
+node tools/site_src/test_code_ui.cjs
 # 5. compile and run every reference answer
 bash tools/verify_all.sh
 ```

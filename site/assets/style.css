@@ -818,3 +818,79 @@ details[open] { padding-bottom: 16px; }
   pre { border: 1px solid #ccc; }
   a { color: #000; }
 }
+
+/* Local lexical highlighting; applies to code blocks, never inline prose. */
+.syntax-keyword { color: #c4b5fd; }
+.syntax-string { color: #86efac; }
+.syntax-number { color: #fdba74; }
+.syntax-comment { color: #94a3b8; font-style: italic; }
+.syntax-function { color: #7dd3fc; }
+
+/* The native textarea owns editing; its matching preview supplies the colors. */
+.code-editor {
+  position: relative;
+  background: var(--code-bg);
+  min-width: 0;
+}
+.code-editor .code-preview,
+.code-editor .code-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 15px 18px;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 22px;
+  letter-spacing: normal;
+  tab-size: 4;
+  white-space: pre;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+.code-editor .code-preview {
+  pointer-events: none;
+}
+.code-editor .code-preview code {
+  display: block;
+  min-width: max-content;
+  font: inherit;
+}
+.code-editor .code-input {
+  color: transparent;
+  caret-color: #f8fafc;
+  background: transparent;
+  resize: none;
+  -webkit-text-fill-color: transparent;
+}
+.code-editor .code-input::selection { background: rgba(96, 165, 250, 0.28); }
+.code-editor .code-input:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: -2px;
+}
+.reset-btn {
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.reset-btn:hover { color: var(--text); background: #f8fafc; }
+@media (forced-colors: active) {
+  .code-editor .code-input { color: CanvasText; -webkit-text-fill-color: CanvasText; background: Canvas; }
+}
+@media print {
+  .code-editor { display: none; }
+  .tabs[data-editable] .tab-panel > pre[hidden] { display: block; }
+  .reset-btn { display: none; }
+}

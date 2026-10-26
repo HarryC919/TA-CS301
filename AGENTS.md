@@ -16,7 +16,7 @@ site/                       publishable static site (publish this folder, not th
   week1-exercises.html      GENERATED — never hand-edit; run build_exercises.py
   assets/style.css          shared design system
   assets/notes.css          notes-page-only additions
-  assets/app.js             language tabs (globally synced, localStorage), copy buttons
+  assets/app.js             local highlighting, temporary editors, synced language tabs, copy/reset
   assets/favicon.svg
   assets/logos/             AI-tool brand marks used on intro.html (local files, no CDN)
 material/week1/Intro.md               source text behind site/intro.html (keep the two in sync)
@@ -49,6 +49,7 @@ repository root as a "Deploy from a branch" Pages source.
 ```bash
 python3 tools/site_src/build_exercises.py      # regenerate site/week1-exercises.html
 python3 tools/site_src/check_site.py --strict-links   # structural QA; expect 0 errors, 0 warnings
+node tools/site_src/test_code_ui.cjs           # Chrome behavior checks; expect ALL CODE UI CHECKS PASSED
 bash tools/verify_all.sh                       # 36 harnesses; expect "ALL 36 HARNESSES PASSED"
 cd site && python3 -m http.server 8000         # local preview (file:// also works)
 ```
@@ -73,6 +74,16 @@ in `material/week1/solutions/pN/`. Editing the generated HTML directly will be o
 - The page defaults every tab group to **java** (CS201 language) and `app.js` keeps one language
   selection synced across all 12 tab groups, persisted as `localStorage["cs301-week1-lang"]`.
   Without JS, a `<noscript>` style reveals all panels.
+- Starter groups have `data-editable`. `app.js` adds textarea editors with a matching
+  highlighted preview. Original code stays in the HTML for no-JS fallback. Only the
+  language choice may use localStorage; never persist code drafts in storage or send
+  them to a server. Reset restores the current template; page load/pageshow restores
+  all templates. Copy must read the textarea value for starters.
+- `app.js` also highlights the notes' read-only pseudocode. Always escape source text
+  before inserting highlight spans. This is lexical highlighting, not syntax validation.
+- For editor changes, run `node tools/site_src/test_code_ui.cjs`; it checks real typing,
+  draft isolation, copy/reset/reload, scroll synchronization, keyboard exit, 390px
+  layout, notes highlighting, and no-JS fallback. Screenshots go only in `.tmp/`.
 
 ## Code and harness conventions
 

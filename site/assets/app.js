@@ -1,19 +1,58 @@
-/* COMPSCI 301 — Week 1 exercises page behaviour.
- *
- * Two features only, both progressive enhancements:
- *   1. Language tabs. Clicking a language anywhere on the page selects that
- *      language for EVERY problem (and remembers it in localStorage), so
- *      students pick their language once.
- *   2. A "Copy" button per code group that copies the currently visible panel.
- *
- * Without JavaScript the page still works: <noscript> CSS reveals every
- * panel, so all reference answers are readable.
+/* Progressive enhancements for static code: highlighting, temporary starter
+ * editors, synchronized language tabs, copy and reset. Only the language choice
+ * is persisted; edited code lives in textarea elements and resets on page load.
  */
 (function () {
   "use strict";
 
   var STORAGE_KEY = "cs301-week1-lang";
   var DEFAULT_LANG = "java";
+
+  function escapeHTML(text) {
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Lexical highlighting only: source is escaped before any markup is added.
+  function highlight(text, lang) {
+    var keywords = ("if else elif for while do break continue return class public private protected " +
+      "static final const let var void int long double float char bool boolean string String " +
+      "new null true false using namespace import from def pass None True False and or not " +
+      "in is with as try catch except finally throw throws function module exports include " +
+      "struct typedef unsigned signed sizeof auto switch case default this super extends " +
+      "implements interface async await yield lambda nonlocal global assert to swap append " +
+      "length floor both non empty end").split(/\s+/);
+    var isHashComment = lang === "py" || lang === "pseudo";
+    var comments = isHashComment ? "#[^\\n]*" : "\\/\\*[\\s\\S]*?(?:\\*\\/|$)|\\/\\/[^\\n]*|#[ \\t]*(?:include|define|ifdef|ifndef|endif|else|pragma)";
+    var strings = '\"\"\"[\\s\\S]*?(?:\"\"\"|$)|\'\'\'[\\s\\S]*?(?:\'\'\'|$)|"(?:\\\\.|[^"\\\\\\n])*"?|\'(?:\\\\.|[^\'\\\\\\n])*\'?|`(?:\\\\.|[^`\\\\])*`?';
+    var pattern = new RegExp(comments + "|" + strings + "|\\b(?:0[xX][0-9a-fA-F]+|[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)[a-zA-Z]*\\b|[A-Za-z_$][\\w$]*", "g");
+    var result = "";
+    var last = 0;
+    var match;
+    while ((match = pattern.exec(text)) !== null) {
+      result += escapeHTML(text.slice(last, match.index));
+      var token = match[0];
+      var type = "";
+      if ((isHashComment && token[0] === "#") || token.slice(0, 2) === "//" || token.slice(0, 2) === "/*") {
+        type = "comment";
+      } else if (/^[\"'`]/.test(token)) {
+        type = "string";
+      } else if (/^[0-9]/.test(token)) {
+        type = "number";
+      } else if (keywords.indexOf(token) !== -1 || token[0] === "#") {
+        type = "keyword";
+      } else if (/^\s*\(/.test(text.slice(pattern.lastIndex))) {
+        type = "function";
+      }
+      result += type ? '<span class="syntax-' + type + '">' + escapeHTML(token) + '</span>' : escapeHTML(token);
+      last = pattern.lastIndex;
+    }
+    return result + escapeHTML(text.slice(last));
+  }
+
+  document.querySelectorAll("pre code").forEach(function (code) {
+    var panel = code.closest(".tab-panel");
+    code.innerHTML = highlight(code.textContent, panel ? panel.getAttribute("data-lang") : "pseudo");
+  });
 
   var groups = Array.prototype.slice.call(document.querySelectorAll(".tabs[data-tabs]"));
   if (groups.length === 0) {
@@ -121,6 +160,100 @@
     });
   });
 
+  var editors = [];
+  groups.filter(function (group) { return group.hasAttribute("data-editable"); }).forEach(function (group) {
+    var reset = document.createElement("button");
+    reset.type = "button";
+    reset.className = "reset-btn";
+    reset.textContent = "Reset code";
+    group.querySelector(".tab-bar").appendChild(reset);
+    panelsOf(group).forEach(function (panel) {
+      var original = panel.querySelector("pre");
+      var initial = original.textContent;
+      var lang = panel.getAttribute("data-lang");
+      var editor = document.createElement("div");
+      editor.className = "code-editor";
+      var preview = document.createElement("pre");
+      preview.className = "code-preview";
+      preview.setAttribute("aria-hidden", "true");
+      var code = document.createElement("code");
+      preview.appendChild(code);
+      var input = document.createElement("textarea");
+      input.className = "code-input";
+      input.value = initial;
+      input.defaultValue = initial;
+      input.spellcheck = false;
+      input.wrap = "off";
+      input.autocomplete = "off";
+      input.setAttribute("autocapitalize", "off");
+      input.setAttribute("autocorrect", "off");
+      input.setAttribute("aria-label", panel.id.replace(/-/g, " ") + " temporary code editor");
+      input.setAttribute("aria-describedby", "editor-help");
+      function syncScroll() {
+        preview.scrollTop = input.scrollTop;
+        preview.scrollLeft = input.scrollLeft;
+      }
+      function render() {
+        // One trailing space keeps the final empty line visible in the preview.
+        code.innerHTML = highlight(input.value + " ", lang);
+        syncScroll();
+      }
+      input.addEventListener("input", render);
+      input.addEventListener("scroll", syncScroll);
+      var releaseTab = false;
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          releaseTab = true;
+          return;
+        }
+        if (event.key !== "Tab") {
+          releaseTab = false;
+          return;
+        }
+        if (releaseTab || event.ctrlKey || event.metaKey || event.altKey) {
+          releaseTab = false;
+          return;
+        }
+        event.preventDefault();
+        var start = input.selectionStart;
+        var end = input.selectionEnd;
+        if (event.shiftKey) {
+          var lineStart = input.value.lastIndexOf("\n", start - 1) + 1;
+          var leading = input.value.slice(lineStart).match(/^(?: {1,4}|\t)/);
+          if (leading) {
+            input.setRangeText("", lineStart, lineStart + leading[0].length, "preserve");
+          }
+        } else {
+          input.setRangeText("    ", start, end, "end");
+        }
+        render();
+      });
+      function restore() {
+        input.value = initial;
+        input.scrollTop = 0;
+        input.scrollLeft = 0;
+        render();
+      }
+      editors.push(restore);
+      panel.restoreCode = restore;
+      original.hidden = true;
+      editor.style.height = Math.min(460, Math.max(220, (initial.split("\n").length + 1) * 22 + 30)) + "px";
+      editor.appendChild(preview);
+      editor.appendChild(input);
+      panel.appendChild(editor);
+      render();
+    });
+    reset.addEventListener("click", function () {
+      var panel = group.querySelector(".tab-panel:not([hidden])");
+      panel.restoreCode();
+      panel.querySelector("textarea").focus();
+    });
+  });
+  // Override browser form restoration as well as normal reload state.
+  window.addEventListener("pageshow", function () {
+    editors.forEach(function (restore) { restore(); });
+  });
+
   var initialLang = storedLang();
   groups.forEach(function (group) {
     setGroupLang(group, initialLang);
@@ -163,8 +296,9 @@
     if (!panel) {
       return;
     }
-    var code = panel.querySelector("pre, code") || panel;
-    var text = code.innerText.replace(/\s+$/, "");
+    var input = panel.querySelector("textarea");
+    var code = panel.querySelector("pre code") || panel;
+    var text = (input ? input.value : code.textContent).replace(/\s+$/, "");
     var original = button.textContent;
     copyText(text)
       .then(function () {

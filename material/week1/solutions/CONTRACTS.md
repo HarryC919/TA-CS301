@@ -172,7 +172,7 @@ Test harness files (verification only, never shipped):
 - Python: `def sort_by_length(words: list[str]) -> list[str]`
 - JS: `function sortByLength(words) { } // return a new sorted array`
 
-**Recommended algorithm:** insertion sort or merge sort (both stable when you only swap on strict inequality). Bubble sort works too. Quicksort is not stable — do not use it here.
+**Recommended algorithm:** insertion sort (shift only strictly larger keys) or merge sort (take from the left on ties). Bubble sort works too. The usual in-place quicksort is not stable — do not use that version here.
 
 **Test cases:** ["pear","kiwi","apple","fig","banana"]→["fig","pear","kiwi","apple","banana"]; ["a"]→["a"]; ["bb","aa","cc"]→["bb","aa","cc"] (all equal length → order preserved); ["ccc","a","bb","ab","ba"]→["a","bb","ab","ba","ccc"] (ties keep original order); ["abcd","a","abc","ab"]→["a","ab","abc","abcd"]; seeded random cross-check vs library stable sort (e.g. Python `sorted(words, key=len)` — the oracle may use library sort; the solution may not).
 
@@ -211,7 +211,7 @@ Test harness files (verification only, never shipped):
 
 > Given an integer array `nums`, return a **new array** with the same values in ascending order, implemented as quick sort. Two requirements:
 > 1. Choose the pivot **uniformly at random** (e.g. pick a random index and move it to the partition position).
-> 2. Use a **3-way partition** (Dutch national flag): after partitioning, elements equal to the pivot are in their final positions, so you recurse only on the `<` and `>` regions. This keeps the sort O(n log n) even on inputs with many duplicate values — a plain 2-way partition degrades to O(n²) on an all-equal array.
+> 2. Use a **3-way partition** (Dutch national flag): after partitioning, elements equal to the pivot are in their final positions, so you recurse only on the `<` and `>` regions. With random pivots, this gives expected O(n log n) time, and an all-equal array takes O(n). Worst-case time remains O(n²). The strict-less-than Lomuto 2-way partition degrades to O(n²) on an all-equal array.
 >
 > Do not modify the input array.
 >
@@ -234,11 +234,11 @@ Test harness files (verification only, never shipped):
 
 ### P6 — Kth Largest Element (Medium+, Quickselect)
 
-**Goal:** order statistics via quickselect; ties into the course topic list.
+**Goal:** optional independent exploration of order statistics via quickselect; not covered in class.
 
 **Statement:**
 
-> Given an integer array `nums` and an integer `k`, return the **kth largest element** in sorted order (i.e. the element that would be at index `n - k` if the array were sorted ascending). The expected solution is **quickselect**: partition like quicksort, but recurse only into the side that contains the target index. Average time O(n), no full sort needed. (Sorting the whole array works here but defeats the purpose — the hidden tests are sized so an O(n log n) sort passes too, but try quickselect.)
+> Given an integer array `nums` and an integer `k`, return the **kth largest element** in sorted order (i.e. the element that would be at index `n - k` if the array were sorted ascending). The expected solution is **quickselect**: use random pivots and 3-way partition, then continue only in the region containing the target index. If the target falls in the equal band, return the pivot. Expected time O(n), worst case O(n²), no full sort needed. The reference implementation uses a loop, so selection itself needs O(1) workspace without a recursion stack. (Sorting the whole array works here but defeats the purpose — the hidden tests are sized so an O(n log n) sort passes too, but try quickselect.)
 >
 > **Example:** `nums = [3,2,1,5,6,4], k = 2` → `5`. `nums = [3,2,3,1,2,4,5,5,6], k = 4` → `4`.
 >
@@ -253,7 +253,7 @@ Test harness files (verification only, never shipped):
 - Python: `def find_kth_largest(nums: list[int], k: int) -> int`
 - JS: `function findKthLargest(nums, k) { }`
 
-**Test cases:** [3,2,1,5,6,4] k=2→5; [3,2,3,1,2,4,5,5,6] k=4→4; [1] k=1→1; [2,1] k=1→2, k=2→1; [-1,-5,3] k=1→3; [3,3,3] k=2→3; seeded random n=200,000 cross-checked vs library sort/nth, quick runtime check.
+**Test cases:** [3,2,1,5,6,4] k=2→5; [3,2,3,1,2,4,5,5,6] k=4→4; [1] k=1→1; [2,1] k=1→2, k=2→1; [-1,-5,3] k=1→3; [3,3,3] k=2→3; all-equal, three-value, sorted, and reverse-sorted arrays of n=100,000 at k=1, k=n/2 and k=n; Python recursion regression [3]*2000, k=1000; seeded random n=200,000 cross-checked vs library sort/nth (additional stress coverage beyond the published length limit), quick runtime check.
 
 ---
 

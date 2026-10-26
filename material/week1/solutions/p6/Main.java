@@ -26,6 +26,22 @@ public class Main {
         check(new int[] {-1, -5, 3}, 1, 3, "case [-1,-5,3]");
         check(new int[] {3, 3, 3}, 2, 3, "case [3,3,3]");
 
+        // Regression cases: equal keys, few distinct keys, and ordered inputs.
+        int[][] regressions = new int[4][100000];
+        for (int i = 0; i < 100000; i++) {
+            regressions[0][i] = 7;
+            regressions[1][i] = i % 3 - 1;
+            regressions[2][i] = i / 5 - 10000;
+            regressions[3][i] = 9999 - i / 5;
+        }
+        for (int[] input : regressions) {
+            int[] oracle = input.clone();
+            Arrays.sort(oracle);
+            for (int k : new int[] {1, input.length / 2, input.length}) {
+                check(input, k, oracle[input.length - k], "duplicate/order regression");
+            }
+        }
+
         // Seeded random cross-check against Arrays.sort, n = 200,000
         int n = 200000;
         Random rng = new Random(42);

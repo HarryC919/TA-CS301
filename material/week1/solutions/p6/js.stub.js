@@ -1,4 +1,4 @@
-// TODO: implement findKthLargest with quickselect (average O(n)).
+// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
 function findKthLargest(nums, k) {
 }
 

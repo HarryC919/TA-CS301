@@ -36,7 +36,7 @@
         signature to implement. Starter templates and verified reference solutions are available
         in C, C++, C#, Java, Python and JavaScript.
       </p>
-      <p class="hero-meta">Start with Problem 1 &middot; Work in any order &middot; Nothing to submit</p>
+      <p class="hero-meta">Choose your level &middot; Problem 6: optional exploration &middot; Nothing to submit</p>
       <div class="hero-actions">
         <a class="btn primary" href="#problem-1">Start with Problem 1</a>
         <a class="btn ghost" href="week1-notes.html">Read the Week 1 notes</a>
@@ -57,15 +57,25 @@
             in these exercises; the point is to write the loops and the recursion yourself.</li>
           <li><strong>Examples, then hints, then solutions.</strong> Check the worked examples, open the
             hints if you are stuck, and read the reference solution only after a serious attempt.</li>
+          <li><strong>Choose your level.</strong> Use the 30-minute practice time for problems that
+            help you. You do not need to finish all six. Problem 6 is optional exploration and will
+            not be covered in class.</li>
           <li><strong>Ask questions.</strong> Bring your attempt to the session. There is no submission
             and no autograder &mdash; the goal is understanding, not a score.</li>
         </ol>
       </div>
+      <p class="note" id="editor-help">Temporary editor: Tab inserts four spaces; Shift+Tab removes
+        leading indentation on the current line. Press Escape, then Tab to move focus out.
+        Switch languages without losing drafts on this page. Reset code restores the current template;
+        refreshing restores all templates. Code is not saved or run by this website.</p>
       <div class="callout tip">
         <span class="callout-title">Pick once, copy anywhere</span>
         <p>Language tabs are synchronized across all six problems, and every code block has a
-          <strong>Copy code</strong> button. Paste the starter template into your editor of choice;
-          nothing needs to be installed for the session.</p>
+          <strong>Copy code</strong> button. Starter templates can be edited here with syntax highlighting;
+          Copy code copies your current draft. To run it, paste it into an environment with the compiler or interpreter for your language already available.
+          These are function templates, not complete runnable programs: add a test call, and a
+          <code>main</code> method or function where your language requires one. This page displays
+          code; it does not execute or grade it.</p>
       </div>
     </section>
     <section class="section" id="problem-index">
@@ -171,8 +181,8 @@
       <p class="sig-note">The array is sorted in place in all six languages &mdash; the caller observes the result through the input array.</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p1-stub-c-tab" data-lang="c" aria-controls="p1-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -393,7 +403,7 @@ module.exports = { bubbleSort };
 
       <p>Sort <code>nums</code> <strong>in place</strong> in ascending order using insertion sort, then return the total number of <strong>shifts</strong> performed.</p>
       <p>A shift is one element moving one position to the right to make room for the key. In the inner loop, each element you pass over and move right counts as one shift. Compare with strict <code>&gt;</code> so that equal elements are never shifted.</p>
-      <p>The total number of shifts is exactly the number of inversions in the array (the argument is sketched on the notes page).</p>
+      <p>The total number of shifts is exactly the number of inversions in the array (each shift accounts for one original inversion).</p>
 
       <h3>Examples</h3>
       <div class="example">
@@ -442,8 +452,8 @@ module.exports = { bubbleSort };
       <p class="sig-note">The return value is the shift count; the sorted order is observed through the modified input array.</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p2-stub-c-tab" data-lang="c" aria-controls="p2-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -503,7 +513,7 @@ module.exports = { insertionSort };
         <ol class="hint-list">
         <li>Keep a sorted prefix <code>nums[0..i-1]</code>. For each <code>nums[i]</code>, save it as <code>key</code>, shift every larger element one step right, then put <code>key</code> into the hole.</li>
         <li>Count one shift per element moved right &mdash; that is, inside the inner loop, not once per insertion.</li>
-        <li>Use <code>nums[j-1] &gt; key</code>, not <code>&gt;=</code>. With <code>&gt;=</code>, the all-equal array shifts every element and returns 6 instead of 0.</li>
+        <li>Use <code>nums[j-1] &gt; key</code>, not <code>&gt;=</code>. With <code>&gt;=</code>, Example 3 (<code>[2,2,2]</code>) performs 3 shifts instead of 0.</li>
         </ol>
       </details>
 
@@ -676,7 +686,7 @@ module.exports = { insertionSort };
 
       <p>Given an array of strings <code>words</code>, return a new array containing the words sorted by length in ascending order.</p>
       <p>Words of equal length must keep their original relative order &mdash; the sort must be <strong>stable</strong>. Implement the sorting yourself; built-in sort functions are not allowed.</p>
-      <p>Insertion sort stays stable if you shift only elements strictly greater than the key; merge sort stays stable if the merge takes from the left half on a tie. Quick sort is not stable, so do not use it here. In C the function sorts the given array of pointers in place; in the other five languages it returns a sorted array.</p>
+      <p>Insertion sort stays stable if you shift only elements strictly greater than the key; merge sort stays stable if the merge takes from the left half on a tie. The usual in-place quick sort is not stable, so do not use that version here. In C the function sorts the given array of pointers in place; in the other five languages it returns a sorted array.</p>
 
       <h3>Examples</h3>
       <div class="example">
@@ -724,8 +734,8 @@ module.exports = { insertionSort };
       <p class="sig-note">C sorts the pointer array in place and returns nothing; the other five languages return the sorted array.</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p3-stub-c-tab" data-lang="c" aria-controls="p3-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -977,7 +987,7 @@ module.exports = { sortByLength };
 
       <p>An <strong>inversion</strong> is a pair of indices <code>(i, j)</code> with <code>i &lt; j</code> and <code>nums[i] &gt; nums[j]</code>. Return the total number of inversions in <code>nums</code>.</p>
       <p>A brute-force double loop is O(n<sup>2</sup>), which is too slow for the largest tests. The expected solution modifies merge sort to count inversions while merging, in O(n log n).</p>
-      <p>The answer can exceed 2<sup>31</sup>, so use a 64-bit integer type (<code>long long</code>, <code>long</code>, or Python's unbounded <code>int</code>). The function must not destroy the caller's array.</p>
+      <p>The answer can reach 4,999,950,000. Use <code>long long</code> in C/C++, <code>long</code> in Java/C#, or Python's unbounded <code>int</code>. JavaScript <code>Number</code> represents every possible answer here exactly. The function must not destroy the caller's array.</p>
 
       <h3>Examples</h3>
       <div class="example">
@@ -1004,7 +1014,7 @@ module.exports = { sortByLength };
         <ul>
         <li>1 &le; <code>nums.length</code> &le; 100,000</li>
         <li>-10<sup>9</sup> &le; <code>nums[i]</code> &le; 10<sup>9</sup></li>
-        <li>Return a 64-bit integer. Python integers are already unbounded.</li>
+        <li>Use a type that represents 4,999,950,000 exactly (64-bit integer, Python <code>int</code>, or JavaScript <code>Number</code>).</li>
         <li>Do not modify the input array. Do not use a built-in sort in the solution.</li>
         </ul>
       </div>
@@ -1026,8 +1036,8 @@ module.exports = { sortByLength };
       <p class="sig-note">C++ receives the array as a <code>const</code> reference &mdash; copy it internally before sorting. C receives a <code>const</code> pointer.</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p4-stub-c-tab" data-lang="c" aria-controls="p4-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -1086,8 +1096,8 @@ module.exports = { countInversions };
         <summary>Show hints (open only if you are stuck)</summary>
         <ol class="hint-list">
         <li>Recap merge sort: recursively sort the two halves, then merge. The counting happens during the merge, not afterwards.</li>
-        <li>When you take an element from the right half, every element still unmerged in the left half is larger than it. That is <code>left.length - i</code> new inversions.</li>
-        <li>Trust but verify: on <code>[4,3,2,1]</code> the recursion should produce 1 pair from the bottom call, then 2, then 3 as the halves merge &mdash; 6 in total.</li>
+        <li>When the right front is strictly smaller than the left front and you take it, every element still unmerged in the left half is larger than it. That is <code>left.length - i</code> new inversions.</li>
+        <li>Trust but verify: on <code>[4,3,2,1]</code> merging <code>[4]</code> with <code>[3]</code> adds 1, merging <code>[2]</code> with <code>[1]</code> adds 1, and the final merge of <code>[3,4]</code> with <code>[1,2]</code> adds 4 &mdash; 6 in total.</li>
         </ol>
       </details>
 
@@ -1595,8 +1605,8 @@ module.exports = { countInversions };
       <div class="problem-meta"><span class="pill gray">Quick sort</span><span class="pill gray">Randomization</span><span class="pill gray">Duplicates</span></div>
 
       <p>Given an integer array <code>nums</code>, return a <strong>new array</strong> with the same values sorted in ascending order, implemented as quick sort.</p>
-      <p>Two requirements. First, choose the pivot <strong>uniformly at random</strong> (pick a random index and move it to the partition position). Second, use a <strong>3-way partition</strong> (the Dutch national flag algorithm): after partitioning, all values equal to the pivot are already in their final positions, so you recurse only on the strictly-smaller and strictly-larger regions.</p>
-      <p>A plain 2-way partition degrades to O(n<sup>2</sup>) on an array where every value is equal. The 3-way version stays O(n log n) on duplicates. Do not modify the input array.</p>
+      <p>Two requirements. First, choose the pivot <strong>uniformly at random</strong> (pick a random index in the current segment and use its value as the pivot). Second, use a <strong>3-way partition</strong> (the Dutch national flag algorithm): after partitioning, all values equal to the pivot are already in their final positions, so you recurse only on the strictly-smaller and strictly-larger regions.</p>
+      <p>The strict-less-than Lomuto 2-way partition in the notes degrades to O(n<sup>2</sup>) on an array where every value is equal. With random pivots, the 3-way version has expected O(n log n) time and processes an all-equal array in O(n); its worst case is still O(n<sup>2</sup>). Do not modify the input array.</p>
 
       <h3>Examples</h3>
       <div class="example">
@@ -1639,8 +1649,8 @@ module.exports = { countInversions };
       <p class="sig-note">C returns a <code>malloc</code>'d array and writes its length to <code>*returnSize</code> (the caller frees it; for an empty input return <code>NULL</code> with <code>*returnSize = 0</code>).</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p5-stub-c-tab" data-lang="c" aria-controls="p5-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -1699,8 +1709,8 @@ module.exports = { quickSort };
         <summary>Show hints (open only if you are stuck)</summary>
         <ol class="hint-list">
         <li>3-way partition scans one index <code>i</code> through the region: smaller than pivot &rarr; swap to the front and advance; equal &rarr; advance; larger &rarr; swap to the back and <em>do not advance</em> (the swapped-in value still needs checking).</li>
-        <li>Randomness: <code>rand() % (hi - lo + 1) + lo</code> in C, <code>std::uniform_int_distribution</code> in C++, <code>Random.Next(lo, hi + 1)</code> in C#, <code>ThreadLocalRandom.current().nextInt(lo, hi + 1)</code> in Java, <code>random.randint(lo, hi)</code> in Python, <code>Math.floor(Math.random() * (hi - lo + 1)) + lo</code> in JS. Swap the chosen index with <code>nums[lo]</code> before partitioning.</li>
-        <li>Recurse on <code>[lo, lt-1]</code> and <code>[gt+1, hi]</code>, never on the equal band. Base case: a region of size 0 or 1. If your code times out on 200,000 equal values, you still have a 2-way partition.</li>
+        <li>Randomness: use rejection sampling with <code>rand()</code> in C (see the reference answer; plain modulo can bias the index), <code>std::uniform_int_distribution</code> in C++, <code>Random.Next(lo, hi + 1)</code> in C#, <code>ThreadLocalRandom.current().nextInt(lo, hi + 1)</code> in Java, <code>random.randint(lo, hi)</code> in Python, <code>Math.floor(Math.random() * (hi - lo + 1)) + lo</code> in JS. Swap the chosen index with <code>nums[lo]</code> before partitioning.</li>
+        <li>Recurse on <code>[lo, lt-1]</code> and <code>[gt+1, hi]</code>, never on the equal band. Base case: a region of size 0 or 1. On 100,000 equal values, there should be one partition pass and no further recursive calls.</li>
         </ol>
       </details>
 
@@ -1749,7 +1759,12 @@ static void quickSortRange(int* arr, int left, int right) {
     }
 
     // 1. Pick the pivot uniformly at random and move it to position `left`.
-    int pivotIndex = left + rand() % (right - left + 1);
+    unsigned int width = (unsigned int)(right - left + 1);
+    unsigned int range = (unsigned int)RAND_MAX + 1U;
+    unsigned int limit = range - range % width;
+    unsigned int draw;
+    do { draw = (unsigned int)rand(); } while (draw &gt;= limit);
+    int pivotIndex = left + (int)(draw % width);
     swapValues(&amp;arr[left], &amp;arr[pivotIndex]);
     int pivot = arr[left];
 
@@ -2140,8 +2155,9 @@ module.exports = { quickSort };
       </div>
       <div class="problem-meta"><span class="pill gray">Quickselect</span><span class="pill gray">Order statistics</span><span class="pill gray">Partition</span></div>
 
+      <p><strong>Optional exploration &mdash; not covered in class.</strong> Try this independently if you want to explore next week's order-statistics topic.</p>
       <p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <strong>k-th largest</strong> element in sorted order &mdash; that is, the element at index <code>n - k</code> if the array were sorted ascending. <code>k</code> is 1-based, so <code>k = 1</code> asks for the maximum.</p>
-      <p>The expected solution is <strong>quickselect</strong>: partition like quicksort, but recurse only into the side that contains the target index. Average time O(n), with no need to sort everything.</p>
+      <p>The expected solution is <strong>quickselect</strong>: partition like quicksort, but continue only in the region containing the target index. Use random pivots and 3-way partition for duplicates. Expected time O(n), with no need to sort everything.</p>
       <p>Sorting the whole array also passes the tests, but it defeats the purpose. Duplicates matter here: <code>[3, 3, 3]</code> with <code>k = 2</code> must return <code>3</code>.</p>
 
       <h3>Examples</h3>
@@ -2182,11 +2198,11 @@ module.exports = { quickSort };
     </tbody>
   </table>
 </div>
-      <p class="sig-note">C receives a mutable pointer, so it may copy and partition the input. C++ receives a <code>const</code> reference &mdash; copy it before partitioning.</p>
+      <p class="sig-note">The C reference answer may reorder the input. The other five reference answers preserve it by making a copy; C++ requires this because the parameter is a <code>const</code> reference. Selection itself is iterative.</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
-<div class="tabs" data-tabs>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
       <button class="tab-btn" type="button" role="tab" id="p6-stub-c-tab" data-lang="c" aria-controls="p6-stub-c" aria-selected="false" tabindex="-1">C</button>
@@ -2199,14 +2215,14 @@ module.exports = { quickSort };
     <button class="copy-btn" type="button">Copy code</button>
   </div>
   <div class="tab-panels">
-    <div class="tab-panel" role="tabpanel" id="p6-stub-c" aria-labelledby="p6-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement findKthLargest with quickselect (average O(n)).
+    <div class="tab-panel" role="tabpanel" id="p6-stub-c" aria-labelledby="p6-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
 int findKthLargest(int* nums, int numsSize, int k) {
     return 0;
 }
 </code></pre></div>
     <div class="tab-panel" role="tabpanel" id="p6-stub-cpp" aria-labelledby="p6-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
 
-// TODO: implement findKthLargest with quickselect (average O(n)).
+// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
 int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
     return 0;
 }
@@ -2214,24 +2230,24 @@ int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
     <div class="tab-panel" role="tabpanel" id="p6-stub-cs" aria-labelledby="p6-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
 
 public static class Solution {
-    // TODO: implement FindKthLargest with quickselect (average O(n)).
+    // TODO: implement FindKthLargest with iterative 3-way quickselect (expected O(n)).
     public static int FindKthLargest(int[] nums, int k) {
         throw new NotImplementedException();
     }
 }
 </code></pre></div>
     <div class="tab-panel" role="tabpanel" id="p6-stub-java" aria-labelledby="p6-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
-    // TODO: implement findKthLargest with quickselect (average O(n)).
+    // TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
     public static int findKthLargest(int[] nums, int k) {
         throw new UnsupportedOperationException();
     }
 }
 </code></pre></div>
-    <div class="tab-panel" role="tabpanel" id="p6-stub-py" aria-labelledby="p6-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement find_kth_largest with quickselect (average O(n)).
+    <div class="tab-panel" role="tabpanel" id="p6-stub-py" aria-labelledby="p6-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement find_kth_largest with iterative 3-way quickselect (expected O(n)).
 def find_kth_largest(nums: list[int], k: int) -&gt; int:
     pass
 </code></pre></div>
-    <div class="tab-panel" role="tabpanel" id="p6-stub-js" aria-labelledby="p6-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement findKthLargest with quickselect (average O(n)).
+    <div class="tab-panel" role="tabpanel" id="p6-stub-js" aria-labelledby="p6-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
 function findKthLargest(nums, k) {
 }
 
@@ -2244,9 +2260,9 @@ module.exports = { findKthLargest };
       <details>
         <summary>Show hints (open only if you are stuck)</summary>
         <ol class="hint-list">
-        <li>Quickselect is quicksort that skips work: partition, then look at where the pivot landed. If that index is <code>n - k</code>, the pivot is the answer; otherwise recurse into the side containing the target.</li>
-        <li>Why O(n) on average? Each partition costs the size of the current region, and the expected region size halves: n + n/2 + n/4 + &hellip; &asymp; 2n.</li>
-        <li>Reuse the 3-way partition from Problem 5. If the equal band contains index <code>n - k</code>, the answer is the pivot value itself &mdash; no recursion needed.</li>
+        <li>Quickselect skips work: after 3-way partition, compare target index <code>n - k</code> with the equal band <code>[lt, gt]</code>. Return the pivot if the target is inside; otherwise keep only the smaller or larger region containing the target.</li>
+        <li>Why expected O(n)? A random pivot lands in the middle half with probability at least 1/2, leaving at most about 3/4 of the current region. A constant expected number of passes gives each such shrinkage, so the work sums geometrically. The region does not always halve.</li>
+        <li>Reuse the 3-way partition from Problem 5 and update <code>left</code>/<code>right</code> in a loop. Skip the entire equal band when narrowing the region. Test all-equal input and <code>k = 1</code>, <code>k = n</code>, and a middle rank.</li>
         </ol>
       </details>
 
@@ -2269,343 +2285,276 @@ module.exports = { findKthLargest };
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p6-solution-c" aria-labelledby="p6-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdlib.h&gt;
 
-// Time: O(n) average, O(n^2) worst case. Space: O(1) extra (nums is reordered in place).
-// Average O(n) intuition: each partition costs O(n), and we recurse into only one
-// side, so the expected total work is n + n/2 + n/4 + ... = O(n).
-// May reorder the caller's array (allowed by the contract).
-
-// Swaps two integer values in place.
+// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(1); may reorder the input, as allowed by the contract.
 static void swapValues(int* first, int* second) {
     int tmp = *first;
     *first = *second;
     *second = tmp;
 }
 
-// Partitions nums[left..right] around a random pivot value.
-// Returns the pivot's final index: smaller values on the left, larger on the right.
-static int partition(int* nums, int left, int right) {
-    // 1. Pick a random pivot and move it to the right end
-    int offset = rand() % (right - left + 1);
-    swapValues(&amp;nums[left + offset], &amp;nums[right]);
-    int pivot = nums[right];
-
-    // 2. Move every value smaller than the pivot to the front
-    int store = left;
-    for (int i = left; i &lt; right; i++) {
-        if (nums[i] &lt; pivot) {
-            swapValues(&amp;nums[store], &amp;nums[i]);
-            store++;
+int findKthLargest(int* nums, int numsSize, int k) {
+    int* working = nums;
+    int size = numsSize;
+    int target = size - k;
+    int left = 0;
+    int right = size - 1;
+    while (left &lt; right) {
+        // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        // Reject the short remainder so each index has equal probability.
+        unsigned int width = (unsigned int)(right - left + 1);
+        unsigned int range = (unsigned int)RAND_MAX + 1U;
+        unsigned int limit = range - range % width;
+        unsigned int draw;
+        do { draw = (unsigned int)rand(); } while (draw &gt;= limit);
+        int pivot = working[left + (int)(draw % width)];
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (working[i] &lt; pivot) {
+                swapValues(&amp;working[lt], &amp;working[i]);
+                lt++;
+                i++;
+            } else if (working[i] &gt; pivot) {
+                swapValues(&amp;working[i], &amp;working[gt]);
+                gt--;  // inspect the swapped-in value before advancing i
+            } else {
+                i++;
+            }
+        }
+        // 2. Keep only the region containing target; skip the entire equal band.
+        if (target &lt; lt) {
+            right = lt - 1;
+        } else if (target &gt; gt) {
+            left = gt + 1;
+        } else {
+            return pivot;
         }
     }
-
-    // 3. Put the pivot between the smaller and larger values
-    swapValues(&amp;nums[store], &amp;nums[right]);
-    return store;
-}
-
-// Quickselect: returns the value that belongs at targetIndex in sorted order.
-static int selectValue(int* nums, int left, int right, int targetIndex) {
-    int pivotIndex = partition(nums, left, right);
-    if (pivotIndex == targetIndex) {
-        return nums[pivotIndex];
-    }
-    if (pivotIndex &lt; targetIndex) {
-        // The target lies to the right: recurse only into that side
-        return selectValue(nums, pivotIndex + 1, right, targetIndex);
-    }
-    // The target lies to the left: recurse only into that side
-    return selectValue(nums, left, pivotIndex - 1, targetIndex);
-}
-
-// The kth largest value sits at ascending index numsSize - k.
-// Uses rand() for the random pivot; call srand(...) once in main if you want a
-// different random sequence on each run.
-int findKthLargest(int* nums, int numsSize, int k) {
-    int targetIndex = numsSize - k;
-    return selectValue(nums, 0, numsSize - 1, targetIndex);
+    return working[left];
 }
 </code></pre></div>
-    <div class="tab-panel" role="tabpanel" id="p6-solution-cpp" aria-labelledby="p6-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;cstdlib&gt;
+    <div class="tab-panel" role="tabpanel" id="p6-solution-cpp" aria-labelledby="p6-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;random&gt;
 #include &lt;vector&gt;
 
-// Time: O(n) average, O(n^2) worst case. Space: O(n) for the working copy.
-// Average O(n) intuition: each partition costs O(n), and we recurse into only one
-// side, so the expected total work is n + n/2 + n/4 + ... = O(n).
-// The caller's vector is left unchanged: quickselect runs on a copy.
-
-// Swaps two integer values in place.
+// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(n) for the copy, O(1) for iterative selection. Input is unchanged.
 static void swapValues(int&amp; first, int&amp; second) {
     int tmp = first;
     first = second;
     second = tmp;
 }
 
-// Partitions nums[left..right] around a random pivot value.
-// Returns the pivot's final index: smaller values on the left, larger on the right.
-static int partition(std::vector&lt;int&gt;&amp; nums, int left, int right) {
-    // 1. Pick a random pivot and move it to the right end
-    int offset = std::rand() % (right - left + 1);
-    swapValues(nums[left + offset], nums[right]);
-    int pivot = nums[right];
-
-    // 2. Move every value smaller than the pivot to the front
-    int store = left;
-    for (int i = left; i &lt; right; i++) {
-        if (nums[i] &lt; pivot) {
-            swapValues(nums[store], nums[i]);
-            store++;
+int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
+    std::vector&lt;int&gt; working = nums;
+    int size = static_cast&lt;int&gt;(working.size());
+    static std::mt19937 generator(std::random_device{}());
+    int target = size - k;
+    int left = 0;
+    int right = size - 1;
+    while (left &lt; right) {
+        // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        std::uniform_int_distribution&lt;int&gt; indices(left, right);
+        int pivot = working[indices(generator)];
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (working[i] &lt; pivot) {
+                swapValues(working[lt], working[i]);
+                lt++;
+                i++;
+            } else if (working[i] &gt; pivot) {
+                swapValues(working[i], working[gt]);
+                gt--;  // inspect the swapped-in value before advancing i
+            } else {
+                i++;
+            }
+        }
+        // 2. Keep only the region containing target; skip the entire equal band.
+        if (target &lt; lt) {
+            right = lt - 1;
+        } else if (target &gt; gt) {
+            left = gt + 1;
+        } else {
+            return pivot;
         }
     }
-
-    // 3. Put the pivot between the smaller and larger values
-    swapValues(nums[store], nums[right]);
-    return store;
-}
-
-// Quickselect: returns the value that belongs at targetIndex in sorted order.
-static int selectValue(std::vector&lt;int&gt;&amp; nums, int left, int right, int targetIndex) {
-    int pivotIndex = partition(nums, left, right);
-    if (pivotIndex == targetIndex) {
-        return nums[pivotIndex];
-    }
-    if (pivotIndex &lt; targetIndex) {
-        // The target lies to the right: recurse only into that side
-        return selectValue(nums, pivotIndex + 1, right, targetIndex);
-    }
-    // The target lies to the left: recurse only into that side
-    return selectValue(nums, left, pivotIndex - 1, targetIndex);
-}
-
-// The kth largest value sits at ascending index nums.size() - k.
-// Uses std::rand() for the random pivot; call std::srand(...) once in main if you
-// want a different random sequence on each run.
-int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
-    // Work on a copy so the caller's vector is not modified.
-    std::vector&lt;int&gt; working = nums;
-    int targetIndex = static_cast&lt;int&gt;(working.size()) - k;
-    return selectValue(working, 0, static_cast&lt;int&gt;(working.size()) - 1, targetIndex);
+    return working[left];
 }
 </code></pre></div>
     <div class="tab-panel" role="tabpanel" id="p6-solution-cs" aria-labelledby="p6-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
 
 public static class Solution {
-    // Time: O(n) average, O(n^2) worst case. Space: O(n) for the working copy.
-    // Average O(n) intuition: each partition costs O(n), and we recurse into only
-    // one side, so the expected total work is n + n/2 + n/4 + ... = O(n).
+
+    // Time: O(n) expected with random pivots; O(n^2) worst case.
+    // Space: O(n) for the copy, O(1) for the iterative selection itself.
     public static int FindKthLargest(int[] nums, int k) {
-        // Work on a copy so the caller's array is not modified.
         int[] working = (int[])nums.Clone();
-        int targetIndex = working.Length - k;
-        return SelectValue(working, 0, working.Length - 1, targetIndex);
+        int target = working.Length - k;
+        int left = 0;
+        int right = working.Length - 1;
+        while (left &lt; right) {
+            // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+            int pivot = working[left + Random.Shared.Next(right - left + 1)];
+            int lt = left;
+            int i = left;
+            int gt = right;
+            while (i &lt;= gt) {
+                if (working[i] &lt; pivot) {
+                    SwapValues(working, lt, i);
+                    lt++;
+                    i++;
+                } else if (working[i] &gt; pivot) {
+                    SwapValues(working, i, gt);
+                    gt--;  // inspect the swapped-in value before advancing i
+                } else {
+                    i++;
+                }
+            }
+            // 2. Keep only the region containing target; skip the entire equal band.
+            if (target &lt; lt) {
+                right = lt - 1;
+            } else if (target &gt; gt) {
+                left = gt + 1;
+            } else {
+                return pivot;
+            }
+        }
+        return working[left];
     }
 
-    // Swaps two positions in the array, in place.
     private static void SwapValues(int[] nums, int first, int second) {
         int tmp = nums[first];
         nums[first] = nums[second];
         nums[second] = tmp;
-    }
-
-    // Partitions nums[left..right] around a random pivot value.
-    // Returns the pivot's final index: smaller values left, larger values right.
-    private static int Partition(int[] nums, int left, int right) {
-        // 1. Pick a random pivot and move it to the right end
-        int offset = Random.Shared.Next(right - left + 1);
-        SwapValues(nums, left + offset, right);
-        int pivot = nums[right];
-
-        // 2. Move every value smaller than the pivot to the front
-        int store = left;
-        for (int i = left; i &lt; right; i++) {
-            if (nums[i] &lt; pivot) {
-                SwapValues(nums, store, i);
-                store++;
-            }
-        }
-
-        // 3. Put the pivot between the smaller and larger values
-        SwapValues(nums, store, right);
-        return store;
-    }
-
-    // Quickselect: returns the value that belongs at targetIndex in sorted order.
-    private static int SelectValue(int[] nums, int left, int right, int targetIndex) {
-        int pivotIndex = Partition(nums, left, right);
-        if (pivotIndex == targetIndex) {
-            return nums[pivotIndex];
-        }
-        if (pivotIndex &lt; targetIndex) {
-            // The target lies to the right: recurse only into that side
-            return SelectValue(nums, pivotIndex + 1, right, targetIndex);
-        }
-        // The target lies to the left: recurse only into that side
-        return SelectValue(nums, left, pivotIndex - 1, targetIndex);
     }
 }
 </code></pre></div>
     <div class="tab-panel" role="tabpanel" id="p6-solution-java" aria-labelledby="p6-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>import java.util.Random;
 
 public class Solution {
-    // Time: O(n) average, O(n^2) worst case. Space: O(n) for the working copy.
-    // Average O(n) intuition: each partition costs O(n), and we recurse into only
-    // one side, so the expected total work is n + n/2 + n/4 + ... = O(n).
     private static final Random RANDOM = new Random();
 
+    // Time: O(n) expected with random pivots; O(n^2) worst case.
+    // Space: O(n) for the copy, O(1) for the iterative selection itself.
     public static int findKthLargest(int[] nums, int k) {
-        // Work on a copy so the caller's array is not modified.
         int[] working = nums.clone();
-        int targetIndex = working.length - k;
-        return selectValue(working, 0, working.length - 1, targetIndex);
+        int target = working.length - k;
+        int left = 0;
+        int right = working.length - 1;
+        while (left &lt; right) {
+            // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+            int pivot = working[left + RANDOM.nextInt(right - left + 1)];
+            int lt = left;
+            int i = left;
+            int gt = right;
+            while (i &lt;= gt) {
+                if (working[i] &lt; pivot) {
+                    swapValues(working, lt, i);
+                    lt++;
+                    i++;
+                } else if (working[i] &gt; pivot) {
+                    swapValues(working, i, gt);
+                    gt--;  // inspect the swapped-in value before advancing i
+                } else {
+                    i++;
+                }
+            }
+            // 2. Keep only the region containing target; skip the entire equal band.
+            if (target &lt; lt) {
+                right = lt - 1;
+            } else if (target &gt; gt) {
+                left = gt + 1;
+            } else {
+                return pivot;
+            }
+        }
+        return working[left];
     }
 
-    // Swaps two positions in the array, in place.
     private static void swapValues(int[] nums, int first, int second) {
         int tmp = nums[first];
         nums[first] = nums[second];
         nums[second] = tmp;
     }
-
-    // Partitions nums[left..right] around a random pivot value.
-    // Returns the pivot's final index: smaller values left, larger values right.
-    private static int partition(int[] nums, int left, int right) {
-        // 1. Pick a random pivot and move it to the right end
-        int offset = RANDOM.nextInt(right - left + 1);
-        swapValues(nums, left + offset, right);
-        int pivot = nums[right];
-
-        // 2. Move every value smaller than the pivot to the front
-        int store = left;
-        for (int i = left; i &lt; right; i++) {
-            if (nums[i] &lt; pivot) {
-                swapValues(nums, store, i);
-                store++;
-            }
-        }
-
-        // 3. Put the pivot between the smaller and larger values
-        swapValues(nums, store, right);
-        return store;
-    }
-
-    // Quickselect: returns the value that belongs at targetIndex in sorted order.
-    private static int selectValue(int[] nums, int left, int right, int targetIndex) {
-        int pivotIndex = partition(nums, left, right);
-        if (pivotIndex == targetIndex) {
-            return nums[pivotIndex];
-        }
-        if (pivotIndex &lt; targetIndex) {
-            // The target lies to the right: recurse only into that side
-            return selectValue(nums, pivotIndex + 1, right, targetIndex);
-        }
-        // The target lies to the left: recurse only into that side
-        return selectValue(nums, left, pivotIndex - 1, targetIndex);
-    }
 }
 </code></pre></div>
     <div class="tab-panel" role="tabpanel" id="p6-solution-py" aria-labelledby="p6-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code>import random
 
-# Time: O(n) average, O(n^2) worst case. Space: O(n) for the working copy.
-# Average O(n) intuition: each partition costs O(n), and we recurse into only one
-# side, so the expected total work is n + n/2 + n/4 + ... = O(n).
-# The caller's list is left unchanged: quickselect runs on a copy.
-
-
-def swap_values(nums: list[int], first: int, second: int) -&gt; None:
-    # Swaps two positions in the list, in place.
-    nums[first], nums[second] = nums[second], nums[first]
-
-
-def partition(nums: list[int], left: int, right: int) -&gt; int:
-    # Partitions nums[left..right] around a random pivot value.
-    # Returns the pivot's final index: smaller values left, larger values right.
-    # 1. Pick a random pivot and move it to the right end
-    pivot_index = random.randint(left, right)
-    swap_values(nums, pivot_index, right)
-    pivot = nums[right]
-
-    # 2. Move every value smaller than the pivot to the front
-    store = left
-    for i in range(left, right):
-        if nums[i] &lt; pivot:
-            swap_values(nums, store, i)
-            store += 1
-
-    # 3. Put the pivot between the smaller and larger values
-    swap_values(nums, store, right)
-    return store
-
-
-def select_value(nums: list[int], left: int, right: int, target_index: int) -&gt; int:
-    # Quickselect: returns the value that belongs at target_index in sorted order.
-    pivot_index = partition(nums, left, right)
-    if pivot_index == target_index:
-        return nums[pivot_index]
-    if pivot_index &lt; target_index:
-        # The target lies to the right: recurse only into that side
-        return select_value(nums, pivot_index + 1, right, target_index)
-    # The target lies to the left: recurse only into that side
-    return select_value(nums, left, pivot_index - 1, target_index)
+# Time: O(n) expected with random pivots; O(n^2) worst case.
+# Space: O(n) for the copy, O(1) for the iterative selection itself.
 
 
 def find_kth_largest(nums: list[int], k: int) -&gt; int:
-    # The kth largest value sits at ascending index len(nums) - k.
-    working = nums[:]  # copy so the caller's list is not modified
-    target_index = len(working) - k
-    return select_value(working, 0, len(working) - 1, target_index)
+    working = nums[:]
+    target = len(working) - k
+    left, right = 0, len(working) - 1
+    while left &lt; right:
+        # 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        pivot = working[random.randint(left, right)]
+        lt, i, gt = left, left, right
+        while i &lt;= gt:
+            if working[i] &lt; pivot:
+                working[lt], working[i] = working[i], working[lt]
+                lt += 1
+                i += 1
+            elif working[i] &gt; pivot:
+                working[i], working[gt] = working[gt], working[i]
+                gt -= 1  # inspect the swapped-in value before advancing i
+            else:
+                i += 1
+        # 2. Keep only the region containing target; skip the entire equal band.
+        if target &lt; lt:
+            right = lt - 1
+        elif target &gt; gt:
+            left = gt + 1
+        else:
+            return pivot
+    return working[left]
 </code></pre></div>
-    <div class="tab-panel" role="tabpanel" id="p6-solution-js" aria-labelledby="p6-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Time: O(n) average, O(n^2) worst case. Space: O(n) for the working copy.
-// Average O(n) intuition: each partition costs O(n), and we recurse into only one
-// side, so the expected total work is n + n/2 + n/4 + ... = O(n).
-// The caller's array is left unchanged: quickselect runs on a copy.
-
-// Swaps two positions in the array, in place.
+    <div class="tab-panel" role="tabpanel" id="p6-solution-js" aria-labelledby="p6-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(n) for the copy, O(1) for the iterative selection itself.
 function swapValues(nums, first, second) {
   const tmp = nums[first];
   nums[first] = nums[second];
   nums[second] = tmp;
 }
 
-// Partitions nums[left..right] around a random pivot value.
-// Returns the pivot's final index: smaller values left, larger values right.
-function partition(nums, left, right) {
-  // 1. Pick a random pivot and move it to the right end
-  const offset = Math.floor(Math.random() * (right - left + 1));
-  swapValues(nums, left + offset, right);
-  const pivot = nums[right];
-
-  // 2. Move every value smaller than the pivot to the front
-  let store = left;
-  for (let i = left; i &lt; right; i++) {
-    if (nums[i] &lt; pivot) {
-      swapValues(nums, store, i);
-      store++;
+function findKthLargest(nums, k) {
+  const working = nums.slice();
+  const target = working.length - k;
+  let left = 0;
+  let right = working.length - 1;
+  while (left &lt; right) {
+    // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+    const pivot = working[left + Math.floor(Math.random() * (right - left + 1))];
+    let lt = left;
+    let i = left;
+    let gt = right;
+    while (i &lt;= gt) {
+      if (working[i] &lt; pivot) {
+        swapValues(working, lt, i);
+        lt++;
+        i++;
+      } else if (working[i] &gt; pivot) {
+        swapValues(working, i, gt);
+        gt--; // inspect the swapped-in value next
+      } else {
+        i++;
+      }
+    }
+    // 2. Keep only the region containing target; skip the entire equal band.
+    if (target &lt; lt) {
+      right = lt - 1;
+    } else if (target &gt; gt) {
+      left = gt + 1;
+    } else {
+      return pivot;
     }
   }
-
-  // 3. Put the pivot between the smaller and larger values
-  swapValues(nums, store, right);
-  return store;
-}
-
-// Quickselect: returns the value that belongs at targetIndex in sorted order.
-function selectValue(nums, left, right, targetIndex) {
-  const pivotIndex = partition(nums, left, right);
-  if (pivotIndex === targetIndex) {
-    return nums[pivotIndex];
-  }
-  if (pivotIndex &lt; targetIndex) {
-    // The target lies to the right: recurse only into that side
-    return selectValue(nums, pivotIndex + 1, right, targetIndex);
-  }
-  // The target lies to the left: recurse only into that side
-  return selectValue(nums, left, pivotIndex - 1, targetIndex);
-}
-
-function findKthLargest(nums, k) {
-  // The kth largest value sits at ascending index nums.length - k.
-  const working = nums.slice(); // copy so the caller's array is not modified
-  const targetIndex = working.length - k;
-  return selectValue(working, 0, working.length - 1, targetIndex);
+  return working[left];
 }
 
 module.exports = { findKthLargest };

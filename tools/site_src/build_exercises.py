@@ -136,7 +136,7 @@ def render_tabs(group_id: str, title: str, codes: dict[str, str]) -> str:
             f"<pre><code>{esc(codes[key])}</code></pre></div>"
         )
     return (
-        '<div class="tabs" data-tabs>\n'
+        f'<div class="tabs" data-tabs{" data-editable" if group_id.endswith("-stub") else ""}>\n'
         '  <div class="tab-bar">\n'
         '    <div class="tab-btns" role="tablist" aria-label="Choose a language">\n'
         f"      {'\n      '.join(buttons)}\n"
@@ -233,7 +233,7 @@ def render_problem(problem: dict, allow_missing: bool) -> str:
       <p class="sig-note">{problem["sig_note"]}</p>
 
       <h3>Starter template</h3>
-      <p class="solution-note">Fill in the TODO. Keep the signature exactly as printed &mdash; the tests call it.</p>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
 {render_tabs(f"p{number}-stub", "Starter template", stubs)}
 
       <h3>Hints</h3>
@@ -321,7 +321,7 @@ HERO = """  <section class="page-hero exercise-hero" id="top">
         signature to implement. Starter templates and verified reference solutions are available
         in C, C++, C#, Java, Python and JavaScript.
       </p>
-      <p class="hero-meta">Start with Problem 1 &middot; Work in any order &middot; Nothing to submit</p>
+      <p class="hero-meta">Choose your level &middot; Problem 6: optional exploration &middot; Nothing to submit</p>
       <div class="hero-actions">
         <a class="btn primary" href="#problem-1">Start with Problem 1</a>
         <a class="btn ghost" href="week1-notes.html">Read the Week 1 notes</a>
@@ -343,15 +343,25 @@ INTRO = """    <section class="section" id="how-to-use">
             in these exercises; the point is to write the loops and the recursion yourself.</li>
           <li><strong>Examples, then hints, then solutions.</strong> Check the worked examples, open the
             hints if you are stuck, and read the reference solution only after a serious attempt.</li>
+          <li><strong>Choose your level.</strong> Use the 30-minute practice time for problems that
+            help you. You do not need to finish all six. Problem 6 is optional exploration and will
+            not be covered in class.</li>
           <li><strong>Ask questions.</strong> Bring your attempt to the session. There is no submission
             and no autograder &mdash; the goal is understanding, not a score.</li>
         </ol>
       </div>
+      <p class="note" id="editor-help">Temporary editor: Tab inserts four spaces; Shift+Tab removes
+        leading indentation on the current line. Press Escape, then Tab to move focus out.
+        Switch languages without losing drafts on this page. Reset code restores the current template;
+        refreshing restores all templates. Code is not saved or run by this website.</p>
       <div class="callout tip">
         <span class="callout-title">Pick once, copy anywhere</span>
         <p>Language tabs are synchronized across all six problems, and every code block has a
-          <strong>Copy code</strong> button. Paste the starter template into your editor of choice;
-          nothing needs to be installed for the session.</p>
+          <strong>Copy code</strong> button. Starter templates can be edited here with syntax highlighting;
+          Copy code copies your current draft. To run it, paste it into an environment with the compiler or interpreter for your language already available.
+          These are function templates, not complete runnable programs: add a test call, and a
+          <code>main</code> method or function where your language requires one. This page displays
+          code; it does not execute or grade it.</p>
       </div>
     </section>
 """

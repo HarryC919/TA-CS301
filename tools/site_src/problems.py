@@ -73,7 +73,7 @@ PROBLEMS = [
             "<strong>shifts</strong> performed.",
             "A shift is one element moving one position to the right to make room for the key. In the inner loop, each element you "
             "pass over and move right counts as one shift. Compare with strict <code>&gt;</code> so that equal elements are never shifted.",
-            "The total number of shifts is exactly the number of inversions in the array (the argument is sketched on the notes page).",
+            "The total number of shifts is exactly the number of inversions in the array (each shift accounts for one original inversion).",
         ],
         "examples": [
             {
@@ -105,7 +105,7 @@ PROBLEMS = [
         "hints": [
             "Keep a sorted prefix <code>nums[0..i-1]</code>. For each <code>nums[i]</code>, save it as <code>key</code>, shift every larger element one step right, then put <code>key</code> into the hole.",
             "Count one shift per element moved right &mdash; that is, inside the inner loop, not once per insertion.",
-            "Use <code>nums[j-1] &gt; key</code>, not <code>&gt;=</code>. With <code>&gt;=</code>, the all-equal array shifts every element and returns 6 instead of 0.",
+            "Use <code>nums[j-1] &gt; key</code>, not <code>&gt;=</code>. With <code>&gt;=</code>, Example 3 (<code>[2,2,2]</code>) performs 3 shifts instead of 0.",
         ],
         "notes_anchor": "insertion-sort",
         "notes_label": "Insertion sort",
@@ -122,8 +122,8 @@ PROBLEMS = [
             "Words of equal length must keep their original relative order &mdash; the sort must be <strong>stable</strong>. Implement the "
             "sorting yourself; built-in sort functions are not allowed.",
             "Insertion sort stays stable if you shift only elements strictly greater than the key; merge sort stays stable if the merge "
-            "takes from the left half on a tie. Quick sort is not "
-            "stable, so do not use it here. In C the function sorts the given array of pointers in place; in the other five languages it "
+            "takes from the left half on a tie. The usual in-place quick sort is not "
+            "stable, so do not use that version here. In C the function sorts the given array of pointers in place; in the other five languages it "
             "returns a sorted array.",
         ],
         "examples": [
@@ -172,8 +172,8 @@ PROBLEMS = [
             "Return the total number of inversions in <code>nums</code>.",
             "A brute-force double loop is O(n<sup>2</sup>), which is too slow for the largest tests. The expected solution modifies merge "
             "sort to count inversions while merging, in O(n log n).",
-            "The answer can exceed 2<sup>31</sup>, so use a 64-bit integer type (<code>long long</code>, <code>long</code>, or Python's "
-            "unbounded <code>int</code>). The function must not destroy the caller's array.",
+            "The answer can reach 4,999,950,000. Use <code>long long</code> in C/C++, <code>long</code> in Java/C#, "
+            "or Python's unbounded <code>int</code>. JavaScript <code>Number</code> represents every possible answer here exactly. The function must not destroy the caller's array.",
         ],
         "examples": [
             {
@@ -198,14 +198,14 @@ PROBLEMS = [
         "constraints": [
             "1 &le; <code>nums.length</code> &le; 100,000",
             "-10<sup>9</sup> &le; <code>nums[i]</code> &le; 10<sup>9</sup>",
-            "Return a 64-bit integer. Python integers are already unbounded.",
+            "Use a type that represents 4,999,950,000 exactly (64-bit integer, Python <code>int</code>, or JavaScript <code>Number</code>).",
             "Do not modify the input array. Do not use a built-in sort in the solution.",
         ],
         "sig_note": "C++ receives the array as a <code>const</code> reference &mdash; copy it internally before sorting. C receives a <code>const</code> pointer.",
         "hints": [
             "Recap merge sort: recursively sort the two halves, then merge. The counting happens during the merge, not afterwards.",
-            "When you take an element from the right half, every element still unmerged in the left half is larger than it. That is <code>left.length - i</code> new inversions.",
-            "Trust but verify: on <code>[4,3,2,1]</code> the recursion should produce 1 pair from the bottom call, then 2, then 3 as the halves merge &mdash; 6 in total.",
+            "When the right front is strictly smaller than the left front and you take it, every element still unmerged in the left half is larger than it. That is <code>left.length - i</code> new inversions.",
+            "Trust but verify: on <code>[4,3,2,1]</code> merging <code>[4]</code> with <code>[3]</code> adds 1, merging <code>[2]</code> with <code>[1]</code> adds 1, and the final merge of <code>[3,4]</code> with <code>[1,2]</code> adds 4 &mdash; 6 in total.",
         ],
         "notes_anchor": "merge-sort",
         "notes_label": "Merge sort",
@@ -220,12 +220,12 @@ PROBLEMS = [
         "statement": [
             "Given an integer array <code>nums</code>, return a <strong>new array</strong> with the same values sorted in ascending order, "
             "implemented as quick sort.",
-            "Two requirements. First, choose the pivot <strong>uniformly at random</strong> (pick a random index and move it to the "
-            "partition position). Second, use a <strong>3-way partition</strong> (the Dutch national flag algorithm): after partitioning, "
+            "Two requirements. First, choose the pivot <strong>uniformly at random</strong> (pick a random index in the current segment and use its value as the "
+            "pivot). Second, use a <strong>3-way partition</strong> (the Dutch national flag algorithm): after partitioning, "
             "all values equal to the pivot are already in their final positions, so you recurse only on the strictly-smaller and "
             "strictly-larger regions.",
-            "A plain 2-way partition degrades to O(n<sup>2</sup>) on an array where every value is equal. The 3-way version stays "
-            "O(n log n) on duplicates. Do not modify the input array.",
+            "The strict-less-than Lomuto 2-way partition in the notes degrades to O(n<sup>2</sup>) on an array where every value is equal. With random pivots, the 3-way version has expected "
+            "O(n log n) time and processes an all-equal array in O(n); its worst case is still O(n<sup>2</sup>). Do not modify the input array.",
         ],
         "examples": [
             {
@@ -250,8 +250,8 @@ PROBLEMS = [
         "sig_note": "C returns a <code>malloc</code>'d array and writes its length to <code>*returnSize</code> (the caller frees it; for an empty input return <code>NULL</code> with <code>*returnSize = 0</code>).",
         "hints": [
             "3-way partition scans one index <code>i</code> through the region: smaller than pivot &rarr; swap to the front and advance; equal &rarr; advance; larger &rarr; swap to the back and <em>do not advance</em> (the swapped-in value still needs checking).",
-            "Randomness: <code>rand() % (hi - lo + 1) + lo</code> in C, <code>std::uniform_int_distribution</code> in C++, <code>Random.Next(lo, hi + 1)</code> in C#, <code>ThreadLocalRandom.current().nextInt(lo, hi + 1)</code> in Java, <code>random.randint(lo, hi)</code> in Python, <code>Math.floor(Math.random() * (hi - lo + 1)) + lo</code> in JS. Swap the chosen index with <code>nums[lo]</code> before partitioning.",
-            "Recurse on <code>[lo, lt-1]</code> and <code>[gt+1, hi]</code>, never on the equal band. Base case: a region of size 0 or 1. If your code times out on 200,000 equal values, you still have a 2-way partition.",
+            "Randomness: use rejection sampling with <code>rand()</code> in C (see the reference answer; plain modulo can bias the index), <code>std::uniform_int_distribution</code> in C++, <code>Random.Next(lo, hi + 1)</code> in C#, <code>ThreadLocalRandom.current().nextInt(lo, hi + 1)</code> in Java, <code>random.randint(lo, hi)</code> in Python, <code>Math.floor(Math.random() * (hi - lo + 1)) + lo</code> in JS. Swap the chosen index with <code>nums[lo]</code> before partitioning.",
+            "Recurse on <code>[lo, lt-1]</code> and <code>[gt+1, hi]</code>, never on the equal band. Base case: a region of size 0 or 1. On 100,000 equal values, there should be one partition pass and no further recursive calls.",
         ],
         "notes_anchor": "quick-sort",
         "notes_label": "Quick sort",
@@ -264,11 +264,12 @@ PROBLEMS = [
         "difficulty_class": "medium",
         "topics": ["Quickselect", "Order statistics", "Partition"],
         "statement": [
+            "<strong>Optional exploration &mdash; not covered in class.</strong> Try this independently if you want to explore next week's order-statistics topic.",
             "Given an integer array <code>nums</code> and an integer <code>k</code>, return the <strong>k-th largest</strong> element in "
             "sorted order &mdash; that is, the element at index <code>n - k</code> if the array were sorted ascending. <code>k</code> is "
             "1-based, so <code>k = 1</code> asks for the maximum.",
-            "The expected solution is <strong>quickselect</strong>: partition like quicksort, but recurse only into the side that contains "
-            "the target index. Average time O(n), with no need to sort everything.",
+            "The expected solution is <strong>quickselect</strong>: partition like quicksort, but continue only in the region containing "
+            "the target index. Use random pivots and 3-way partition for duplicates. Expected time O(n), with no need to sort everything.",
             "Sorting the whole array also passes the tests, but it defeats the purpose. Duplicates matter here: <code>[3, 3, 3]</code> "
             "with <code>k = 2</code> must return <code>3</code>.",
         ],
@@ -292,11 +293,11 @@ PROBLEMS = [
             "The array can contain many duplicate values.",
             "Do not use a built-in sort. O(n log n) passes, but the point is O(n) on average.",
         ],
-        "sig_note": "C receives a mutable pointer, so it may copy and partition the input. C++ receives a <code>const</code> reference &mdash; copy it before partitioning.",
+        "sig_note": "The C reference answer may reorder the input. The other five reference answers preserve it by making a copy; C++ requires this because the parameter is a <code>const</code> reference. Selection itself is iterative.",
         "hints": [
-            "Quickselect is quicksort that skips work: partition, then look at where the pivot landed. If that index is <code>n - k</code>, the pivot is the answer; otherwise recurse into the side containing the target.",
-            "Why O(n) on average? Each partition costs the size of the current region, and the expected region size halves: n + n/2 + n/4 + &hellip; &asymp; 2n.",
-            "Reuse the 3-way partition from Problem 5. If the equal band contains index <code>n - k</code>, the answer is the pivot value itself &mdash; no recursion needed.",
+            "Quickselect skips work: after 3-way partition, compare target index <code>n - k</code> with the equal band <code>[lt, gt]</code>. Return the pivot if the target is inside; otherwise keep only the smaller or larger region containing the target.",
+            "Why expected O(n)? A random pivot lands in the middle half with probability at least 1/2, leaving at most about 3/4 of the current region. A constant expected number of passes gives each such shrinkage, so the work sums geometrically. The region does not always halve.",
+            "Reuse the 3-way partition from Problem 5 and update <code>left</code>/<code>right</code> in a loop. Skip the entire equal band when narrowing the region. Test all-equal input and <code>k = 1</code>, <code>k = n</code>, and a middle rank.",
         ],
         "notes_anchor": "order-statistics",
         "notes_label": "Order statistics (preview)",

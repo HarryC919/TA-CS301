@@ -197,7 +197,7 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
         problems = re.findall(r'<section class="problem" id="(problem-\d+)"', raw)
         if problems != [f"problem-{n}" for n in range(1, 7)]:
             errors.append(f"{rel}: expected problem-1..problem-6 sections, found {problems}")
-        tab_groups = re.findall(r'<div class="tabs" data-tabs>', raw)
+        tab_groups = re.findall(r'<div class="tabs" data-tabs(?: data-editable)?>', raw)
         if len(tab_groups) != 12:
             errors.append(f"{rel}: expected 12 tab groups (6 problems x stub+solution), found {len(tab_groups)}")
         panel_count = len(re.findall(r'class="tab-panel" role="tabpanel"', raw))
