@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COMPSCI 301 · Week 1: Sorting Algorithms</title>
+  <meta name="description" content="Week 1 course materials for COMPSCI 301: sorting algorithms (bubble, insertion, merge, quick), complexity analysis, and six practice exercises with solutions in C, C++, C#, Java, Python and JavaScript.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <a href="index.html" class="active">Home</a>
+        <a href="intro.html">Introduction</a>
+        <a href="week1-notes.html">Week 1 Notes</a>
+        <a href="week1-exercises.html">Week 1 Exercises</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Week 1 · Course materials</span>
+      <h1>Sorting Algorithms</h1>
+      <p class="subtitle">
+        Bubble, insertion, merge, and quick sort: how each one works, how to reason about
+        its running time, and how to choose between them — followed by six exercises that
+        make it stick.
+      </p>
+      <p class="hero-meta">COMPSCI 301 · Algorithms &amp; Databases · optional practice session</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="week1-notes.html">Start with the concepts</a>
+        <a class="btn ghost" href="week1-exercises.html">Go straight to the exercises</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <section class="section" id="at-a-glance">
+      <div class="section-title"><h2>Week 1 at a glance</h2></div>
+      <p class="lead">
+        Week 1 is a quick pass over the four classic comparison sorts, then hands-on practice.
+        Everything is on two pages — read the notes first, then work through the exercises at
+        your own pace.
+      </p>
+      <div class="card-grid">
+        <div class="card">
+          <span class="pill blue">Notes</span>
+          <h3>Concepts in about 20 minutes</h3>
+          <p>One short section per algorithm: the idea, a worked example you can follow by hand,
+            the complexity table, and the pitfall that usually shows up on exams.</p>
+          <a class="more-link" href="week1-notes.html">Read the Week 1 notes</a>
+        </div>
+        <div class="card">
+          <span class="pill green">Practice</span>
+          <h3>Six LeetCode-style exercises</h3>
+          <p>Each problem states the task, the exact input/output format, constraints, and the
+            function signature to implement — with hints if you get stuck.</p>
+          <a class="more-link" href="week1-exercises.html">Open the exercises</a>
+        </div>
+        <div class="card">
+          <span class="pill orange">Solutions</span>
+          <h3>Answers in six languages</h3>
+          <p>Reference solutions for C, C++, C#, Java, Python, and JavaScript, verified by running
+            their test cases. Pick a language once and it stays selected across problems.</p>
+          <a class="more-link" href="week1-exercises.html#problem-1">See Problem 1</a>
+        </div>
+        <div class="card">
+          <span class="pill gray">Introduction</span>
+          <h3>Who runs the recitation</h3>
+          <p>Your TA, office hours, who the session is for, what we do in each session, and the
+            AI policy.</p>
+          <a class="more-link" href="intro.html">Meet your TA</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="session">
+      <div class="section-title"><h2>How our session runs</h2></div>
+      <p>
+        The session is informal and optional, usually with 5–15 people. Come for all of it or
+        drop in for the part you need.
+      </p>
+      <ol class="steps">
+        <li><strong>Concepts first (~20 min).</strong> We walk through the four sorts using the
+          notes page: what the algorithm does, when it is fast, and when it degrades.</li>
+        <li><strong>Practice (~40–50 min).</strong> Start with Problem 1 and move at your own
+          speed. Work alone or in pairs; ask questions anytime.</li>
+        <li><strong>Compare solutions (~10 min).</strong> After you have tried a problem, open
+          the reference answer in your language and compare it with your version.</li>
+        <li><strong>No submission.</strong> The exercises are for you, not for a grade. Nothing
+          needs to be uploaded, and no account is required.</li>
+      </ol>
+      <div class="callout info">
+        <span class="callout-title">Why this site exists</span>
+        <p>The official course website is temporarily unavailable, so Week 1 materials are
+          mirrored here so you can start right away. Instructor announcements remain the
+          authoritative source for everything else.</p>
+      </div>
+    </section>
+
+    <section class="section" id="prerequisites">
+      <div class="section-title"><h2>What you should already know</h2></div>
+      <p>
+        These materials assume CS201 (basic Java programming and basic data structures:
+        arrays, linked lists, trees, heaps). In particular you should be comfortable with:
+      </p>
+      <ul>
+        <li>arrays and indexing, including swapping two elements;</li>
+        <li><code>for</code>/<code>while</code> loops and nested loops over a range;</li>
+        <li>comparing numbers and strings, and sorting rules like "ascending order";</li>
+        <li>reading Java-style pseudocode — every algorithm is also given in plain language.</li>
+      </ul>
+      <p class="note">
+        Merge sort (and quick sort) use recursion. If recursion still feels shaky, read the merge
+        sort section of the notes slowly — it is the best place to practice the idea of "solve a
+        smaller piece the same way, then combine".
+      </p>
+    </section>
+
+    <section class="section" id="weeks">
+      <div class="section-title"><h2>Weeks</h2></div>
+      <div class="week-list">
+        <div class="week-row available">
+          <div>
+            <div class="week-name">Week 1 — Sorting Algorithms <span class="pill blue">Available</span></div>
+            <div class="week-topics">Bubble sort · Insertion sort · Merge sort · Quick sort · Complexity &amp; stability</div>
+          </div>
+          <div class="week-links">
+            <a class="btn" href="week1-notes.html">Notes</a>
+            <a class="btn primary" href="week1-exercises.html">Exercises</a>
+          </div>
+        </div>
+        <div class="week-row">
+          <div>
+            <div class="week-name">Week 2 — Order statistics &amp; binary search <span class="pill gray">Coming soon</span></div>
+            <div class="week-topics">Selection, k-th smallest/largest, binary search and variants</div>
+          </div>
+          <div class="week-links"><span class="note">Materials will be posted here</span></div>
+        </div>
+        <div class="week-row">
+          <div>
+            <div class="week-name">Later weeks <span class="pill gray">Planned</span></div>
+            <div class="week-topics">Dynamic programming · greedy algorithms · graph algorithms · MST · shortest paths · SQL · file organization · hashing · transactions · concurrency · recovery · distributed databases</div>
+          </div>
+          <div class="week-links"><span class="note">Follow the instructor's schedule</span></div>
+        </div>
+      </div>
+      <p class="note">
+        The official course site is down at the moment; this page will fill in week by week.
+        If you need a topic earlier, tell the TA.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>COMPSCI 301 · course materials for the recitation sessions.</p>
+      <p class="muted small">The official course site is temporarily unavailable. If you spot a mistake, tell the TA.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

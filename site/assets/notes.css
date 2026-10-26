@@ -1,0 +1,93 @@
+/* ==========================================================================
+   COMPSCI 301 — Week 1 notes page
+   Loaded after style.css. Everything here is new and prefixed with "notes-".
+   ========================================================================== */
+
+/* Skip link: off-screen until it receives keyboard focus. */
+.notes-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 9px 15px;
+  background: var(--surface);
+  color: var(--accent-dark);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.notes-skip:focus {
+  left: 16px;
+  top: 12px;
+}
+
+/* Trace tables: the array notation reads better as plain monospace
+   than as a row of inline-code chips. */
+.notes-trace code {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 0.92em;
+}
+
+/* Definition lists used for the per-algorithm complexity summary. */
+.notes-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 20px;
+  margin: 12px 0 18px;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.notes-facts dt {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.notes-facts dd {
+  margin: 0;
+  font-size: 0.93rem;
+}
+
+/* Quick-takeaway card: the list is the last thing in the card. */
+.notes-takeaways ol {
+  margin: 4px 0 0;
+  padding-left: 1.2rem;
+}
+
+.notes-takeaways li {
+  margin: 8px 0;
+}
+
+.notes-takeaways li:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .notes-facts {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .notes-facts dd {
+    margin-bottom: 10px;
+  }
+
+  .notes-facts dt:not(:first-child) {
+    margin-top: 6px;
+  }
+}
+
+/* Keep complexity labels such as "O(n log n)" on one line in the big table. */
+#comparison table.data td:nth-child(2),
+#comparison table.data td:nth-child(3),
+#comparison table.data td:nth-child(4),
+#comparison table.data td:nth-child(5) {
+  white-space: nowrap;
+}

@@ -1,0 +1,16 @@
+# Private TA application documents — must never be published.
+application/
+
+# Local scratch: screenshots, verification logs, generated previews.
+.tmp/
+
+# Build and test artifacts.
+__pycache__/
+*.class
+bin/
+obj/
+*.o
+*.out
+
+# OS noise.
+.DS_Store
