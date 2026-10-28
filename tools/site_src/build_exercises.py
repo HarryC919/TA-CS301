@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build `site/week1-exercises.html` from the exercise content + reference files.
+"""Build `site/recitation1.html` from the exercise content + reference files.
 
 Inputs:
   - `tools/site_src/problems.py`      statements, examples, hints, signatures
@@ -28,10 +28,11 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 
 from problems import DEFAULT_LANG, LANGS, PROBLEMS, SIGNATURES  # noqa: E402
+from site_layout import header
 
 SOL = ROOT / "material" / "week1" / "solutions"
 SITE = ROOT / "site"
-DEFAULT_OUT = SITE / "week1-exercises.html"
+DEFAULT_OUT = SITE / "recitation1.html"
 
 LANG_EXT = {key: ext for key, _label, ext in LANGS}
 LANG_LABEL = {key: label for key, label, _ext in LANGS}
@@ -204,7 +205,7 @@ def render_problem(problem: dict, allow_missing: bool) -> str:
     hints = "\n".join(f"        <li>{hint}</li>" for hint in problem["hints"])
 
     notes_link = (
-        f'<a href="week1-notes.html#{problem["notes_anchor"]}">{problem["notes_label"]}</a>'
+        f'<a href="#{problem["notes_anchor"]}">{problem["notes_label"]}</a>'
     )
 
     return f"""
@@ -286,10 +287,11 @@ HEAD = (
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Week 1 Exercises · COMPSCI 301</title>
-  <meta name="description" content="Six LeetCode-style sorting exercises for COMPSCI 301 Week 1: bubble sort, insertion sort, stable sorting, counting inversions, quick sort, and quickselect. Starter templates and verified reference solutions in C, C++, C#, Java, Python and JavaScript.">
+  <title>Recitation 1 · Sorting Algorithms — COMPSCI 301</title>
+  <meta name="description" content="Six LeetCode-style sorting exercises for COMPSCI 301 Recitation 1: bubble sort, insertion sort, stable sorting, counting inversions, quick sort, and quickselect. Starter templates and verified reference solutions in C, C++, C#, Java, Python and JavaScript.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/notes.css">
   <noscript><style>"""
     + NOSCRIPT_STYLE
     + """  </style></noscript>
@@ -299,36 +301,15 @@ HEAD = (
 """
 )
 
-HEADER = """  <header class="site-header">
-    <div class="container header-inner">
-      <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
-      <nav class="site-nav" aria-label="Site">
-        <a href="index.html">Home</a>
-        <a href="intro.html">Introduction</a>
-        <a href="week1-notes.html">Week 1 Notes</a>
-        <a href="week1-exercises.html" class="active">Week 1 Exercises</a>
-      </nav>
-    </div>
-  </header>
-"""
+HEADER = header("recitation1.html")
 
-HERO = """  <section class="page-hero exercise-hero" id="top">
-    <div class="container">
-      <span class="eyebrow">Week 1 · Practice</span>
-      <h1>Exercises: Sorting Algorithms</h1>
-      <p class="subtitle">
-        Six problems, each with the task, worked examples, constraints and the exact function
-        signature to implement. Starter templates and verified reference solutions are available
-        in C, C++, C#, Java, Python and JavaScript.
-      </p>
-      <p class="hero-meta">Choose your level &middot; Problem 6: optional exploration &middot; Nothing to submit</p>
-      <div class="hero-actions">
-        <a class="btn primary" href="#problem-1">Start with Problem 1</a>
-        <a class="btn ghost" href="week1-notes.html">Read the Week 1 notes</a>
-      </div>
-    </div>
-  </section>
-"""
+HERO = """<section class="page-hero" id="top"><div class="container">
+<span class="eyebrow">Recitation 1 · Available</span><h1>Sorting Algorithms</h1>
+<p class="subtitle">Concept notes and six practice problems in one place: bubble, insertion, merge and quick sort.</p>
+<p class="hero-meta">Read the notes, try the exercises, and use Problem 6 for independent exploration.</p>
+<div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Exercises</a></div>
+<div class="callout info"><span class="callout-title">Course materials</span><p>The official course site is temporarily unavailable. These materials support the recitation; instructor announcements remain authoritative.</p></div>
+</div></section>"""
 
 INTRO = """    <section class="section" id="how-to-use">
       <div class="section-title"><h2>How these exercises work</h2></div>
@@ -399,15 +380,15 @@ FINISHED_EARLY = """    <section class="section" id="finished-early">
         </div>
         <div class="card">
           <span class="pill orange">Read ahead</span>
-          <h3>Toward Week 2</h3>
-          <p>Quickselect is your first taste of order statistics. Week 2 covers selection and binary
-            search; the notes page ends with a short preview so you can start thinking about it.</p>
-          <a class="more-link" href="week1-notes.html">Revisit the Week 1 notes</a>
+          <h3>Explore order statistics</h3>
+          <p>Quickselect is your first taste of order statistics. Selection and binary
+            search are related topics to explore; the notes page ends with a short preview so you can start thinking about it.</p>
+          <a class="more-link" href="#notes">Revisit the Recitation 1 notes</a>
         </div>
       </div>
       <div class="callout info">
         <span class="callout-title">Optional and ungraded</span>
-        <p>These problems are practice material for the Week 1 session. They are not part of your
+        <p>These problems are practice material for the Recitation 1 session. They are not part of your
           grade, there is nothing to upload, and you are welcome to work on them before, during or
           after the session. If a reference answer looks wrong, tell the TA.</p>
       </div>
@@ -427,13 +408,18 @@ FOOTER = """  <footer class="site-footer">
 
 
 def build(allow_missing: bool) -> str:
-    parts = [HEAD, HEADER, HERO, '  <main class="container">\n', INTRO, PROBLEM_INDEX_HEAD]
+    notes = (ROOT / "tools/site_src/recitation1-notes.html").read_text(encoding="utf-8")
+    parts = [HEAD, HEADER, '<main id="main">', HERO, '<div class="container">',
+             '<section class="section" id="notes"><div class="section-title"><h2>Notes</h2></div>',
+             notes, '</section>',
+             '<section class="section" id="exercises"><div class="section-title"><h2>Exercises</h2></div>',
+             INTRO, PROBLEM_INDEX_HEAD]
     parts.append(build_problem_index())
     parts.append(PROBLEM_INDEX_TAIL)
     for problem in PROBLEMS:
         parts.append(render_problem(problem, allow_missing))
     parts.append(FINISHED_EARLY)
-    parts.append("  </main>\n\n")
+    parts.append("</section></div></main>\n")
     parts.append(FOOTER)
     return "".join(parts)
 

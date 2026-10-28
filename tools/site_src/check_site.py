@@ -40,7 +40,7 @@ LANGS = ["c", "cpp", "cs", "java", "py", "js"]
 # Every page must offer the same navigation, in this order, with the current
 # page marked `class="active"` (the exercises page is generated from its own
 # header template, so the check covers that template too).
-NAV_ORDER = ["index.html", "intro.html", "week1-notes.html", "week1-exercises.html"]
+NAV_ORDER = ["index.html", "intro.html"] + [f"recitation{n}.html" for n in range(8)]
 
 
 class PageParser(HTMLParser):
@@ -142,7 +142,8 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
                 nav_active.append(href)
         if nav_hrefs != NAV_ORDER:
             errors.append(f"{rel}: navigation should be {NAV_ORDER}, found {nav_hrefs}")
-        if nav_active != [rel.name]:
+        expected_active = "recitation1.html" if rel.name in {"week1-notes.html", "week1-exercises.html"} else rel.name
+        if nav_active != [expected_active]:
             errors.append(
                 f"{rel}: navigation should mark only {rel.name!r} as active, "
                 f"found {nav_active}"
@@ -193,7 +194,7 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
             errors.append(f"{rel}: image {src!r} not found")
 
     # Exercises-specific structure.
-    if rel.name == "week1-exercises.html":
+    if rel.name == "recitation1.html":
         problems = re.findall(r'<section class="problem" id="(problem-\d+)"', raw)
         if problems != [f"problem-{n}" for n in range(1, 7)]:
             errors.append(f"{rel}: expected problem-1..problem-6 sections, found {problems}")
@@ -217,7 +218,8 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
         hidden_panels = len(re.findall(r'class="tab-panel"[^>]* hidden>', raw))
         if hidden_panels != 60:
             errors.append(f"{rel}: expected 60 hidden panels (72 - 12 java), found {hidden_panels}")
-        signatures = len(re.findall(r"<td><code>", raw))
+        exercise_html = raw.split('id="exercises"', 1)[-1]
+        signatures = len(re.findall(r"<td><code>", exercise_html))
         if signatures != 36:
             errors.append(f"{rel}: expected 36 signature rows, found {signatures}")
         for lang in LANGS:
@@ -225,7 +227,7 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
             # 12 tab buttons + 12 panels per language.
             if panels != 24:
                 errors.append(f"{rel}: language {lang!r} should appear 24 times, found {panels}")
-        if raw.count("<details>") != 12:
+        if exercise_html.count("<details>") != 12:
             errors.append(f"{rel}: expected 12 <details> blocks (hints + solutions), found {raw.count('<details>')}")
         if "TODO" not in raw:
             errors.append(f"{rel}: no TODO text found in starter templates")
@@ -271,6 +273,9 @@ def main() -> int:
         return 1
 
     errors: list[str] = []
+    for required in NAV_ORDER:
+        if not (site / required).is_file():
+            errors.append(f"missing required page: {required}")
     warnings: list[str] = []
     for page in pages:
         page_errors, page_warnings = check_page(page, site, args.strict_links)

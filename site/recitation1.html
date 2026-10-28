@@ -1,0 +1,3251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recitation 1 · Sorting Algorithms — COMPSCI 301</title>
+  <meta name="description" content="Six LeetCode-style sorting exercises for COMPSCI 301 Recitation 1: bubble sort, insertion sort, stable sorting, counting inversions, quick sort, and quickselect. Starter templates and verified reference solutions in C, C++, C#, Java, Python and JavaScript.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/notes.css">
+  <noscript><style>
+    .tab-btn, .copy-btn { display: none !important; }
+    .tab-panel[hidden] { display: block !important; }
+    .tab-panel { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    .tab-panel:first-child { border-top: 0; }
+  </style></noscript>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="intro.html">Introduction</a>
+      <details class="recitation-menu">
+        <summary class="active">Recitation 1</summary>
+        <div class="recitation-options"><a href="recitation0.html">Recitation 0 — Environment & kernels</a>
+<a href="recitation1.html" class="active" aria-current="page">Recitation 1 — Sorting algorithms</a>
+<a href="recitation2.html">Recitation 2 — Content to be announced</a>
+<a href="recitation3.html">Recitation 3 — Content to be announced</a>
+<a href="recitation4.html">Recitation 4 — Content to be announced</a>
+<a href="recitation5.html">Recitation 5 — Content to be announced</a>
+<a href="recitation6.html">Recitation 6 — Content to be announced</a>
+<a href="recitation7.html">Recitation 7 — Content to be announced</a></div>
+      </details>
+    </nav>
+  </div>
+</header><main id="main"><section class="page-hero" id="top"><div class="container">
+<span class="eyebrow">Recitation 1 · Available</span><h1>Sorting Algorithms</h1>
+<p class="subtitle">Concept notes and six practice problems in one place: bubble, insertion, merge and quick sort.</p>
+<p class="hero-meta">Read the notes, try the exercises, and use Problem 6 for independent exploration.</p>
+<div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Exercises</a></div>
+<div class="callout info"><span class="callout-title">Course materials</span><p>The official course site is temporarily unavailable. These materials support the recitation; instructor announcements remain authoritative.</p></div>
+</div></section><div class="container"><section class="section" id="notes"><div class="section-title"><h2>Notes</h2></div>      <nav class="toc" aria-label="On this page">
+        <h2>On this page</h2>
+        <ol>
+          <li><a href="#big-picture">The big picture</a></li>
+          <li><a href="#bubble-sort">Bubble sort</a></li>
+          <li><a href="#insertion-sort">Insertion sort</a></li>
+          <li><a href="#merge-sort">Merge sort</a></li>
+          <li><a href="#quick-sort">Quick sort</a></li>
+          <li><a href="#stability">Stability and in-place</a></li>
+          <li><a href="#comparison">All four side by side</a></li>
+          <li><a href="#when-to-use">When to use which</a></li>
+          <li><a href="#order-statistics">Order statistics preview</a></li>
+          <li><a href="#before-exercises">Before the exercises</a></li>
+        </ol>
+      </nav>
+
+      <section class="section" id="takeaways">
+        <div class="section-title"><h2>Five things to remember</h2></div>
+        <div class="card notes-takeaways">
+          <ol>
+            <li>No comparison sort beats <strong>Ω(n log n)</strong> comparisons in the worst case: n
+              items come in n! orders, and every order must be told apart.</li>
+            <li><strong>Bubble and insertion sort use O(1) extra space</strong>; quick sort partitions in place
+              but also needs a recursion stack. Standard array merge sort uses O(n) extra space.</li>
+            <li>Insertion sort's <strong>shift count equals the number of inversions</strong>, I.
+              Its total time is Θ(n + I), so sorted input still takes Θ(n). Problem 2 builds on this.</li>
+            <li><strong>Stability</strong> means equal keys keep their original order, which matters as
+              soon as records carry several fields.</li>
+            <li>A <strong>random pivot plus 3-way partition</strong> avoids predictable bad splits
+              on sorted input and skips equal keys. Expected time is O(n log n); the O(n²) worst case remains.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="goals">
+        <div class="section-title"><h2>Learning goals</h2></div>
+        <p class="lead">By the end of this pass you should be able to:</p>
+        <ul>
+          <li>state what a comparison-based sort is and why Ω(n log n) bounds it;</li>
+          <li>trace bubble, insertion, merge and quick sort on a small array by hand;</li>
+          <li>read best, average and worst cases, keeping time separate from extra space;</li>
+          <li>define stable, in-place and adaptive, and label the four sorts with them;</li>
+          <li>choose a sort for a stated situation, including the hybrids libraries ship.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="big-picture">
+        <div class="section-title"><h2>The big picture</h2></div>
+        <p class="lead">Sorting is the warm-up problem of algorithm analysis: trivial to state, easy to
+          implement badly, and bounded below by Ω(n log n) once only comparisons are allowed.</p>
+
+        <h3>What sorting is for</h3>
+        <p>An ordered array is easier to work with everywhere. Binary search needs it, deduplication
+          becomes one scan, and grouping, medians and the greedy or dynamic-programming algorithms of
+          later weeks all start from an order. Databases do the same work with ORDER BY, sort-merge
+          joins and B-tree indexes.</p>
+
+        <h3>What "comparison-based" means</h3>
+        <p>All four sorts learn about two elements only by comparing them: less than, equal, greater
+          than. They never inspect digits, bytes or hashes, so the same code sorts integers, strings or
+          whole records whenever a total order exists. That restriction is exactly what makes the lower
+          bound apply; counting sort and radix sort escape it by looking at values.</p>
+
+        <h3>Why Ω(n log n) is a lower bound</h3>
+        <p>With n distinct values there are n! possible input orders, and the algorithm must tell all of
+          them apart, so its decision tree needs at least n! leaves. A binary tree with L leaves has
+          height at least log<sub>2</sub> L, so some input forces at least log<sub>2</sub>(n!)
+          comparisons. Since log<sub>2</sub>(n!) ≈ n log<sub>2</sub> n − 1.44n, that is Ω(n log n).
+          Merge sort matches the bound; quick sort matches it on average.</p>
+
+        <h3>In place, stable, adaptive</h3>
+        <p>Strictly in place: O(1) extra memory including the call stack. Quick sort's partition
+          is in place, but its recursion stack uses additional memory; the tables below exclude that stack
+          when labeling its data rearrangement as in place.
+          Stable: equal keys keep their relative order. Adaptive: already or nearly sorted input makes
+          the algorithm clearly faster. Table 1 applies all three to the four sorts.</p>
+
+        <h3>Why quadratic sorts still matter</h3>
+        <p>For n = 10, insertion sort needs at most 45 shifts. Its low overhead can make it
+          useful for small inputs, and its running time on nearly sorted data approaches O(n).
+          Practical hybrid sorts exploit this: Timsort extends short runs with insertion sort;
+          common introsort implementations use insertion sort on small partitions and heapsort
+          if recursion grows too deep. The useful cutoff depends on the implementation and data.</p>
+      </section>
+
+      <section class="algo" id="bubble-sort">
+        <div class="algo-head">
+          <span class="algo-num">1</span>
+          <h2>Bubble sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Average O(n²)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(1)</span>
+          <span class="pill orange">Stable, in place</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Bubble sort makes repeated passes, comparing neighbours and swapping them when they are out
+          of order. Each pass floats the largest remaining element to the end of the unsorted region, so
+          after k passes the last k elements are final and the next pass can be shorter. That growing
+          sorted tail is the picture worth remembering.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Compare the first two elements and swap them if the left one is larger, then move one
+            position right and repeat across the unsorted region.</li>
+          <li>The largest remaining element is now at the region's right end; shrink the region by one.</li>
+          <li>Set a flag on every swap. A full pass without swaps means the array is sorted, so stop
+            early.</li>
+          <li>Repeat until a pass is clean or one element is left.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Bubble sort on <code>[5, 2, 4, 1, 3]</code>:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing bubble sort on [5, 2, 4, 1, 3]. The sorted tail grows by one per pass.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Pass</th>
+                <th scope="col">Array after the pass</th>
+                <th scope="col">What the pass settled</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>start</td><td><code>[5, 2, 4, 1, 3]</code></td><td>nothing yet</td></tr>
+              <tr><td>1</td><td><code>[2, 4, 1, 3, 5]</code></td><td>5 reaches the end</td></tr>
+              <tr><td>2</td><td><code>[2, 1, 3, 4, 5]</code></td><td>4 joins the sorted tail</td></tr>
+              <tr><td>3</td><td><code>[1, 2, 3, 4, 5]</code></td><td>the array becomes sorted</td></tr>
+              <tr><td>4</td><td><code>[1, 2, 3, 4, 5]</code></td><td>no swaps, so stop</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Passes 1 to 3 make 4, 3 and 2 comparisons; pass 4 makes 1 and then stops early.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">bubble_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>for pass = 1 to n - 1:
+  swapped = false
+  for i = 0 to n - pass - 1:
+    if a[i] &gt; a[i + 1]:
+      swap a[i] and a[i + 1]
+      swapped = true
+  if not swapped:
+    break                    # array is already sorted: stop
+return a</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best case</dt>
+          <dd>O(n): sorted input, one pass of n − 1 comparisons, no swaps, early exit.</dd>
+          <dt>Average and worst</dt>
+          <dd>O(n²): about n(n − 1)/2 comparisons; reverse-sorted input swaps at every comparison.</dd>
+          <dt>Extra space</dt>
+          <dd>O(1): a temporary and two counters.</dd>
+          <dt>Stability</dt>
+          <dd>Stable: only strictly greater neighbours swap, so equal values never cross.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>Without the early-exit check, this bubble-sort loop makes Θ(n²) comparisons even on
+            sorted input. Reset the flag before every pass; otherwise a swap in an earlier pass can
+            prevent a later clean pass from stopping the loop. Bubble sort is a teaching tool for tracing, not a
+            sort to ship.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="insertion-sort">
+        <div class="algo-head">
+          <span class="algo-num">2</span>
+          <h2>Insertion sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Best O(n)</span>
+          <span class="pill blue">Average O(n²)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(1)</span>
+          <span class="pill orange">Stable, in place, adaptive</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Insertion sort grows a sorted prefix one element at a time, the way most people sort a hand
+          of cards: take the next card and slide it left until it sits in order. Everything before the
+          current position is already sorted, and the new element is inserted into that prefix.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Start with the first element as a sorted prefix of length one.</li>
+          <li>Take the next element as the key and scan left through the prefix.</li>
+          <li>Shift every element greater than the key one position right; one shift moves one element
+            exactly one place.</li>
+          <li>Stop at an element ≤ the key or at the start of the array, and put the key in the gap.</li>
+          <li>Repeat until the prefix spans the array.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Insertion sort on <code>[5, 2, 4, 1, 3]</code>, sorted prefix in bold:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing insertion sort on [5, 2, 4, 1, 3]. Seven shifts in total = seven inversions.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Insert</th>
+                <th scope="col">Array after inserting</th>
+                <th scope="col">Shifts used</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>start</td><td><code>[5 | 2, 4, 1, 3]</code></td><td>0</td></tr>
+              <tr><td>2</td><td><code><strong>[2, 5]</strong> | 4, 1, 3</code></td><td>1</td></tr>
+              <tr><td>4</td><td><code><strong>[2, 4, 5]</strong> | 1, 3</code></td><td>1</td></tr>
+              <tr><td>1</td><td><code><strong>[1, 2, 4, 5]</strong> | 3</code></td><td>3</td></tr>
+              <tr><td>3</td><td><code><strong>[1, 2, 3, 4, 5]</strong></code></td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">The shifts add up: 1 + 1 + 3 + 2 = 7, and the array has exactly 7 inversions.
+          An inversion is a pair i &lt; j with a[i] &gt; a[j]. Each shift lets the key pass one
+          larger predecessor, accounting for exactly one original inversion. Counting all such shifts
+          counts each inversion once. Problem 2 asks you to implement this count.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">insertion_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>for i = 1 to n - 1:
+  key = a[i]
+  j = i - 1
+  while j &gt;= 0 and a[j] &gt; key:
+    a[j + 1] = a[j]          # shift one position right
+    j = j - 1
+  a[j + 1] = key             # drop the key into the gap
+return a</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best case</dt>
+          <dd>O(n): sorted input, n − 1 comparisons, no shifts.</dd>
+          <dt>Average and worst</dt>
+          <dd>O(n²): reverse-sorted input needs n(n − 1)/2 shifts, about 12.5 million moves for
+            n = 5,000; random input averages roughly n²/4.</dd>
+          <dt>Extra space</dt>
+          <dd>O(1): the key and two indices.</dd>
+          <dt>Stability and adaptivity</dt>
+          <dd>Stable, and adaptive: exactly I shifts for I inversions in the original array, plus
+            Θ(n) loop overhead, giving Θ(n + I) total time.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>Binary-searching the insertion point only trades comparisons for shifts. The shifts still take
+            Θ(n²) moves in the worst case and dominate on arrays; cutting them needs a different data structure.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="merge-sort">
+        <div class="algo-head">
+          <span class="algo-num">3</span>
+          <h2>Merge sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Best O(n log n)</span>
+          <span class="pill blue">Average O(n log n)</span>
+          <span class="pill blue">Worst O(n log n)</span>
+          <span class="pill green">Space O(n)</span>
+          <span class="pill orange">Stable, not in place</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Merge sort splits the array in half, sorts each half recursively, then merges the two sorted
+          halves. Merging is where the work happens: compare the fronts, take the smaller element, and
+          repeat. Each half arrives sorted, so every element is touched once per recursion level, and
+          there are about log<sub>2</sub> n levels.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>A segment of length 0 or 1 is sorted: return it.</li>
+          <li>Split the segment at its midpoint and sort both halves recursively.</li>
+          <li>Merge: repeatedly append the smaller front element; on a tie take the left one, which
+            keeps the sort stable.</li>
+          <li>Append whatever is left over and copy the merged run back into place.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Merge sort on <code>[5, 2, 4, 1, 3]</code>, using the same floor midpoint as the pseudocode:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing merge sort on [5, 2, 4, 1, 3]. Depth is ⌈log2 5⌉ = 3 levels.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Stage</th>
+                <th scope="col">Arrays</th>
+                <th scope="col">Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>split</td><td><code>[5, 2]</code> and <code>[4, 1, 3]</code></td><td>left has 2 elements; right has 3</td></tr>
+              <tr><td>left merge</td><td><code>[5]</code> + <code>[2]</code></td><td><code>[2, 5]</code></td></tr>
+              <tr><td>right inner merge</td><td><code>[1]</code> + <code>[3]</code></td><td><code>[1, 3]</code></td></tr>
+              <tr><td>right merge</td><td><code>[4]</code> + <code>[1, 3]</code></td><td><code>[1, 3, 4]</code></td></tr>
+              <tr><td>final merge</td><td><code>[2, 5]</code> + <code>[1, 3, 4]</code></td><td><code>[1, 2, 3, 4, 5]</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Five elements give ⌈log<sub>2</sub> 5⌉ = 3 levels, and the total merge work per level is at most proportional to five
+          elements (some branches reach singletons earlier): that is the O(n log n) argument.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">merge_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>merge_sort(a):
+  if length(a) &lt;= 1:
+    return a
+  mid   = floor(length(a) / 2)
+  left  = merge_sort(a[0 .. mid - 1])
+  right = merge_sort(a[mid .. length(a) - 1])
+  return merge(left, right)
+
+merge(left, right):
+  result = []
+  i = 0
+  j = 0
+  while i &lt; length(left) and j &lt; length(right):
+    if left[i] &lt;= right[j]:   # &lt;= keeps equal keys in order
+      append left[i] to result
+      i = i + 1
+    else:
+      append right[j] to result
+      j = j + 1
+  append left[i .. end] and right[j .. end] to result
+  return result</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best, average, worst</dt>
+          <dd>All O(n log n): log<sub>2</sub> n levels with O(n) merging per level, whatever the input
+            order.</dd>
+          <dt>Extra space</dt>
+          <dd>O(n) for the merge buffer. Linked lists can be merged by relinking nodes instead, which is
+            why merge sort is the standard list sort.</dd>
+          <dt>Stability</dt>
+          <dd>Yes, if the merge takes from the left half on ties.</dd>
+          <dt>In place</dt>
+          <dd>No: the buffer is the price of the guaranteed bound.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>The tie-break is the stability switch: writing <code>&lt;</code> instead of
+            <code>&lt;=</code> flips equal keys across halves. Standard merge sort has Θ(n log n) time in the best, average and worst cases;
+            the exact comparison counts can differ. This array version uses O(n) extra memory.
+            Use indices when merging: removing the first element of a Python list takes linear time.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="quick-sort">
+        <div class="algo-head">
+          <span class="algo-num">4</span>
+          <h2>Quick sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Average O(n log n)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(log n) average</span>
+          <span class="pill red">Not stable, in-place partition</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Quick sort picks a pivot, partitions the segment so smaller elements lie left and larger
+          right, then sorts both sides recursively. Unlike merge sort, the hard part comes first: after
+          partitioning, the pivot sits in its final position and never moves again.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Pick a pivot. The trace below uses the last element; the exercises want a random index.</li>
+          <li>Partition: swap every element smaller than the pivot into a growing left region, then swap
+            the pivot into the boundary.</li>
+          <li>The pivot is now final: everything left of it is smaller, everything right larger or
+            equal.</li>
+          <li>Recurse on both sides. A 3-way partition groups equal keys in the middle and keeps them out
+            of the recursion.</li>
+          <li>Stop at segments of zero or one element.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Quick sort on <code>[8, 3, 5, 1, 9, 2]</code>, last element as pivot (a simplified
+          illustration; the exercise requires a random pivot):</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing quick sort with last-element pivots: pivot 2, then 3, then 5, then 8.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Partition</th>
+                <th scope="col">Segment before</th>
+                <th scope="col">Pivot</th>
+                <th scope="col">Array after partitioning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><code>[8, 3, 5, 1, 9, 2]</code></td><td>2</td><td><code>[1, 2, 5, 8, 9, 3]</code></td></tr>
+              <tr><td>2</td><td><code>[5, 8, 9, 3]</code></td><td>3</td><td><code>[1, 2, 3, 8, 9, 5]</code></td></tr>
+              <tr><td>3</td><td><code>[8, 9, 5]</code></td><td>5</td><td><code>[1, 2, 3, 5, 9, 8]</code></td></tr>
+              <tr><td>4</td><td><code>[9, 8]</code></td><td>8</td><td><code>[1, 2, 3, 5, 8, 9]</code></td></tr>
+              <tr><td>done</td><td>singletons left</td><td>—</td><td><code>[1, 2, 3, 5, 8, 9]</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Each partition is one pass over its segment. The first split is uneven: one element
+          lies left of the pivot and four lie right. Each later split has an empty left side, so this
+          trace also illustrates poor balance. On sorted input, last-element pivots leave subproblems
+          of sizes 0 and n − 1, giving (n − 1) + (n − 2) + ... + 1 comparisons. Random pivots prevent
+          sorted order alone from forcing these bad splits; they do not eliminate the O(n²) worst case.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">quick_sort(a, lo, hi)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>quick_sort(a, lo, hi):
+  if lo &gt;= hi:
+    return
+  p = partition(a, lo, hi)   # p is the pivot's final index
+  quick_sort(a, lo, p - 1)
+  quick_sort(a, p + 1, hi)
+
+partition(a, lo, hi):
+  pivot = a[hi]              # illustration: use a random index in practice
+  i = lo
+  for j = lo to hi - 1:
+    if a[j] &lt; pivot:
+      swap a[i] and a[j]
+      i = i + 1
+  swap a[i] and a[hi]        # the pivot lands at index i
+  return i</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best and average</dt>
+          <dd>O(n log n): balanced partitions give log<sub>2</sub> n levels of O(n) work; random pivots
+            give expected O(n log n) time on distinct keys. For duplicate-heavy input,
+            use the 3-way partition required in P5.</dd>
+          <dt>Worst case</dt>
+          <dd>O(n²): maximally unbalanced partitions, as first or last pivots cause on sorted input, or
+            the illustrated Lomuto 2-way partition on all-equal input.</dd>
+          <dt>Extra space</dt>
+          <dd>O(log n) average recursion stack, O(n) worst case; the partitioning itself is in place.</dd>
+          <dt>Stability</dt>
+          <dd>Not stable: swaps move equal keys past each other.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>The illustrated last-pivot Lomuto partition is quadratic on sorted or all-equal input. Use a random index plus a 3-way partition, which sets equal keys aside in one
+            pass. Randomization gives an expected bound, not a worst-case guarantee; 3-way partition
+            handles an all-equal segment in Θ(n). Quick sort is still not stable.</p>
+        </aside>
+      </section>
+
+      <section class="section" id="stability">
+        <div class="section-title"><h2>Stability, in place, and the words we use</h2></div>
+        <p class="lead">Three adjectives appear in every sorting discussion. They are independent, and the
+          four sorts cover most useful combinations.</p>
+
+        <h3>Stable</h3>
+        <p>A sort is stable when equal keys keep their original relative order. Take three student
+          records — <strong>(Alice, 90)</strong>, <strong>(Bob, 85)</strong>, <strong>(Cara, 90)</strong>
+          — and sort them by score ascending. Alice and Cara tie at 90, so the score alone does not
+          decide between them. A stable sort returns Bob 85, Alice 90, Cara 90 and keeps the tie in
+          place; an unstable sort may return Bob 85, Cara 90, Alice 90. That is fine when only scores
+          matter, and wrong when the records were in name order. Sorting by a second field after a first
+          only works when the second sort is stable.</p>
+
+        <h3>In place</h3>
+        <p>Strictly in place means O(1) extra memory, including the call stack. Quick sort is
+          often called in place because its partition rearranges the original array with O(1) workspace;
+          its recursive version still uses an expected O(log n) stack and O(n) stack in the worst case.
+          The tables use this conventional label with the stack shown separately. Standard array merge
+          sort uses an O(n) buffer. P5 returns a copy, so its complete function uses O(n) space even
+          though the sorting inside that copy partitions in place.</p>
+
+        <h3>Adaptive</h3>
+        <p>A sort is adaptive when it is clearly faster on partly ordered data. Insertion sort is the
+          model case: its shift count is I, the number of inversions, and total time is Θ(n + I). Bubble sort is
+          adaptive only with the early-exit flag. Merge and quick sort are not, because their split or
+          partition pattern ignores the order already present.</p>
+
+        <div class="table-wrap">
+          <table class="data">
+            <caption>Table 1. Which of the four sorts are stable, in place and adaptive.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Sort</th>
+                <th scope="col">Stable</th>
+                <th scope="col">In place</th>
+                <th scope="col">Adaptive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Bubble</td><td>Yes</td><td>Yes</td><td>Yes, with early exit</td></tr>
+              <tr><td>Insertion</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Merge</td><td>Yes</td><td>No (O(n) buffer)</td><td>No</td></tr>
+              <tr><td>Quick</td><td>No</td><td>Yes, excluding stack</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">The buffer is what buys merge sort stability and a guaranteed bound; quick sort
+          trades those for speed and locality.</p>
+      </section>
+
+      <section class="section" id="comparison">
+        <div class="section-title"><h2>All four side by side</h2></div>
+        <p class="lead">The pills from each section, collected in one table. Here n is the number of
+          elements. The quick-sort row describes the 2-way version above on distinct keys; its average
+          assumes random pivots. P5 uses 3-way partition, whose all-equal best case is Θ(n).
+          The in-place column excludes the recursion stack, which is counted under extra space.</p>
+
+        <div class="table-wrap">
+          <table class="data">
+            <caption>Table 2. Bubble, insertion, merge and quick sort side by side.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Algorithm</th>
+                <th scope="col">Best</th>
+                <th scope="col">Average</th>
+                <th scope="col">Worst</th>
+                <th scope="col">Extra space</th>
+                <th scope="col">Stable</th>
+                <th scope="col">In-place</th>
+                <th scope="col">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bubble</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td>
+                <td>Yes</td><td>O(n) best case only with the early-exit flag</td>
+              </tr>
+              <tr>
+                <td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td>
+                <td>Yes</td><td>Adaptive; shifts equal inversions</td>
+              </tr>
+              <tr>
+                <td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td>
+                <td>Yes</td><td>No</td><td>Guaranteed bound; linked lists and external sorting</td>
+              </tr>
+              <tr>
+                <td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td>
+                <td>O(log n) avg</td><td>No</td><td>Yes</td>
+                <td>2-way trace above; P5 adds 3-way partition</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Constants matter as well as notation. Insertion sort can be faster on small arrays;
+          the crossover depends on the implementation, element type and input. Practical libraries
+          therefore often combine several algorithms.</p>
+      </section>
+
+      <section class="section" id="when-to-use">
+        <div class="section-title"><h2>When to use which</h2></div>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Small or nearly sorted</h3>
+            <p>Insertion sort is a useful choice for small or nearly sorted arrays. Its time is
+              Θ(n + I), where I is the number of inversions; the useful size cutoff depends on the implementation.</p>
+          </div>
+          <div class="card">
+            <h3>Guaranteed worst case, stable</h3>
+            <p>Use merge sort when O(n) memory is acceptable. It is also the natural choice for linked
+              lists and external sorting, where sequential passes are all the disk gives you.</p>
+          </div>
+          <div class="card">
+            <h3>General-purpose arrays</h3>
+            <p>Quick sort with a random pivot and a 3-way partition is often efficient on arrays.
+              This recursive version uses expected O(log n) stack space, O(n) in the worst case.</p>
+          </div>
+          <div class="card">
+            <h3>Teaching only</h3>
+            <p>Bubble sort, for tracing by hand and counting swaps in a demonstration. It is rarely a practical first choice.</p>
+          </div>
+          <div class="card">
+            <h3>Bounded integer keys</h3>
+            <p>Use counting sort or radix sort. They are not comparison-based, so they can beat the
+              Ω(n log n) bound for special data; they come later in the course.</p>
+          </div>
+        </div>
+        <p>Real libraries ship hybrids: Timsort merges runs that insertion sort extends, and introsort
+          mixes quick sort, heapsort and insertion sort. Library choices depend on the language, element type and implementation; do not
+          assume one algorithm or one performance ranking applies everywhere.</p>
+      </section>
+
+      <section class="section" id="order-statistics">
+        <div class="section-title"><h2>A preview: order statistics</h2></div>
+        <p><strong>Optional exploration — not covered in class.</strong> If only one order statistic
+          is needed, sorting the whole array does extra work. For the k-th largest value (1-based k),
+          the target index in ascending order is n − k. Quickselect partitions and continues only in
+          the region containing that target. With 3-way partition, stop if the target is in the equal band.</p>
+        <p>Uniform random pivots give expected O(n) time, with O(n²) worst case. The retained region
+          does not necessarily halve on each step. One way to see the expected bound: a pivot in the
+          middle half occurs with probability at least 1/2 and leaves at most about 3/4 of the elements;
+          only a constant expected number of partitions is needed for each such shrinkage. The work
+          then forms a geometric sum. This is an intuition for the expected bound, not a guarantee
+          that every partition is balanced.</p>
+        <p>An iterative implementation needs O(1) selection workspace and no recursion stack. The
+          reference answers copy the input except in C, so those complete functions use O(n) extra space.
+          Median-of-medians is a different pivot rule that can guarantee O(n) worst-case time.</p>
+        <p>Problem 6 on the exercises page builds directly on quick sort's partition.
+          <a class="more-link" href="#problem-6">See Problem 6 on the exercises page</a></p>
+      </section>
+
+      <section class="section" id="before-exercises">
+        <div class="section-title"><h2>Before you start the exercises</h2></div>
+        <p>The exercises page has six problems mapped to the four sorts. Use whichever language is
+          fastest for you: C, C++, C#, Java, Python and JavaScript are all fine. Reference solutions are
+          provided, but only after a real attempt; nothing is submitted.</p>
+        <ul>
+          <li>Trace the four worked examples above by hand before writing any code.</li>
+          <li>Pick one language and stay with it. Porting a finished solution is cheap; switching
+            mid-problem is not.</li>
+          <li>Open the reference solution only after your code runs, or after you can name the exact
+            line where you are stuck.</li>
+          <li>Bring your attempt, or the exact place it breaks, to the practice session.</li>
+        </ul>
+        <p><a class="btn primary" href="#exercises">Open the Recitation 1 exercises</a></p>
+      </section>
+</section><section class="section" id="exercises"><div class="section-title"><h2>Exercises</h2></div>    <section class="section" id="how-to-use">
+      <div class="section-title"><h2>How these exercises work</h2></div>
+      <div class="practice-intro">
+        <ol class="steps">
+          <li><strong>Pick your language.</strong> Choose C, C++, C#, Java, Python or JavaScript in
+            any code block &mdash; your choice is remembered and applied to every problem on this
+            page. Java is selected by default because it is the CS201 language.</li>
+          <li><strong>Fill in the TODO.</strong> Each problem prints the exact function signature the
+            tests use, plus a starter template. Keep the signature unchanged.</li>
+          <li><strong>Implement the algorithm yourself.</strong> Built-in sorting calls are off limits
+            in these exercises; the point is to write the loops and the recursion yourself.</li>
+          <li><strong>Examples, then hints, then solutions.</strong> Check the worked examples, open the
+            hints if you are stuck, and read the reference solution only after a serious attempt.</li>
+          <li><strong>Choose your level.</strong> Use the 30-minute practice time for problems that
+            help you. You do not need to finish all six. Problem 6 is optional exploration and will
+            not be covered in class.</li>
+          <li><strong>Ask questions.</strong> Bring your attempt to the session. There is no submission
+            and no autograder &mdash; the goal is understanding, not a score.</li>
+        </ol>
+      </div>
+      <p class="note" id="editor-help">Temporary editor: Tab inserts four spaces; Shift+Tab removes
+        leading indentation on the current line. Press Escape, then Tab to move focus out.
+        Switch languages without losing drafts on this page. Reset code restores the current template;
+        refreshing restores all templates. Code is not saved or run by this website.</p>
+      <div class="callout tip">
+        <span class="callout-title">Pick once, copy anywhere</span>
+        <p>Language tabs are synchronized across all six problems, and every code block has a
+          <strong>Copy code</strong> button. Starter templates can be edited here with syntax highlighting;
+          Copy code copies your current draft. To run it, paste it into an environment with the compiler or interpreter for your language already available.
+          These are function templates, not complete runnable programs: add a test call, and a
+          <code>main</code> method or function where your language requires one. This page displays
+          code; it does not execute or grade it.</p>
+      </div>
+    </section>
+    <section class="section" id="problem-index">
+      <div class="section-title"><h2>Problem index</h2></div>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Topics</th></tr></thead>
+    <tbody>
+        <tr>
+          <td>1</td>
+          <td><a href="#problem-1">Bubble Sort with Early Exit</a></td>
+          <td><span class="pill difficulty easy">Easy</span></td>
+          <td>Bubble sort &middot; Early exit &middot; In place</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><a href="#problem-2">Insertion Sort: Count the Shifts</a></td>
+          <td><span class="pill difficulty easy">Easy</span></td>
+          <td>Insertion sort &middot; Adaptive sorting &middot; Counting</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><a href="#problem-3">Stable Sort by Word Length</a></td>
+          <td><span class="pill difficulty easy">Easy&ndash;Medium</span></td>
+          <td>Stability &middot; Insertion sort &middot; Merge sort</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><a href="#problem-4">Count Inversions</a></td>
+          <td><span class="pill difficulty medium">Medium</span></td>
+          <td>Merge sort &middot; Counting &middot; 64-bit integers</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><a href="#problem-5">Quick Sort: Random Pivot, 3-Way Partition</a></td>
+          <td><span class="pill difficulty medium">Medium</span></td>
+          <td>Quick sort &middot; Randomization &middot; Duplicates</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><a href="#problem-6">Kth Largest Element (Quickselect)</a></td>
+          <td><span class="pill difficulty medium">Medium+</span></td>
+          <td>Quickselect &middot; Order statistics &middot; Partition</td>
+        </tr>
+    </tbody>
+  </table>
+</div>      <p class="note">
+        Difficulty labels: <span class="pill difficulty easy">Easy</span>
+        <span class="pill difficulty medium">Medium</span>
+        &mdash; they refer to the algorithm, not to how long the code is.
+      </p>
+    </section>
+
+    <section class="problem" id="problem-1">
+      <div class="problem-index">Problem 1</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Bubble Sort with Early Exit</h2>
+        <span class="pill difficulty easy">Easy</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Bubble sort</span><span class="pill gray">Early exit</span><span class="pill gray">In place</span></div>
+
+      <p>Given an integer array <code>nums</code>, sort it <strong>in place</strong> in ascending order using bubble sort.</p>
+      <p>Your implementation must include the early-exit optimization: track whether any swap happened during a pass. If a full pass makes no swaps, the array is already sorted, so stop immediately.</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [5, 2, 4, 1, 3]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">nums = [1, 2, 3, 4, 5]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">After the call the array is sorted in place; the function returns nothing.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [1, 2, 3, 4]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">nums = [1, 2, 3, 4]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Already sorted: the first pass makes no swaps, so the loop exits after one pass. This is the O(n) best case.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>1 &le; <code>nums.length</code> &le; 1000</li>
+        <li>-10<sup>4</sup> &le; <code>nums[i]</code> &le; 10<sup>4</sup></li>
+        <li>Sort in place, in ascending order. The function returns nothing.</li>
+        <li>Do not use a built-in sort.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>void bubbleSort(int* nums, int numsSize)</code></td></tr>
+        <tr><td>C++</td><td><code>void bubbleSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr><td>C#</td><td><code>public static void BubbleSort(int[] nums)</code></td></tr>
+        <tr><td>Java</td><td><code>public static void bubbleSort(int[] nums)</code></td></tr>
+        <tr><td>Python</td><td><code>def bubble_sort(nums: list[int]) -&gt; None</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function bubbleSort(nums)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">The array is sorted in place in all six languages &mdash; the caller observes the result through the input array.</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-c-tab" data-lang="c" aria-controls="p1-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-cpp-tab" data-lang="cpp" aria-controls="p1-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-cs-tab" data-lang="cs" aria-controls="p1-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-java-tab" data-lang="java" aria-controls="p1-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-py-tab" data-lang="py" aria-controls="p1-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-js-tab" data-lang="js" aria-controls="p1-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p1-stub-c" aria-labelledby="p1-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement bubble sort with the early-exit optimization.
+void bubbleSort(int* nums, int numsSize) {
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-stub-cpp" aria-labelledby="p1-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// TODO: implement bubble sort with the early-exit optimization.
+void bubbleSort(std::vector&lt;int&gt;&amp; nums) {
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-stub-cs" aria-labelledby="p1-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement bubble sort with the early-exit optimization.
+    public static void BubbleSort(int[] nums) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-stub-java" aria-labelledby="p1-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement bubble sort with the early-exit optimization.
+    public static void bubbleSort(int[] nums) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-stub-py" aria-labelledby="p1-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement bubble sort with the early-exit optimization.
+def bubble_sort(nums: list[int]) -&gt; None:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-stub-js" aria-labelledby="p1-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement bubble sort with the early-exit optimization.
+function bubbleSort(nums) {
+}
+
+module.exports = { bubbleSort };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>Compare adjacent pairs: for each pass, walk <code>j</code> from <code>0</code> to <code>n - 1 - pass</code> and swap <code>nums[j]</code> with <code>nums[j+1]</code> whenever they are out of order.</li>
+        <li>Reset an <code>swapped</code> flag to <code>false</code> at the start of every pass, set it to <code>true</code> whenever you swap, and stop as soon as a pass finishes with no swaps.</li>
+        <li>An already-sorted array must take a single pass. If your loop always runs the full n&nbsp;&minus;&nbsp;1 passes, the early exit is not wired up correctly.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-c-tab" data-lang="c" aria-controls="p1-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-cpp-tab" data-lang="cpp" aria-controls="p1-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-cs-tab" data-lang="cs" aria-controls="p1-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-java-tab" data-lang="java" aria-controls="p1-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-py-tab" data-lang="py" aria-controls="p1-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-js-tab" data-lang="js" aria-controls="p1-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p1-solution-c" aria-labelledby="p1-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+void bubbleSort(int* nums, int numsSize) {
+    for (int end = numsSize - 1; end &gt; 0; end--) {
+        int swapped = 0;
+        // 1. Compare adjacent pairs, bubbling the largest value to the end
+        for (int i = 0; i &lt; end; i++) {
+            if (nums[i] &gt; nums[i + 1]) {
+                int tmp = nums[i];
+                nums[i] = nums[i + 1];
+                nums[i + 1] = tmp;
+                swapped = 1;
+            }
+        }
+        // 2. Early exit: a full pass with no swaps means already sorted
+        if (!swapped) {
+            break;
+        }
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-solution-cpp" aria-labelledby="p1-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+void bubbleSort(std::vector&lt;int&gt;&amp; nums) {
+    for (int end = static_cast&lt;int&gt;(nums.size()) - 1; end &gt; 0; end--) {
+        bool swapped = false;
+        // 1. Compare adjacent pairs, bubbling the largest value to the end
+        for (int i = 0; i &lt; end; i++) {
+            if (nums[i] &gt; nums[i + 1]) {
+                std::swap(nums[i], nums[i + 1]);
+                swapped = true;
+            }
+        }
+        // 2. Early exit: a full pass with no swaps means already sorted
+        if (!swapped) {
+            break;
+        }
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-solution-cs" aria-labelledby="p1-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+    public static void BubbleSort(int[] nums) {
+        for (int end = nums.Length - 1; end &gt; 0; end--) {
+            bool swapped = false;
+            // 1. Compare adjacent pairs, bubbling the largest value to the end
+            for (int i = 0; i &lt; end; i++) {
+                if (nums[i] &gt; nums[i + 1]) {
+                    int temp = nums[i];
+                    nums[i] = nums[i + 1];
+                    nums[i + 1] = temp;
+                    swapped = true;
+                }
+            }
+            // 2. Early exit: a full pass with no swaps means already sorted
+            if (!swapped) {
+                break;
+            }
+        }
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-solution-java" aria-labelledby="p1-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+    public static void bubbleSort(int[] nums) {
+        for (int end = nums.length - 1; end &gt; 0; end--) {
+            boolean swapped = false;
+            // 1. Compare adjacent pairs, bubbling the largest value to the end
+            for (int i = 0; i &lt; end; i++) {
+                if (nums[i] &gt; nums[i + 1]) {
+                    int tmp = nums[i];
+                    nums[i] = nums[i + 1];
+                    nums[i + 1] = tmp;
+                    swapped = true;
+                }
+            }
+            // 2. Early exit: a full pass with no swaps means already sorted
+            if (!swapped) {
+                break;
+            }
+        }
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-solution-py" aria-labelledby="p1-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code># Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+def bubble_sort(nums: list[int]) -&gt; None:
+    for end in range(len(nums) - 1, 0, -1):
+        swapped = False
+        # 1. Compare adjacent pairs, bubbling the largest value to the end
+        for i in range(end):
+            if nums[i] &gt; nums[i + 1]:
+                temp = nums[i]
+                nums[i] = nums[i + 1]
+                nums[i + 1] = temp
+                swapped = True
+        # 2. Early exit: a full pass with no swaps means already sorted
+        if not swapped:
+            break
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p1-solution-js" aria-labelledby="p1-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
+function bubbleSort(nums) {
+  for (let end = nums.length - 1; end &gt; 0; end--) {
+    let swapped = false;
+    // 1. Compare adjacent pairs, bubbling the largest value to the end
+    for (let i = 0; i &lt; end; i++) {
+      if (nums[i] &gt; nums[i + 1]) {
+        const tmp = nums[i];
+        nums[i] = nums[i + 1];
+        nums[i + 1] = tmp;
+        swapped = true;
+      }
+    }
+    // 2. Early exit: a full pass with no swaps means already sorted
+    if (!swapped) {
+      break;
+    }
+  }
+}
+
+module.exports = { bubbleSort };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#bubble-sort">Bubble sort</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+
+    <section class="problem" id="problem-2">
+      <div class="problem-index">Problem 2</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Insertion Sort: Count the Shifts</h2>
+        <span class="pill difficulty easy">Easy</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Insertion sort</span><span class="pill gray">Adaptive sorting</span><span class="pill gray">Counting</span></div>
+
+      <p>Sort <code>nums</code> <strong>in place</strong> in ascending order using insertion sort, then return the total number of <strong>shifts</strong> performed.</p>
+      <p>A shift is one element moving one position to the right to make room for the key. In the inner loop, each element you pass over and move right counts as one shift. Compare with strict <code>&gt;</code> so that equal elements are never shifted.</p>
+      <p>The total number of shifts is exactly the number of inversions in the array (each shift accounts for one original inversion).</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [5, 2, 4, 1]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 5 (and nums = [1, 2, 4, 5])</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Insert 2: 5 shifts once (1). Insert 4: 5 shifts once (2). Insert 1: 5, 4, and 2 each shift once (5 in total).</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [1, 2, 3]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 0</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Already sorted: nothing ever shifts.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 3</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [2, 2, 2]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 0</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Equal keys do not count as out of order, so nothing shifts.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>1 &le; <code>nums.length</code> &le; 1000</li>
+        <li>-10<sup>4</sup> &le; <code>nums[i]</code> &le; 10<sup>4</sup></li>
+        <li>The shift count fits in a 32-bit integer.</li>
+        <li>Sort in place. Do not use a built-in sort.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>int insertionSort(int* nums, int numsSize)</code></td></tr>
+        <tr><td>C++</td><td><code>int insertionSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr><td>C#</td><td><code>public static int InsertionSort(int[] nums)</code></td></tr>
+        <tr><td>Java</td><td><code>public static int insertionSort(int[] nums)</code></td></tr>
+        <tr><td>Python</td><td><code>def insertion_sort(nums: list[int]) -&gt; int</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function insertionSort(nums)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">The return value is the shift count; the sorted order is observed through the modified input array.</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-c-tab" data-lang="c" aria-controls="p2-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-cpp-tab" data-lang="cpp" aria-controls="p2-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-cs-tab" data-lang="cs" aria-controls="p2-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-java-tab" data-lang="java" aria-controls="p2-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-py-tab" data-lang="py" aria-controls="p2-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-js-tab" data-lang="js" aria-controls="p2-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p2-stub-c" aria-labelledby="p2-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement insertion sort and return the total number of shifts.
+int insertionSort(int* nums, int numsSize) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-stub-cpp" aria-labelledby="p2-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// TODO: implement insertion sort and return the total number of shifts.
+int insertionSort(std::vector&lt;int&gt;&amp; nums) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-stub-cs" aria-labelledby="p2-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement insertion sort and return the total number of shifts.
+    public static int InsertionSort(int[] nums) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-stub-java" aria-labelledby="p2-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement insertion sort and return the total number of shifts.
+    public static int insertionSort(int[] nums) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-stub-py" aria-labelledby="p2-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement insertion sort and return the total number of shifts.
+def insertion_sort(nums: list[int]) -&gt; int:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-stub-js" aria-labelledby="p2-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement insertion sort and return the total number of shifts.
+function insertionSort(nums) {
+}
+
+module.exports = { insertionSort };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>Keep a sorted prefix <code>nums[0..i-1]</code>. For each <code>nums[i]</code>, save it as <code>key</code>, shift every larger element one step right, then put <code>key</code> into the hole.</li>
+        <li>Count one shift per element moved right &mdash; that is, inside the inner loop, not once per insertion.</li>
+        <li>Use <code>nums[j-1] &gt; key</code>, not <code>&gt;=</code>. With <code>&gt;=</code>, Example 3 (<code>[2,2,2]</code>) performs 3 shifts instead of 0.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-c-tab" data-lang="c" aria-controls="p2-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-cpp-tab" data-lang="cpp" aria-controls="p2-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-cs-tab" data-lang="cs" aria-controls="p2-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-java-tab" data-lang="java" aria-controls="p2-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-py-tab" data-lang="py" aria-controls="p2-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-js-tab" data-lang="js" aria-controls="p2-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p2-solution-c" aria-labelledby="p2-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Insertion sort: sorts nums in place and returns the total number of shifts
+// (each time an element is moved one position right to make room for the key).
+// Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+
+int insertionSort(int* nums, int numsSize) {
+    int shifts = 0;
+    for (int i = 1; i &lt; numsSize; i++) {
+        int key = nums[i];
+        int j = i - 1;
+        // 1. Shift elements greater than the key one position to the right
+        while (j &gt;= 0 &amp;&amp; nums[j] &gt; key) {
+            nums[j + 1] = nums[j];
+            shifts++;
+            j--;
+        }
+        // 2. Insert the key into the gap
+        nums[j + 1] = key;
+    }
+    return shifts;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-solution-cpp" aria-labelledby="p2-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// Insertion sort: sorts nums in place and returns the total number of shifts
+// (each time an element is moved one position right to make room for the key).
+// Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+
+int insertionSort(std::vector&lt;int&gt;&amp; nums) {
+    int shifts = 0;
+    for (std::size_t i = 1; i &lt; nums.size(); i++) {
+        int key = nums[i];
+        std::size_t j = i;
+        // 1. Shift elements greater than the key one position to the right
+        while (j &gt; 0 &amp;&amp; nums[j - 1] &gt; key) {
+            nums[j] = nums[j - 1];
+            shifts++;
+            j--;
+        }
+        // 2. Insert the key into the gap
+        nums[j] = key;
+    }
+    return shifts;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-solution-cs" aria-labelledby="p2-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution
+{
+    // Insertion sort: sorts nums in place and returns the total number of shifts
+    // (each time an element is moved one position right to make room for the key).
+    // Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+    public static int InsertionSort(int[] nums)
+    {
+        int shifts = 0;
+        for (int i = 1; i &lt; nums.Length; i++)
+        {
+            int key = nums[i];
+            int j = i - 1;
+            // 1. Shift elements greater than the key one position to the right
+            while (j &gt;= 0 &amp;&amp; nums[j] &gt; key)
+            {
+                nums[j + 1] = nums[j];
+                shifts++;
+                j--;
+            }
+            // 2. Insert the key into the gap
+            nums[j + 1] = key;
+        }
+        return shifts;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-solution-java" aria-labelledby="p2-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // Insertion sort: sorts nums in place and returns the total number of shifts
+    // (each time an element is moved one position right to make room for the key).
+    // Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+    public static int insertionSort(int[] nums) {
+        int shifts = 0;
+        for (int i = 1; i &lt; nums.length; i++) {
+            int key = nums[i];
+            int j = i - 1;
+            // 1. Shift elements greater than the key one position to the right
+            while (j &gt;= 0 &amp;&amp; nums[j] &gt; key) {
+                nums[j + 1] = nums[j];
+                shifts++;
+                j--;
+            }
+            // 2. Insert the key into the gap
+            nums[j + 1] = key;
+        }
+        return shifts;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-solution-py" aria-labelledby="p2-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code># Insertion sort: sorts nums in place and returns the total number of shifts
+# (each time an element is moved one position right to make room for the key).
+# Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+def insertion_sort(nums: list[int]) -&gt; int:
+    shifts = 0
+    for i in range(1, len(nums)):
+        key = nums[i]
+        j = i - 1
+        # 1. Shift elements greater than the key one position to the right
+        while j &gt;= 0 and nums[j] &gt; key:
+            nums[j + 1] = nums[j]
+            shifts += 1
+            j -= 1
+        # 2. Insert the key into the gap
+        nums[j + 1] = key
+    return shifts
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p2-solution-js" aria-labelledby="p2-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Insertion sort: sorts nums in place and returns the total number of shifts
+// (each time an element is moved one position right to make room for the key).
+// Time: O(n^2) worst, O(n) best (already sorted). Space: O(1).
+function insertionSort(nums) {
+    let shifts = 0;
+    for (let i = 1; i &lt; nums.length; i++) {
+        const key = nums[i];
+        let j = i - 1;
+        // 1. Shift elements greater than the key one position to the right
+        while (j &gt;= 0 &amp;&amp; nums[j] &gt; key) {
+            nums[j + 1] = nums[j];
+            shifts++;
+            j--;
+        }
+        // 2. Insert the key into the gap
+        nums[j + 1] = key;
+    }
+    return shifts;
+}
+
+module.exports = { insertionSort };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#insertion-sort">Insertion sort</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+
+    <section class="problem" id="problem-3">
+      <div class="problem-index">Problem 3</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Stable Sort by Word Length</h2>
+        <span class="pill difficulty easy">Easy&ndash;Medium</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Stability</span><span class="pill gray">Insertion sort</span><span class="pill gray">Merge sort</span></div>
+
+      <p>Given an array of strings <code>words</code>, return a new array containing the words sorted by length in ascending order.</p>
+      <p>Words of equal length must keep their original relative order &mdash; the sort must be <strong>stable</strong>. Implement the sorting yourself; built-in sort functions are not allowed.</p>
+      <p>Insertion sort stays stable if you shift only elements strictly greater than the key; merge sort stays stable if the merge takes from the left half on a tie. The usual in-place quick sort is not stable, so do not use that version here. In C the function sorts the given array of pointers in place; in the other five languages it returns a sorted array.</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">words = ["pear", "kiwi", "apple", "fig", "banana"]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">["fig", "pear", "kiwi", "apple", "banana"]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Lengths are 3, 4, 5, 6. “pear” and “kiwi” are both length 4, and “pear” came first, so it stays first.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">words = ["bb", "aa", "cc"]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">["bb", "aa", "cc"]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">All words have length 2, so a stable sort changes nothing.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 3</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">words = ["ccc", "a", "bb", "ab", "ba"]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">["a", "bb", "ab", "ba", "ccc"]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">“ab” and “ba” are both length 2 and keep their original order.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>1 &le; <code>words.length</code> &le; 1000</li>
+        <li>Each word is 1&ndash;100 lowercase English letters.</li>
+        <li>The sort must be stable. Do not use a built-in sort.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>void sortByLength(char** words, int wordsSize)</code></td></tr>
+        <tr><td>C++</td><td><code>std::vector&lt;std::string&gt; sortByLength(std::vector&lt;std::string&gt; words)</code></td></tr>
+        <tr><td>C#</td><td><code>public static string[] SortByLength(string[] words)</code></td></tr>
+        <tr><td>Java</td><td><code>public static String[] sortByLength(String[] words)</code></td></tr>
+        <tr><td>Python</td><td><code>def sort_by_length(words: list[str]) -&gt; list[str]</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function sortByLength(words)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">C sorts the pointer array in place and returns nothing; the other five languages return the sorted array.</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-c-tab" data-lang="c" aria-controls="p3-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-cpp-tab" data-lang="cpp" aria-controls="p3-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-cs-tab" data-lang="cs" aria-controls="p3-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-java-tab" data-lang="java" aria-controls="p3-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-py-tab" data-lang="py" aria-controls="p3-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-js-tab" data-lang="js" aria-controls="p3-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p3-stub-c" aria-labelledby="p3-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement a stable sort by length (sort the pointer array in place).
+void sortByLength(char** words, int wordsSize) {
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-stub-cpp" aria-labelledby="p3-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// TODO: implement a stable sort by length (return a new sorted vector).
+std::vector&lt;std::string&gt; sortByLength(std::vector&lt;std::string&gt; words) {
+    return words;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-stub-cs" aria-labelledby="p3-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement a stable sort by length (return a new sorted array).
+    public static string[] SortByLength(string[] words) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-stub-java" aria-labelledby="p3-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement a stable sort by length (return a new sorted array).
+    public static String[] sortByLength(String[] words) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-stub-py" aria-labelledby="p3-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement a stable sort by length (return a new sorted list).
+def sort_by_length(words: list[str]) -&gt; list[str]:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-stub-js" aria-labelledby="p3-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement a stable sort by length (return a new sorted array).
+function sortByLength(words) {
+}
+
+module.exports = { sortByLength };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>Insertion sort: move each word left past every word that is <em>longer</em>, stopping at a shorter or equal-length neighbour. Equal-length words therefore never jump over each other.</li>
+        <li>Merge sort: when the two fronts have equal length, take the one from the left half. That single <code>&lt;=</code> comparison is what makes the merge stable.</li>
+        <li>Test Example 3 carefully: the three length-2 words must stay in their original order, so compare lengths only and never the strings themselves.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-c-tab" data-lang="c" aria-controls="p3-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-cpp-tab" data-lang="cpp" aria-controls="p3-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-cs-tab" data-lang="cs" aria-controls="p3-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-java-tab" data-lang="java" aria-controls="p3-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-py-tab" data-lang="py" aria-controls="p3-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-js-tab" data-lang="js" aria-controls="p3-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p3-solution-c" aria-labelledby="p3-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;string.h&gt;
+
+// Sort by length, stably, using insertion sort.
+// Time: O(n^2) worst, O(n) best (already ordered by length). Space: O(1).
+// NOTE: sorts the array of pointers IN PLACE — the char* entries are
+// rearranged; the string contents are never modified.
+void sortByLength(char** words, int wordsSize) {
+    for (int i = 1; i &lt; wordsSize; i++) {
+        char* key = words[i];
+        int keyLength = (int)strlen(key);
+        int j = i - 1;
+
+        // 1. Shift longer words one slot to the right.
+        //    Strict '&gt;' (not &gt;=) keeps equal-length words in original order.
+        while (j &gt;= 0 &amp;&amp; (int)strlen(words[j]) &gt; keyLength) {
+            words[j + 1] = words[j];
+            j--;
+        }
+
+        // 2. Drop the key into the gap.
+        words[j + 1] = key;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-solution-cpp" aria-labelledby="p3-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// Sort by length, stably, using insertion sort.
+// Time: O(n^2) worst, O(n) best (already ordered by length). Space: O(1) extra.
+// Takes the vector by value and returns it sorted, so the caller's
+// array is never modified.
+std::vector&lt;std::string&gt; sortByLength(std::vector&lt;std::string&gt; words) {
+    for (int i = 1; i &lt; (int)words.size(); i++) {
+        std::string key = words[i];
+        int keyLength = (int)key.size();
+        int j = i - 1;
+
+        // 1. Shift longer words one slot to the right.
+        //    Strict '&gt;' (not &gt;=) keeps equal-length words in original order.
+        while (j &gt;= 0 &amp;&amp; (int)words[j].size() &gt; keyLength) {
+            words[j + 1] = words[j];
+            j--;
+        }
+
+        // 2. Drop the key into the gap.
+        words[j + 1] = key;
+    }
+    return words;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-solution-cs" aria-labelledby="p3-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+// Sort by length, stably, using insertion sort.
+// Time: O(n^2) worst, O(n) best (already ordered by length). Space: O(n) for the new array.
+// Returns a NEW array; the input is never modified. Strict '&gt;' keeps
+// equal-length words in their original relative order.
+public static class Solution {
+    public static string[] SortByLength(string[] words) {
+        string[] result = new string[words.Length];
+        Array.Copy(words, result, words.Length);
+
+        for (int i = 1; i &lt; result.Length; i++) {
+            string key = result[i];
+            int j = i - 1;
+
+            // 1. Shift longer words one slot to the right.
+            while (j &gt;= 0 &amp;&amp; result[j].Length &gt; key.Length) {
+                result[j + 1] = result[j];
+                j--;
+            }
+
+            // 2. Drop the key into the gap.
+            result[j + 1] = key;
+        }
+        return result;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-solution-java" aria-labelledby="p3-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>// Sort by length, stably, using insertion sort.
+// Time: O(n^2) worst, O(n) best (already ordered by length).
+// Space: O(n) for the new array. Returns a NEW array; the input is never modified.
+// Strict '&gt;' (not '&gt;=') keeps equal-length words in their original relative order.
+public class Solution {
+    public static String[] sortByLength(String[] words) {
+        String[] result = words.clone();
+
+        for (int i = 1; i &lt; result.length; i++) {
+            String key = result[i];
+            int j = i - 1;
+
+            // 1. Shift longer words one slot to the right.
+            //    Strict '&gt;' keeps equal-length words in their original order.
+            while (j &gt;= 0 &amp;&amp; result[j].length() &gt; key.length()) {
+                result[j + 1] = result[j];
+                j--;
+            }
+
+            // 2. Drop the key into the gap.
+            result[j + 1] = key;
+        }
+        return result;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-solution-py" aria-labelledby="p3-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code>def sort_by_length(words: list[str]) -&gt; list[str]:
+    """Return a NEW list with the words sorted by length, stably.
+
+    Insertion sort; strict '&gt;' keeps equal-length words in original order.
+    Time: O(n^2) worst, O(n) best (already ordered by length). Space: O(n).
+    """
+    result = list(words)  # copy: the caller's list is never modified
+
+    for i in range(1, len(result)):
+        key = result[i]
+        j = i - 1
+
+        # 1. Shift longer words one slot to the right.
+        while j &gt;= 0 and len(result[j]) &gt; len(key):
+            result[j + 1] = result[j]
+            j -= 1
+
+        # 2. Drop the key into the gap.
+        result[j + 1] = key
+
+    return result
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p3-solution-js" aria-labelledby="p3-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Sort by length, stably, using insertion sort.
+// Time: O(n^2) worst, O(n) best (already ordered by length). Space: O(n).
+// Returns a NEW array; the input is never modified.
+function sortByLength(words) {
+    const result = words.slice(); // copy: the caller's array is never modified
+
+    for (let i = 1; i &lt; result.length; i++) {
+        const key = result[i];
+        let j = i - 1;
+
+        // 1. Shift longer words one slot to the right.
+        //    Strict '&gt;' keeps equal-length words in original order.
+        while (j &gt;= 0 &amp;&amp; result[j].length &gt; key.length) {
+            result[j + 1] = result[j];
+            j--;
+        }
+
+        // 2. Drop the key into the gap.
+        result[j + 1] = key;
+    }
+
+    return result;
+}
+
+module.exports = { sortByLength };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#stability">Stability</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+
+    <section class="problem" id="problem-4">
+      <div class="problem-index">Problem 4</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Count Inversions</h2>
+        <span class="pill difficulty medium">Medium</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Merge sort</span><span class="pill gray">Counting</span><span class="pill gray">64-bit integers</span></div>
+
+      <p>An <strong>inversion</strong> is a pair of indices <code>(i, j)</code> with <code>i &lt; j</code> and <code>nums[i] &gt; nums[j]</code>. Return the total number of inversions in <code>nums</code>.</p>
+      <p>A brute-force double loop is O(n<sup>2</sup>), which is too slow for the largest tests. The expected solution modifies merge sort to count inversions while merging, in O(n log n).</p>
+      <p>The answer can reach 4,999,950,000. Use <code>long long</code> in C/C++, <code>long</code> in Java/C#, or Python's unbounded <code>int</code>. JavaScript <code>Number</code> represents every possible answer here exactly. The function must not destroy the caller's array.</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [8, 4, 2, 1]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 6</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Every one of the six pairs is out of order.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [1, 20, 6, 4, 5]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 5</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">The inversions are (20,6), (20,4), (20,5), (6,4) and (6,5).</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 3</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [2, 2, 2]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">return 0</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Equal values are not inversions: the comparison is strict.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>1 &le; <code>nums.length</code> &le; 100,000</li>
+        <li>-10<sup>9</sup> &le; <code>nums[i]</code> &le; 10<sup>9</sup></li>
+        <li>Use a type that represents 4,999,950,000 exactly (64-bit integer, Python <code>int</code>, or JavaScript <code>Number</code>).</li>
+        <li>Do not modify the input array. Do not use a built-in sort in the solution.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>long long countInversions(const int* nums, int numsSize)</code></td></tr>
+        <tr><td>C++</td><td><code>long long countInversions(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr><td>C#</td><td><code>public static long CountInversions(int[] nums)</code></td></tr>
+        <tr><td>Java</td><td><code>public static long countInversions(int[] nums)</code></td></tr>
+        <tr><td>Python</td><td><code>def count_inversions(nums: list[int]) -&gt; int</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function countInversions(nums)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">C++ receives the array as a <code>const</code> reference &mdash; copy it internally before sorting. C receives a <code>const</code> pointer.</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-c-tab" data-lang="c" aria-controls="p4-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-cpp-tab" data-lang="cpp" aria-controls="p4-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-cs-tab" data-lang="cs" aria-controls="p4-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-java-tab" data-lang="java" aria-controls="p4-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-py-tab" data-lang="py" aria-controls="p4-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-js-tab" data-lang="js" aria-controls="p4-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p4-stub-c" aria-labelledby="p4-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement count inversions by extending merge sort.
+long long countInversions(const int* nums, int numsSize) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-stub-cpp" aria-labelledby="p4-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// TODO: implement count inversions by extending merge sort.
+long long countInversions(const std::vector&lt;int&gt;&amp; nums) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-stub-cs" aria-labelledby="p4-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement count inversions by extending merge sort.
+    public static long CountInversions(int[] nums) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-stub-java" aria-labelledby="p4-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement count inversions by extending merge sort.
+    public static long countInversions(int[] nums) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-stub-py" aria-labelledby="p4-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement count inversions by extending merge sort.
+def count_inversions(nums: list[int]) -&gt; int:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-stub-js" aria-labelledby="p4-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement count inversions by extending merge sort.
+function countInversions(nums) {
+}
+
+module.exports = { countInversions };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>Recap merge sort: recursively sort the two halves, then merge. The counting happens during the merge, not afterwards.</li>
+        <li>When the right front is strictly smaller than the left front and you take it, every element still unmerged in the left half is larger than it. That is <code>left.length - i</code> new inversions.</li>
+        <li>Trust but verify: on <code>[4,3,2,1]</code> merging <code>[4]</code> with <code>[3]</code> adds 1, merging <code>[2]</code> with <code>[1]</code> adds 1, and the final merge of <code>[3,4]</code> with <code>[1,2]</code> adds 4 &mdash; 6 in total.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-c-tab" data-lang="c" aria-controls="p4-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-cpp-tab" data-lang="cpp" aria-controls="p4-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-cs-tab" data-lang="cs" aria-controls="p4-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-java-tab" data-lang="java" aria-controls="p4-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-py-tab" data-lang="py" aria-controls="p4-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-js-tab" data-lang="js" aria-controls="p4-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p4-solution-c" aria-labelledby="p4-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
+// An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+// Time: O(n log n). Space: O(n) for the work copy and the temp array.
+// The caller's array is not modified: we copy it before sorting.
+// The result type is long long (64-bit) because the answer can exceed 2^31.
+#include &lt;stdlib.h&gt;
+
+// Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+// into nums[left..right], and return the inversions between the halves.
+static long long mergeAndCount(int* nums, int* temp, int left, int mid, int right) {
+    int leftIndex = left;        // next element of the left half
+    int rightIndex = mid + 1;    // next element of the right half
+    int writeIndex = left;       // next free slot in temp
+    long long inversions = 0;
+
+    while (leftIndex &lt;= mid &amp;&amp; rightIndex &lt;= right) {
+        if (nums[leftIndex] &lt;= nums[rightIndex]) {
+            // The left value is not greater, so it forms no inversion.
+            temp[writeIndex] = nums[leftIndex];
+            writeIndex++;
+            leftIndex++;
+        } else {
+            // nums[rightIndex] is smaller than every remaining left value,
+            // and all of them come before it in the original array.
+            inversions += (long long)(mid - leftIndex + 1);
+            temp[writeIndex] = nums[rightIndex];
+            writeIndex++;
+            rightIndex++;
+        }
+    }
+
+    // Copy what is left of one half (the other half is already used up).
+    while (leftIndex &lt;= mid) {
+        temp[writeIndex] = nums[leftIndex];
+        writeIndex++;
+        leftIndex++;
+    }
+    while (rightIndex &lt;= right) {
+        temp[writeIndex] = nums[rightIndex];
+        writeIndex++;
+        rightIndex++;
+    }
+
+    // Put the merged run back so nums[left..right] is now sorted.
+    for (int index = left; index &lt;= right; index++) {
+        nums[index] = temp[index];
+    }
+    return inversions;
+}
+
+// Sort nums[left..right] with merge sort, counting inversions on the way.
+static long long mergeSort(int* nums, int* temp, int left, int right) {
+    if (left &gt;= right) {
+        return 0;  // one element (or none) has no inversions
+    }
+    int mid = left + (right - left) / 2;
+    long long inversions = 0;
+    inversions += mergeSort(nums, temp, left, mid);            // 1. sort left half
+    inversions += mergeSort(nums, temp, mid + 1, right);       // 2. sort right half
+    inversions += mergeAndCount(nums, temp, left, mid, right); // 3. merge and count
+    return inversions;
+}
+
+long long countInversions(const int* nums, int numsSize) {
+    if (numsSize &lt; 2) {
+        return 0;
+    }
+
+    // Work on a copy so the caller's array is never changed.
+    int* work = malloc((size_t)numsSize * sizeof(int));
+    int* temp = malloc((size_t)numsSize * sizeof(int));
+    if (work == NULL || temp == NULL) {
+        free(work);
+        free(temp);
+        return 0;  // out of memory; cannot happen for n &lt;= 100,000
+    }
+    for (int i = 0; i &lt; numsSize; i++) {
+        work[i] = nums[i];
+    }
+
+    long long total = mergeSort(work, temp, 0, numsSize - 1);
+    free(work);
+    free(temp);
+    return total;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-solution-cpp" aria-labelledby="p4-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
+// An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+// Time: O(n log n). Space: O(n) for the work copy and the temp array.
+// The caller's vector is not modified: we copy it before sorting.
+// The result type is long long (64-bit) because the answer can exceed 2^31.
+#include &lt;vector&gt;
+
+// Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+// into nums[left..right], and return the inversions between the halves.
+static long long mergeAndCount(std::vector&lt;int&gt;&amp; nums, std::vector&lt;int&gt;&amp; temp,
+                               int left, int mid, int right) {
+    int leftIndex = left;        // next element of the left half
+    int rightIndex = mid + 1;    // next element of the right half
+    int writeIndex = left;       // next free slot in temp
+    long long inversions = 0;
+
+    while (leftIndex &lt;= mid &amp;&amp; rightIndex &lt;= right) {
+        if (nums[leftIndex] &lt;= nums[rightIndex]) {
+            // The left value is not greater, so it forms no inversion.
+            temp[writeIndex] = nums[leftIndex];
+            writeIndex++;
+            leftIndex++;
+        } else {
+            // nums[rightIndex] is smaller than every remaining left value,
+            // and all of them come before it in the original array.
+            inversions += static_cast&lt;long long&gt;(mid - leftIndex + 1);
+            temp[writeIndex] = nums[rightIndex];
+            writeIndex++;
+            rightIndex++;
+        }
+    }
+
+    // Copy what is left of one half (the other half is already used up).
+    while (leftIndex &lt;= mid) {
+        temp[writeIndex] = nums[leftIndex];
+        writeIndex++;
+        leftIndex++;
+    }
+    while (rightIndex &lt;= right) {
+        temp[writeIndex] = nums[rightIndex];
+        writeIndex++;
+        rightIndex++;
+    }
+
+    // Put the merged run back so nums[left..right] is now sorted.
+    for (int index = left; index &lt;= right; index++) {
+        nums[index] = temp[index];
+    }
+    return inversions;
+}
+
+// Sort nums[left..right] with merge sort, counting inversions on the way.
+static long long mergeSort(std::vector&lt;int&gt;&amp; nums, std::vector&lt;int&gt;&amp; temp,
+                           int left, int right) {
+    if (left &gt;= right) {
+        return 0;  // one element (or none) has no inversions
+    }
+    int mid = left + (right - left) / 2;
+    long long inversions = 0;
+    inversions += mergeSort(nums, temp, left, mid);            // 1. sort left half
+    inversions += mergeSort(nums, temp, mid + 1, right);       // 2. sort right half
+    inversions += mergeAndCount(nums, temp, left, mid, right); // 3. merge and count
+    return inversions;
+}
+
+long long countInversions(const std::vector&lt;int&gt;&amp; nums) {
+    if (nums.size() &lt; 2) {
+        return 0;
+    }
+
+    // Work on a copy so the caller's vector is never changed.
+    std::vector&lt;int&gt; work = nums;
+    std::vector&lt;int&gt; temp(nums.size());
+    return mergeSort(work, temp, 0, static_cast&lt;int&gt;(nums.size()) - 1);
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-solution-cs" aria-labelledby="p4-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
+// An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+// Time: O(n log n). Space: O(n) for the work copy and the temp array.
+// The caller's array is not modified: we copy it before sorting.
+// The result type is long (64-bit) because the answer can exceed 2^31.
+using System;
+
+public static class Solution
+{
+    public static long CountInversions(int[] nums)
+    {
+        if (nums.Length &lt; 2)
+        {
+            return 0;
+        }
+
+        // Work on a copy so the caller's array is never changed.
+        int[] work = new int[nums.Length];
+        Array.Copy(nums, work, nums.Length);
+        int[] temp = new int[nums.Length];
+        return MergeSort(work, temp, 0, nums.Length - 1);
+    }
+
+    // Sort nums[left..right] with merge sort, counting inversions on the way.
+    private static long MergeSort(int[] nums, int[] temp, int left, int right)
+    {
+        if (left &gt;= right)
+        {
+            return 0;  // one element (or none) has no inversions
+        }
+        int mid = left + (right - left) / 2;
+        long inversions = 0;
+        inversions += MergeSort(nums, temp, left, mid);            // 1. sort left half
+        inversions += MergeSort(nums, temp, mid + 1, right);       // 2. sort right half
+        inversions += MergeAndCount(nums, temp, left, mid, right); // 3. merge and count
+        return inversions;
+    }
+
+    // Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+    // into nums[left..right], and return the inversions between the halves.
+    private static long MergeAndCount(int[] nums, int[] temp, int left, int mid, int right)
+    {
+        int leftIndex = left;        // next element of the left half
+        int rightIndex = mid + 1;    // next element of the right half
+        int writeIndex = left;       // next free slot in temp
+        long inversions = 0;
+
+        while (leftIndex &lt;= mid &amp;&amp; rightIndex &lt;= right)
+        {
+            if (nums[leftIndex] &lt;= nums[rightIndex])
+            {
+                // The left value is not greater, so it forms no inversion.
+                temp[writeIndex] = nums[leftIndex];
+                writeIndex++;
+                leftIndex++;
+            }
+            else
+            {
+                // nums[rightIndex] is smaller than every remaining left value,
+                // and all of them come before it in the original array.
+                inversions += mid - leftIndex + 1;
+                temp[writeIndex] = nums[rightIndex];
+                writeIndex++;
+                rightIndex++;
+            }
+        }
+
+        // Copy what is left of one half (the other half is already used up).
+        while (leftIndex &lt;= mid)
+        {
+            temp[writeIndex] = nums[leftIndex];
+            writeIndex++;
+            leftIndex++;
+        }
+        while (rightIndex &lt;= right)
+        {
+            temp[writeIndex] = nums[rightIndex];
+            writeIndex++;
+            rightIndex++;
+        }
+
+        // Put the merged run back so nums[left..right] is now sorted.
+        for (int index = left; index &lt;= right; index++)
+        {
+            nums[index] = temp[index];
+        }
+        return inversions;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-solution-java" aria-labelledby="p4-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
+// An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+// Time: O(n log n). Space: O(n) for the work copy and the temp array.
+// The caller's array is not modified: we copy it before sorting.
+// The result type is long (64-bit) because the answer can exceed 2^31.
+public class Solution {
+    public static long countInversions(int[] nums) {
+        if (nums.length &lt; 2) {
+            return 0;
+        }
+
+        // Work on a copy so the caller's array is never changed.
+        int[] work = new int[nums.length];
+        System.arraycopy(nums, 0, work, 0, nums.length);
+        int[] temp = new int[nums.length];
+        return mergeSort(work, temp, 0, nums.length - 1);
+    }
+
+    // Sort nums[left..right] with merge sort, counting inversions on the way.
+    private static long mergeSort(int[] nums, int[] temp, int left, int right) {
+        if (left &gt;= right) {
+            return 0;  // one element (or none) has no inversions
+        }
+        int mid = left + (right - left) / 2;
+        long inversions = 0;
+        inversions += mergeSort(nums, temp, left, mid);            // 1. sort left half
+        inversions += mergeSort(nums, temp, mid + 1, right);       // 2. sort right half
+        inversions += mergeAndCount(nums, temp, left, mid, right); // 3. merge and count
+        return inversions;
+    }
+
+    // Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+    // into nums[left..right], and return the inversions between the halves.
+    private static long mergeAndCount(int[] nums, int[] temp, int left, int mid, int right) {
+        int leftIndex = left;        // next element of the left half
+        int rightIndex = mid + 1;    // next element of the right half
+        int writeIndex = left;       // next free slot in temp
+        long inversions = 0;
+
+        while (leftIndex &lt;= mid &amp;&amp; rightIndex &lt;= right) {
+            if (nums[leftIndex] &lt;= nums[rightIndex]) {
+                // The left value is not greater, so it forms no inversion.
+                temp[writeIndex] = nums[leftIndex];
+                writeIndex++;
+                leftIndex++;
+            } else {
+                // nums[rightIndex] is smaller than every remaining left value,
+                // and all of them come before it in the original array.
+                inversions += mid - leftIndex + 1;
+                temp[writeIndex] = nums[rightIndex];
+                writeIndex++;
+                rightIndex++;
+            }
+        }
+
+        // Copy what is left of one half (the other half is already used up).
+        while (leftIndex &lt;= mid) {
+            temp[writeIndex] = nums[leftIndex];
+            writeIndex++;
+            leftIndex++;
+        }
+        while (rightIndex &lt;= right) {
+            temp[writeIndex] = nums[rightIndex];
+            writeIndex++;
+            rightIndex++;
+        }
+
+        // Put the merged run back so nums[left..right] is now sorted.
+        for (int index = left; index &lt;= right; index++) {
+            nums[index] = temp[index];
+        }
+        return inversions;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-solution-py" aria-labelledby="p4-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code># Count inversions in O(n log n) by extending merge sort.
+# An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+# Time: O(n log n). Space: O(n) for the work copy and the temp array.
+# The caller's list is not modified: we copy it before sorting.
+# Python ints are unbounded, so the answer is exact even beyond 64 bits.
+
+
+def count_inversions(nums: list[int]) -&gt; int:
+    if len(nums) &lt; 2:
+        return 0
+
+    # Work on a copy so the caller's list is never changed.
+    work = nums[:]
+    temp = [0] * len(nums)
+    return merge_sort(work, temp, 0, len(nums) - 1)
+
+
+def merge_sort(nums: list[int], temp: list[int], left: int, right: int) -&gt; int:
+    # Sort nums[left..right] with merge sort, counting inversions on the way.
+    if left &gt;= right:
+        return 0  # one element (or none) has no inversions
+    mid = (left + right) // 2
+    inversions = 0
+    inversions += merge_sort(nums, temp, left, mid)             # 1. sort left half
+    inversions += merge_sort(nums, temp, mid + 1, right)        # 2. sort right half
+    inversions += merge_and_count(nums, temp, left, mid, right) # 3. merge and count
+    return inversions
+
+
+def merge_and_count(nums: list[int], temp: list[int], left: int, mid: int, right: int) -&gt; int:
+    # Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+    # into nums[left..right], and return the inversions between the halves.
+    left_index = left        # next element of the left half
+    right_index = mid + 1    # next element of the right half
+    write_index = left       # next free slot in temp
+    inversions = 0
+
+    while left_index &lt;= mid and right_index &lt;= right:
+        if nums[left_index] &lt;= nums[right_index]:
+            # The left value is not greater, so it forms no inversion.
+            temp[write_index] = nums[left_index]
+            write_index += 1
+            left_index += 1
+        else:
+            # nums[right_index] is smaller than every remaining left value,
+            # and all of them come before it in the original array.
+            inversions += mid - left_index + 1
+            temp[write_index] = nums[right_index]
+            write_index += 1
+            right_index += 1
+
+    # Copy what is left of one half (the other half is already used up).
+    while left_index &lt;= mid:
+        temp[write_index] = nums[left_index]
+        write_index += 1
+        left_index += 1
+    while right_index &lt;= right:
+        temp[write_index] = nums[right_index]
+        write_index += 1
+        right_index += 1
+
+    # Put the merged run back so nums[left..right] is now sorted.
+    for index in range(left, right + 1):
+        nums[index] = temp[index]
+    return inversions
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p4-solution-js" aria-labelledby="p4-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
+// An inversion is a pair (i, j) with i &lt; j and nums[i] &gt; nums[j].
+// Time: O(n log n). Space: O(n) for the work copy and the temp array.
+// The caller's array is not modified: we copy it before sorting.
+// Returns a Number. The largest answer here is n * (n - 1) / 2 for
+// n = 100,000, which is 4,999,950,000 — well below 2^53, so it is exact.
+
+function countInversions(nums) {
+  if (nums.length &lt; 2) {
+    return 0;
+  }
+
+  // Work on a copy so the caller's array is never changed.
+  const work = nums.slice();
+  const temp = new Array(nums.length);
+  return mergeSort(work, temp, 0, nums.length - 1);
+}
+
+// Sort nums[left..right] with merge sort, counting inversions on the way.
+function mergeSort(nums, temp, left, right) {
+  if (left &gt;= right) {
+    return 0; // one element (or none) has no inversions
+  }
+  const mid = Math.floor((left + right) / 2);
+  let inversions = 0;
+  inversions += mergeSort(nums, temp, left, mid);            // 1. sort left half
+  inversions += mergeSort(nums, temp, mid + 1, right);       // 2. sort right half
+  inversions += mergeAndCount(nums, temp, left, mid, right); // 3. merge and count
+  return inversions;
+}
+
+// Merge the two sorted halves nums[left..mid] and nums[mid+1..right]
+// into nums[left..right], and return the inversions between the halves.
+function mergeAndCount(nums, temp, left, mid, right) {
+  let leftIndex = left;      // next element of the left half
+  let rightIndex = mid + 1;  // next element of the right half
+  let writeIndex = left;     // next free slot in temp
+  let inversions = 0;
+
+  while (leftIndex &lt;= mid &amp;&amp; rightIndex &lt;= right) {
+    if (nums[leftIndex] &lt;= nums[rightIndex]) {
+      // The left value is not greater, so it forms no inversion.
+      temp[writeIndex] = nums[leftIndex];
+      writeIndex += 1;
+      leftIndex += 1;
+    } else {
+      // nums[rightIndex] is smaller than every remaining left value,
+      // and all of them come before it in the original array.
+      inversions += mid - leftIndex + 1;
+      temp[writeIndex] = nums[rightIndex];
+      writeIndex += 1;
+      rightIndex += 1;
+    }
+  }
+
+  // Copy what is left of one half (the other half is already used up).
+  while (leftIndex &lt;= mid) {
+    temp[writeIndex] = nums[leftIndex];
+    writeIndex += 1;
+    leftIndex += 1;
+  }
+  while (rightIndex &lt;= right) {
+    temp[writeIndex] = nums[rightIndex];
+    writeIndex += 1;
+    rightIndex += 1;
+  }
+
+  // Put the merged run back so nums[left..right] is now sorted.
+  for (let index = left; index &lt;= right; index += 1) {
+    nums[index] = temp[index];
+  }
+  return inversions;
+}
+
+module.exports = { countInversions };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#merge-sort">Merge sort</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+
+    <section class="problem" id="problem-5">
+      <div class="problem-index">Problem 5</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Quick Sort: Random Pivot, 3-Way Partition</h2>
+        <span class="pill difficulty medium">Medium</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Quick sort</span><span class="pill gray">Randomization</span><span class="pill gray">Duplicates</span></div>
+
+      <p>Given an integer array <code>nums</code>, return a <strong>new array</strong> with the same values sorted in ascending order, implemented as quick sort.</p>
+      <p>Two requirements. First, choose the pivot <strong>uniformly at random</strong> (pick a random index in the current segment and use its value as the pivot). Second, use a <strong>3-way partition</strong> (the Dutch national flag algorithm): after partitioning, all values equal to the pivot are already in their final positions, so you recurse only on the strictly-smaller and strictly-larger regions.</p>
+      <p>The strict-less-than Lomuto 2-way partition in the notes degrades to O(n<sup>2</sup>) on an array where every value is equal. With random pivots, the 3-way version has expected O(n log n) time and processes an all-equal array in O(n); its worst case is still O(n<sup>2</sup>). Do not modify the input array.</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [5, 2, 4, 1, 3]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">[1, 2, 3, 4, 5]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">The input array itself is unchanged.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [3, 1, 3, 3, 2, 3]</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">[1, 2, 3, 3, 3, 3]</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">All four 3s are grouped by the partition and never examined again: that is why duplicates are cheap here.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>0 &le; <code>nums.length</code> &le; 100,000</li>
+        <li>-10<sup>6</sup> &le; <code>nums[i]</code> &le; 10<sup>6</sup></li>
+        <li>The tests include many duplicates, fully sorted inputs, and an empty array.</li>
+        <li>Do not modify the input array. Do not use a built-in sort.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>int* quickSort(const int* nums, int numsSize, int* returnSize)</code></td></tr>
+        <tr><td>C++</td><td><code>std::vector&lt;int&gt; quickSort(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr><td>C#</td><td><code>public static int[] QuickSort(int[] nums)</code></td></tr>
+        <tr><td>Java</td><td><code>public static int[] quickSort(int[] nums)</code></td></tr>
+        <tr><td>Python</td><td><code>def quick_sort(nums: list[int]) -&gt; list[int]</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function quickSort(nums)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">C returns a <code>malloc</code>'d array and writes its length to <code>*returnSize</code> (the caller frees it; for an empty input return <code>NULL</code> with <code>*returnSize = 0</code>).</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-c-tab" data-lang="c" aria-controls="p5-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-cpp-tab" data-lang="cpp" aria-controls="p5-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-cs-tab" data-lang="cs" aria-controls="p5-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-java-tab" data-lang="java" aria-controls="p5-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-py-tab" data-lang="py" aria-controls="p5-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-js-tab" data-lang="js" aria-controls="p5-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p5-stub-c" aria-labelledby="p5-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement quick sort with a random pivot and a 3-way partition.
+int* quickSort(const int* nums, int numsSize, int* returnSize) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-stub-cpp" aria-labelledby="p5-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// TODO: implement quick sort with a random pivot and a 3-way partition.
+std::vector&lt;int&gt; quickSort(const std::vector&lt;int&gt;&amp; nums) {
+    return {};
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-stub-cs" aria-labelledby="p5-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement quick sort with a random pivot and a 3-way partition.
+    public static int[] QuickSort(int[] nums) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-stub-java" aria-labelledby="p5-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement quick sort with a random pivot and a 3-way partition.
+    public static int[] quickSort(int[] nums) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-stub-py" aria-labelledby="p5-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement quick sort with a random pivot and a 3-way partition.
+def quick_sort(nums: list[int]) -&gt; list[int]:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-stub-js" aria-labelledby="p5-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement quick sort with a random pivot and a 3-way partition.
+function quickSort(nums) {
+}
+
+module.exports = { quickSort };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>3-way partition scans one index <code>i</code> through the region: smaller than pivot &rarr; swap to the front and advance; equal &rarr; advance; larger &rarr; swap to the back and <em>do not advance</em> (the swapped-in value still needs checking).</li>
+        <li>Randomness: use rejection sampling with <code>rand()</code> in C (see the reference answer; plain modulo can bias the index), <code>std::uniform_int_distribution</code> in C++, <code>Random.Next(lo, hi + 1)</code> in C#, <code>ThreadLocalRandom.current().nextInt(lo, hi + 1)</code> in Java, <code>random.randint(lo, hi)</code> in Python, <code>Math.floor(Math.random() * (hi - lo + 1)) + lo</code> in JS. Swap the chosen index with <code>nums[lo]</code> before partitioning.</li>
+        <li>Recurse on <code>[lo, lt-1]</code> and <code>[gt+1, hi]</code>, never on the equal band. Base case: a region of size 0 or 1. On 100,000 equal values, there should be one partition pass and no further recursive calls.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-c-tab" data-lang="c" aria-controls="p5-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-cpp-tab" data-lang="cpp" aria-controls="p5-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-cs-tab" data-lang="cs" aria-controls="p5-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-java-tab" data-lang="java" aria-controls="p5-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-py-tab" data-lang="py" aria-controls="p5-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-js-tab" data-lang="js" aria-controls="p5-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p5-solution-c" aria-labelledby="p5-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdlib.h&gt;
+
+// Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+// Space: O(log n) average recursion depth, plus O(n) for the returned array.
+//
+// Quick sort with two safeguards:
+//   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+//      are not the worst case.
+//   2. The partition is 3-way (Dutch national flag), so every value equal to the
+//      pivot lands in its final position and is never recursed into. That keeps
+//      arrays with many duplicates fast instead of degrading to O(n^2).
+//
+// Returns a NEW array allocated with malloc; the caller owns it and must free() it.
+// The input array nums is never modified.
+
+static void swapValues(int* a, int* b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+// Sort arr[left..right] in place.
+static void quickSortRange(int* arr, int left, int right) {
+    if (left &gt;= right) {
+        return;  // 0 or 1 element: already sorted
+    }
+
+    // 1. Pick the pivot uniformly at random and move it to position `left`.
+    unsigned int width = (unsigned int)(right - left + 1);
+    unsigned int range = (unsigned int)RAND_MAX + 1U;
+    unsigned int limit = range - range % width;
+    unsigned int draw;
+    do { draw = (unsigned int)rand(); } while (draw &gt;= limit);
+    int pivotIndex = left + (int)(draw % width);
+    swapValues(&amp;arr[left], &amp;arr[pivotIndex]);
+    int pivot = arr[left];
+
+    // 2. 3-way partition (Dutch national flag). When the loop ends:
+    //      arr[left..lt-1]  &lt;  pivot
+    //      arr[lt..gt]      == pivot  (already in their final positions)
+    //      arr[gt+1..right] &gt;  pivot
+    int lt = left;
+    int i = left;
+    int gt = right;
+    while (i &lt;= gt) {
+        if (arr[i] &lt; pivot) {
+            swapValues(&amp;arr[lt], &amp;arr[i]);
+            lt++;
+            i++;
+        } else if (arr[i] &gt; pivot) {
+            swapValues(&amp;arr[i], &amp;arr[gt]);
+            gt--;
+        } else {
+            i++;
+        }
+    }
+
+    // 3. Recurse only on the strictly smaller and strictly larger parts.
+    quickSortRange(arr, left, lt - 1);
+    quickSortRange(arr, gt + 1, right);
+}
+
+int* quickSort(const int* nums, int numsSize, int* returnSize) {
+    *returnSize = 0;
+    if (numsSize &lt;= 0) {
+        return NULL;  // empty input: nothing to sort
+    }
+
+    int* result = (int*)malloc((size_t)numsSize * sizeof(int));
+    if (result == NULL) {
+        return NULL;  // allocation failed
+    }
+
+    // Copy the input first so the caller's array is never modified.
+    for (int i = 0; i &lt; numsSize; i++) {
+        result[i] = nums[i];
+    }
+
+    quickSortRange(result, 0, numsSize - 1);
+    *returnSize = numsSize;
+    return result;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-solution-cpp" aria-labelledby="p5-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;random&gt;
+#include &lt;vector&gt;
+
+// Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+// Space: O(log n) average recursion depth, plus O(n) for the returned array.
+//
+// Quick sort with two safeguards:
+//   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+//      are not the worst case.
+//   2. The partition is 3-way (Dutch national flag), so every value equal to the
+//      pivot lands in its final position and is never recursed into. That keeps
+//      arrays with many duplicates fast instead of degrading to O(n^2).
+//
+// Returns a NEW vector; the caller's vector nums is never modified.
+
+static void swapValues(int&amp; a, int&amp; b) {
+    int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+// Return a uniformly random index in [low, high].
+static int randomIndex(int low, int high) {
+    static std::mt19937 generator(std::random_device{}());
+    std::uniform_int_distribution&lt;int&gt; distribution(low, high);
+    return distribution(generator);
+}
+
+// Sort arr[left..right] in place.
+static void quickSortRange(std::vector&lt;int&gt;&amp; arr, int left, int right) {
+    if (left &gt;= right) {
+        return;  // 0 or 1 element: already sorted
+    }
+
+    // 1. Pick the pivot uniformly at random and move it to position `left`.
+    int pivotIndex = randomIndex(left, right);
+    swapValues(arr[left], arr[pivotIndex]);
+    int pivot = arr[left];
+
+    // 2. 3-way partition (Dutch national flag). When the loop ends:
+    //      arr[left..lt-1]  &lt;  pivot
+    //      arr[lt..gt]      == pivot  (already in their final positions)
+    //      arr[gt+1..right] &gt;  pivot
+    int lt = left;
+    int i = left;
+    int gt = right;
+    while (i &lt;= gt) {
+        if (arr[i] &lt; pivot) {
+            swapValues(arr[lt], arr[i]);
+            lt++;
+            i++;
+        } else if (arr[i] &gt; pivot) {
+            swapValues(arr[i], arr[gt]);
+            gt--;
+        } else {
+            i++;
+        }
+    }
+
+    // 3. Recurse only on the strictly smaller and strictly larger parts.
+    quickSortRange(arr, left, lt - 1);
+    quickSortRange(arr, gt + 1, right);
+}
+
+std::vector&lt;int&gt; quickSort(const std::vector&lt;int&gt;&amp; nums) {
+    std::vector&lt;int&gt; result = nums;  // copy: never modify the caller's vector
+    if (result.size() &gt; 1) {
+        quickSortRange(result, 0, static_cast&lt;int&gt;(result.size()) - 1);
+    }
+    return result;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-solution-cs" aria-labelledby="p5-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+// Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+// Space: O(log n) average recursion depth, plus O(n) for the returned array.
+//
+// Quick sort with two safeguards:
+//   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+//      are not the worst case.
+//   2. The partition is 3-way (Dutch national flag), so every value equal to the
+//      pivot lands in its final position and is never recursed into. That keeps
+//      arrays with many duplicates fast instead of degrading to O(n^2).
+//
+// Returns a NEW array; the caller's array nums is never modified.
+public static class Solution {
+    public static int[] QuickSort(int[] nums) {
+        int[] result = new int[nums.Length];
+        Array.Copy(nums, result, nums.Length);  // copy: never modify the caller's array
+        if (result.Length &gt; 1) {
+            QuickSortRange(result, 0, result.Length - 1);
+        }
+        return result;
+    }
+
+    // Sort arr[left..right] in place.
+    private static void QuickSortRange(int[] arr, int left, int right) {
+        if (left &gt;= right) {
+            return;  // 0 or 1 element: already sorted
+        }
+
+        // 1. Pick the pivot uniformly at random and move it to position `left`.
+        int pivotIndex = Random.Shared.Next(left, right + 1);
+        SwapValues(arr, left, pivotIndex);
+        int pivot = arr[left];
+
+        // 2. 3-way partition (Dutch national flag). When the loop ends:
+        //      arr[left..lt-1]  &lt;  pivot
+        //      arr[lt..gt]      == pivot  (already in their final positions)
+        //      arr[gt+1..right] &gt;  pivot
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (arr[i] &lt; pivot) {
+                SwapValues(arr, lt, i);
+                lt++;
+                i++;
+            } else if (arr[i] &gt; pivot) {
+                SwapValues(arr, i, gt);
+                gt--;
+            } else {
+                i++;
+            }
+        }
+
+        // 3. Recurse only on the strictly smaller and strictly larger parts.
+        QuickSortRange(arr, left, lt - 1);
+        QuickSortRange(arr, gt + 1, right);
+    }
+
+    private static void SwapValues(int[] arr, int a, int b) {
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-solution-java" aria-labelledby="p5-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>import java.util.Random;
+
+// Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+// Space: O(log n) average recursion depth, plus O(n) for the returned array.
+//
+// Quick sort with two safeguards:
+//   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+//      are not the worst case.
+//   2. The partition is 3-way (Dutch national flag), so every value equal to the
+//      pivot lands in its final position and is never recursed into. That keeps
+//      arrays with many duplicates fast instead of degrading to O(n^2).
+//
+// Returns a NEW array; the caller's array nums is never modified.
+public class Solution {
+    // One shared random generator for all pivot choices.
+    private static final Random RANDOM = new Random();
+
+    public static int[] quickSort(int[] nums) {
+        int[] result = nums.clone();  // copy: never modify the caller's array
+        if (result.length &gt; 1) {
+            quickSortRange(result, 0, result.length - 1);
+        }
+        return result;
+    }
+
+    // Sort arr[left..right] in place.
+    private static void quickSortRange(int[] arr, int left, int right) {
+        if (left &gt;= right) {
+            return;  // 0 or 1 element: already sorted
+        }
+
+        // 1. Pick the pivot uniformly at random and move it to position `left`.
+        int pivotIndex = left + RANDOM.nextInt(right - left + 1);
+        swapValues(arr, left, pivotIndex);
+        int pivot = arr[left];
+
+        // 2. 3-way partition (Dutch national flag). When the loop ends:
+        //      arr[left..lt-1]  &lt;  pivot
+        //      arr[lt..gt]      == pivot  (already in their final positions)
+        //      arr[gt+1..right] &gt;  pivot
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (arr[i] &lt; pivot) {
+                swapValues(arr, lt, i);
+                lt++;
+                i++;
+            } else if (arr[i] &gt; pivot) {
+                swapValues(arr, i, gt);
+                gt--;
+            } else {
+                i++;
+            }
+        }
+
+        // 3. Recurse only on the strictly smaller and strictly larger parts.
+        quickSortRange(arr, left, lt - 1);
+        quickSortRange(arr, gt + 1, right);
+    }
+
+    private static void swapValues(int[] arr, int a, int b) {
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-solution-py" aria-labelledby="p5-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code>import random
+
+# Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+# Space: O(log n) average recursion depth, plus O(n) for the returned array.
+#
+# Quick sort with two safeguards:
+#   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+#      are not the worst case.
+#   2. The partition is 3-way (Dutch national flag), so every value equal to the
+#      pivot lands in its final position and is never recursed into. That keeps
+#      arrays with many duplicates fast instead of degrading to O(n^2).
+#
+# Returns a NEW list; the caller's list nums is never modified.
+
+
+def quick_sort(nums: list[int]) -&gt; list[int]:
+    result = list(nums)  # copy: never modify the caller's list
+    if len(result) &gt; 1:
+        _quick_sort_range(result, 0, len(result) - 1)
+    return result
+
+
+# Sort arr[left..right] in place.
+def _quick_sort_range(arr: list[int], left: int, right: int) -&gt; None:
+    if left &gt;= right:
+        return  # 0 or 1 element: already sorted
+
+    # 1. Pick the pivot uniformly at random and move it to position `left`.
+    pivot_index = random.randint(left, right)
+    arr[left], arr[pivot_index] = arr[pivot_index], arr[left]
+    pivot = arr[left]
+
+    # 2. 3-way partition (Dutch national flag). When the loop ends:
+    #      arr[left..lt-1]  &lt;  pivot
+    #      arr[lt..gt]      == pivot  (already in their final positions)
+    #      arr[gt+1..right] &gt;  pivot
+    lt = left
+    i = left
+    gt = right
+    while i &lt;= gt:
+        if arr[i] &lt; pivot:
+            arr[lt], arr[i] = arr[i], arr[lt]
+            lt += 1
+            i += 1
+        elif arr[i] &gt; pivot:
+            arr[i], arr[gt] = arr[gt], arr[i]
+            gt -= 1
+        else:
+            i += 1
+
+    # 3. Recurse only on the strictly smaller and strictly larger parts.
+    _quick_sort_range(arr, left, lt - 1)
+    _quick_sort_range(arr, gt + 1, right)
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p5-solution-js" aria-labelledby="p5-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Time: O(n log n) average, O(n^2) worst (extremely unlikely: the pivot is random).
+// Space: O(log n) average recursion depth, plus O(n) for the returned array.
+//
+// Quick sort with two safeguards:
+//   1. The pivot index is chosen uniformly at random, so already-sorted inputs
+//      are not the worst case.
+//   2. The partition is 3-way (Dutch national flag), so every value equal to the
+//      pivot lands in its final position and is never recursed into. That keeps
+//      arrays with many duplicates fast instead of degrading to O(n^2).
+//
+// Returns a NEW array; the caller's array nums is never modified.
+
+function quickSort(nums) {
+  const result = nums.slice();  // copy: never modify the caller's array
+  if (result.length &gt; 1) {
+    quickSortRange(result, 0, result.length - 1);
+  }
+  return result;
+}
+
+function swapValues(arr, a, b) {
+  const tmp = arr[a];
+  arr[a] = arr[b];
+  arr[b] = tmp;
+}
+
+// Sort arr[left..right] in place.
+function quickSortRange(arr, left, right) {
+  if (left &gt;= right) {
+    return;  // 0 or 1 element: already sorted
+  }
+
+  // 1. Pick the pivot uniformly at random and move it to position `left`.
+  const pivotIndex = left + Math.floor(Math.random() * (right - left + 1));
+  swapValues(arr, left, pivotIndex);
+  const pivot = arr[left];
+
+  // 2. 3-way partition (Dutch national flag). When the loop ends:
+  //      arr[left..lt-1]  &lt;  pivot
+  //      arr[lt..gt]      == pivot  (already in their final positions)
+  //      arr[gt+1..right] &gt;  pivot
+  let lt = left;
+  let i = left;
+  let gt = right;
+  while (i &lt;= gt) {
+    if (arr[i] &lt; pivot) {
+      swapValues(arr, lt, i);
+      lt++;
+      i++;
+    } else if (arr[i] &gt; pivot) {
+      swapValues(arr, i, gt);
+      gt--;
+    } else {
+      i++;
+    }
+  }
+
+  // 3. Recurse only on the strictly smaller and strictly larger parts.
+  quickSortRange(arr, left, lt - 1);
+  quickSortRange(arr, gt + 1, right);
+}
+
+module.exports = { quickSort };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#quick-sort">Quick sort</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+
+    <section class="problem" id="problem-6">
+      <div class="problem-index">Problem 6</div>
+      <div class="problem-head">
+        <h2 class="problem-title">Kth Largest Element (Quickselect)</h2>
+        <span class="pill difficulty medium">Medium+</span>
+      </div>
+      <div class="problem-meta"><span class="pill gray">Quickselect</span><span class="pill gray">Order statistics</span><span class="pill gray">Partition</span></div>
+
+      <p><strong>Optional exploration &mdash; not covered in class.</strong> Try this independently if you want to explore order statistics beyond this session.</p>
+      <p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <strong>k-th largest</strong> element in sorted order &mdash; that is, the element at index <code>n - k</code> if the array were sorted ascending. <code>k</code> is 1-based, so <code>k = 1</code> asks for the maximum.</p>
+      <p>The expected solution is <strong>quickselect</strong>: partition like quicksort, but continue only in the region containing the target index. Use random pivots and 3-way partition for duplicates. Expected time O(n), with no need to sort everything.</p>
+      <p>Sorting the whole array also passes the tests, but it defeats the purpose. Duplicates matter here: <code>[3, 3, 3]</code> with <code>k = 2</code> must return <code>3</code>.</p>
+
+      <h3>Examples</h3>
+      <div class="example">
+        <div class="example-label">Example 1</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [3, 2, 1, 5, 6, 4], k = 2</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">5</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Sorted: [1, 2, 3, 4, 5, 6]. The second largest is 5.</div></div>
+      </div>
+      <div class="example">
+        <div class="example-label">Example 2</div>
+        <div class="io-row"><span class="io-key">Input</span><div class="io-value">nums = [3, 2, 3, 1, 2, 4, 5, 5, 6], k = 4</div></div>
+<div class="io-row"><span class="io-key">Output</span><div class="io-value">4</div></div>
+<div class="io-row"><span class="io-key">Explanation</span><div class="io-value plain">Sorted: [1, 2, 2, 3, 3, 4, 5, 5, 6]. Index n - k = 5 holds 4.</div></div>
+      </div>
+
+      <h3>Constraints</h3>
+      <div class="constraints">
+        <ul>
+        <li>1 &le; <code>k</code> &le; <code>nums.length</code> &le; 100,000</li>
+        <li>-10<sup>4</sup> &le; <code>nums[i]</code> &le; 10<sup>4</sup></li>
+        <li>The array can contain many duplicate values.</li>
+        <li>Do not use a built-in sort. O(n log n) passes, but the point is O(n) on average.</li>
+        </ul>
+      </div>
+
+      <h3>Function signature</h3>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
+    <tbody>
+        <tr><td>C</td><td><code>int findKthLargest(int* nums, int numsSize, int k)</code></td></tr>
+        <tr><td>C++</td><td><code>int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k)</code></td></tr>
+        <tr><td>C#</td><td><code>public static int FindKthLargest(int[] nums, int k)</code></td></tr>
+        <tr><td>Java</td><td><code>public static int findKthLargest(int[] nums, int k)</code></td></tr>
+        <tr><td>Python</td><td><code>def find_kth_largest(nums: list[int], k: int) -&gt; int</code></td></tr>
+        <tr><td>JavaScript</td><td><code>function findKthLargest(nums, k)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+      <p class="sig-note">The C reference answer may reorder the input. The other five reference answers preserve it by making a copy; C++ requires this because the parameter is a <code>const</code> reference. Selection itself is iterative.</p>
+
+      <h3>Starter template</h3>
+      <p class="solution-note">Edit the TODO below, or copy the template into your editor. Changes here are temporary and clear on refresh. Keep the function signature unchanged.</p>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-c-tab" data-lang="c" aria-controls="p6-stub-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-cpp-tab" data-lang="cpp" aria-controls="p6-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-cs-tab" data-lang="cs" aria-controls="p6-stub-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-java-tab" data-lang="java" aria-controls="p6-stub-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-py-tab" data-lang="py" aria-controls="p6-stub-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-js-tab" data-lang="js" aria-controls="p6-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p6-stub-c" aria-labelledby="p6-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
+int findKthLargest(int* nums, int numsSize, int k) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-stub-cpp" aria-labelledby="p6-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+
+// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
+int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
+    return 0;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-stub-cs" aria-labelledby="p6-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+    // TODO: implement FindKthLargest with iterative 3-way quickselect (expected O(n)).
+    public static int FindKthLargest(int[] nums, int k) {
+        throw new NotImplementedException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-stub-java" aria-labelledby="p6-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Java</span></div><pre><code>public class Solution {
+    // TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
+    public static int findKthLargest(int[] nums, int k) {
+        throw new UnsupportedOperationException();
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-stub-py" aria-labelledby="p6-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">Python</span></div><pre><code># TODO: implement find_kth_largest with iterative 3-way quickselect (expected O(n)).
+def find_kth_largest(nums: list[int], k: int) -&gt; int:
+    pass
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-stub-js" aria-labelledby="p6-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
+function findKthLargest(nums, k) {
+}
+
+module.exports = { findKthLargest };
+</code></pre></div>
+  </div>
+</div>
+
+      <h3>Hints</h3>
+      <details>
+        <summary>Show hints (open only if you are stuck)</summary>
+        <ol class="hint-list">
+        <li>Quickselect skips work: after 3-way partition, compare target index <code>n - k</code> with the equal band <code>[lt, gt]</code>. Return the pivot if the target is inside; otherwise keep only the smaller or larger region containing the target.</li>
+        <li>Why expected O(n)? A random pivot lands in the middle half with probability at least 1/2, leaving at most about 3/4 of the current region. A constant expected number of passes gives each such shrinkage, so the work sums geometrically. The region does not always halve.</li>
+        <li>Reuse the 3-way partition from Problem 5 and update <code>left</code>/<code>right</code> in a loop. Skip the entire equal band when narrowing the region. Test all-equal input and <code>k = 1</code>, <code>k = n</code>, and a middle rank.</li>
+        </ol>
+      </details>
+
+      <h3>Reference solution</h3>
+      <p class="solution-note">Try the problem yourself first. Reading a solution you have not attempted teaches very little.</p>
+      <details>
+        <summary>Show the reference solution</summary>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-c-tab" data-lang="c" aria-controls="p6-solution-c" aria-selected="false" tabindex="-1">C</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-cpp-tab" data-lang="cpp" aria-controls="p6-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-cs-tab" data-lang="cs" aria-controls="p6-solution-cs" aria-selected="false" tabindex="-1">C#</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-java-tab" data-lang="java" aria-controls="p6-solution-java" aria-selected="true" tabindex="0">Java</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-py-tab" data-lang="py" aria-controls="p6-solution-py" aria-selected="false" tabindex="-1">Python</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-js-tab" data-lang="js" aria-controls="p6-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+    </div>
+    <button class="copy-btn" type="button">Copy code</button>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="p6-solution-c" aria-labelledby="p6-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdlib.h&gt;
+
+// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(1); may reorder the input, as allowed by the contract.
+static void swapValues(int* first, int* second) {
+    int tmp = *first;
+    *first = *second;
+    *second = tmp;
+}
+
+int findKthLargest(int* nums, int numsSize, int k) {
+    int* working = nums;
+    int size = numsSize;
+    int target = size - k;
+    int left = 0;
+    int right = size - 1;
+    while (left &lt; right) {
+        // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        // Reject the short remainder so each index has equal probability.
+        unsigned int width = (unsigned int)(right - left + 1);
+        unsigned int range = (unsigned int)RAND_MAX + 1U;
+        unsigned int limit = range - range % width;
+        unsigned int draw;
+        do { draw = (unsigned int)rand(); } while (draw &gt;= limit);
+        int pivot = working[left + (int)(draw % width)];
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (working[i] &lt; pivot) {
+                swapValues(&amp;working[lt], &amp;working[i]);
+                lt++;
+                i++;
+            } else if (working[i] &gt; pivot) {
+                swapValues(&amp;working[i], &amp;working[gt]);
+                gt--;  // inspect the swapped-in value before advancing i
+            } else {
+                i++;
+            }
+        }
+        // 2. Keep only the region containing target; skip the entire equal band.
+        if (target &lt; lt) {
+            right = lt - 1;
+        } else if (target &gt; gt) {
+            left = gt + 1;
+        } else {
+            return pivot;
+        }
+    }
+    return working[left];
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-solution-cpp" aria-labelledby="p6-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;random&gt;
+#include &lt;vector&gt;
+
+// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(n) for the copy, O(1) for iterative selection. Input is unchanged.
+static void swapValues(int&amp; first, int&amp; second) {
+    int tmp = first;
+    first = second;
+    second = tmp;
+}
+
+int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k) {
+    std::vector&lt;int&gt; working = nums;
+    int size = static_cast&lt;int&gt;(working.size());
+    static std::mt19937 generator(std::random_device{}());
+    int target = size - k;
+    int left = 0;
+    int right = size - 1;
+    while (left &lt; right) {
+        // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        std::uniform_int_distribution&lt;int&gt; indices(left, right);
+        int pivot = working[indices(generator)];
+        int lt = left;
+        int i = left;
+        int gt = right;
+        while (i &lt;= gt) {
+            if (working[i] &lt; pivot) {
+                swapValues(working[lt], working[i]);
+                lt++;
+                i++;
+            } else if (working[i] &gt; pivot) {
+                swapValues(working[i], working[gt]);
+                gt--;  // inspect the swapped-in value before advancing i
+            } else {
+                i++;
+            }
+        }
+        // 2. Keep only the region containing target; skip the entire equal band.
+        if (target &lt; lt) {
+            right = lt - 1;
+        } else if (target &gt; gt) {
+            left = gt + 1;
+        } else {
+            return pivot;
+        }
+    }
+    return working[left];
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-solution-cs" aria-labelledby="p6-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C#</span></div><pre><code>using System;
+
+public static class Solution {
+
+    // Time: O(n) expected with random pivots; O(n^2) worst case.
+    // Space: O(n) for the copy, O(1) for the iterative selection itself.
+    public static int FindKthLargest(int[] nums, int k) {
+        int[] working = (int[])nums.Clone();
+        int target = working.Length - k;
+        int left = 0;
+        int right = working.Length - 1;
+        while (left &lt; right) {
+            // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+            int pivot = working[left + Random.Shared.Next(right - left + 1)];
+            int lt = left;
+            int i = left;
+            int gt = right;
+            while (i &lt;= gt) {
+                if (working[i] &lt; pivot) {
+                    SwapValues(working, lt, i);
+                    lt++;
+                    i++;
+                } else if (working[i] &gt; pivot) {
+                    SwapValues(working, i, gt);
+                    gt--;  // inspect the swapped-in value before advancing i
+                } else {
+                    i++;
+                }
+            }
+            // 2. Keep only the region containing target; skip the entire equal band.
+            if (target &lt; lt) {
+                right = lt - 1;
+            } else if (target &gt; gt) {
+                left = gt + 1;
+            } else {
+                return pivot;
+            }
+        }
+        return working[left];
+    }
+
+    private static void SwapValues(int[] nums, int first, int second) {
+        int tmp = nums[first];
+        nums[first] = nums[second];
+        nums[second] = tmp;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-solution-java" aria-labelledby="p6-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Java</span></div><pre><code>import java.util.Random;
+
+public class Solution {
+    private static final Random RANDOM = new Random();
+
+    // Time: O(n) expected with random pivots; O(n^2) worst case.
+    // Space: O(n) for the copy, O(1) for the iterative selection itself.
+    public static int findKthLargest(int[] nums, int k) {
+        int[] working = nums.clone();
+        int target = working.length - k;
+        int left = 0;
+        int right = working.length - 1;
+        while (left &lt; right) {
+            // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+            int pivot = working[left + RANDOM.nextInt(right - left + 1)];
+            int lt = left;
+            int i = left;
+            int gt = right;
+            while (i &lt;= gt) {
+                if (working[i] &lt; pivot) {
+                    swapValues(working, lt, i);
+                    lt++;
+                    i++;
+                } else if (working[i] &gt; pivot) {
+                    swapValues(working, i, gt);
+                    gt--;  // inspect the swapped-in value before advancing i
+                } else {
+                    i++;
+                }
+            }
+            // 2. Keep only the region containing target; skip the entire equal band.
+            if (target &lt; lt) {
+                right = lt - 1;
+            } else if (target &gt; gt) {
+                left = gt + 1;
+            } else {
+                return pivot;
+            }
+        }
+        return working[left];
+    }
+
+    private static void swapValues(int[] nums, int first, int second) {
+        int tmp = nums[first];
+        nums[first] = nums[second];
+        nums[second] = tmp;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-solution-py" aria-labelledby="p6-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">Python</span></div><pre><code>import random
+
+# Time: O(n) expected with random pivots; O(n^2) worst case.
+# Space: O(n) for the copy, O(1) for the iterative selection itself.
+
+
+def find_kth_largest(nums: list[int], k: int) -&gt; int:
+    working = nums[:]
+    target = len(working) - k
+    left, right = 0, len(working) - 1
+    while left &lt; right:
+        # 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+        pivot = working[random.randint(left, right)]
+        lt, i, gt = left, left, right
+        while i &lt;= gt:
+            if working[i] &lt; pivot:
+                working[lt], working[i] = working[i], working[lt]
+                lt += 1
+                i += 1
+            elif working[i] &gt; pivot:
+                working[i], working[gt] = working[gt], working[i]
+                gt -= 1  # inspect the swapped-in value before advancing i
+            else:
+                i += 1
+        # 2. Keep only the region containing target; skip the entire equal band.
+        if target &lt; lt:
+            right = lt - 1
+        elif target &gt; gt:
+            left = gt + 1
+        else:
+            return pivot
+    return working[left]
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="p6-solution-js" aria-labelledby="p6-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Time: O(n) expected with random pivots; O(n^2) worst case.
+// Space: O(n) for the copy, O(1) for the iterative selection itself.
+function swapValues(nums, first, second) {
+  const tmp = nums[first];
+  nums[first] = nums[second];
+  nums[second] = tmp;
+}
+
+function findKthLargest(nums, k) {
+  const working = nums.slice();
+  const target = working.length - k;
+  let left = 0;
+  let right = working.length - 1;
+  while (left &lt; right) {
+    // 1. Partition into &lt; pivot, == pivot, and &gt; pivot regions.
+    const pivot = working[left + Math.floor(Math.random() * (right - left + 1))];
+    let lt = left;
+    let i = left;
+    let gt = right;
+    while (i &lt;= gt) {
+      if (working[i] &lt; pivot) {
+        swapValues(working, lt, i);
+        lt++;
+        i++;
+      } else if (working[i] &gt; pivot) {
+        swapValues(working, i, gt);
+        gt--; // inspect the swapped-in value next
+      } else {
+        i++;
+      }
+    }
+    // 2. Keep only the region containing target; skip the entire equal band.
+    if (target &lt; lt) {
+      right = lt - 1;
+    } else if (target &gt; gt) {
+      left = gt + 1;
+    } else {
+      return pivot;
+    }
+  }
+  return working[left];
+}
+
+module.exports = { findKthLargest };
+</code></pre></div>
+  </div>
+</div>
+      </details>
+
+      <div class="problem-links">
+        Related notes: <a href="#order-statistics">Order statistics (preview)</a> &nbsp;&middot;&nbsp; <a href="#problem-index">Back to the problem index</a>
+      </div>
+    </section>
+    <section class="section" id="finished-early">
+      <div class="section-title"><h2>Finished early?</h2></div>
+      <div class="card-grid">
+        <div class="card">
+          <span class="pill blue">Challenge</span>
+          <h3>Make quickselect fast</h3>
+          <p>Problem 6 is the hardest exercise here. If you finish early, implement it without
+            looking at the 3-way partition hint, then prove to yourself why the expected runtime
+            is O(n) rather than O(n log n).</p>
+          <a class="more-link" href="#problem-6">Open Problem 6</a>
+        </div>
+        <div class="card">
+          <span class="pill green">Experiment</span>
+          <h3>Count the shifts</h3>
+          <p>On a reversed array of length n, insertion sort performs exactly n(n&minus;1)/2 shifts.
+            Verify that with your Problem 2 solution for n = 5, 10 and 100, then explain where the
+            formula comes from.</p>
+          <a class="more-link" href="#problem-2">Open Problem 2</a>
+        </div>
+        <div class="card">
+          <span class="pill orange">Read ahead</span>
+          <h3>Explore order statistics</h3>
+          <p>Quickselect is your first taste of order statistics. Selection and binary
+            search are related topics to explore; the notes page ends with a short preview so you can start thinking about it.</p>
+          <a class="more-link" href="#notes">Revisit the Recitation 1 notes</a>
+        </div>
+      </div>
+      <div class="callout info">
+        <span class="callout-title">Optional and ungraded</span>
+        <p>These problems are practice material for the Recitation 1 session. They are not part of your
+          grade, there is nothing to upload, and you are welcome to work on them before, during or
+          after the session. If a reference answer looks wrong, tell the TA.</p>
+      </div>
+    </section>
+</section></div></main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>COMPSCI 301 · course materials for the recitation sessions.</p>
+      <p class="muted small">The official course site is temporarily unavailable. If you spot a mistake, tell the TA.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

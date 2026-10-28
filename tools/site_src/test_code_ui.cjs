@@ -55,7 +55,7 @@ const root = path.resolve(__dirname, '../..');
       throw new Error(`Page not ready: ${selector}`);
     }
     await call('Emulation.setDeviceMetricsOverride', {width: 1440, height: 1200, deviceScaleFactor: 1, mobile: false});
-    await call('Page.navigate', {url: 'file://' + path.join(root, 'site/week1-exercises.html')});
+    await call('Page.navigate', {url: 'file://' + path.join(root, 'site/recitation1.html')});
     await ready('#p1-stub-java');
     assert.equal(await evaluate('document.querySelectorAll("textarea.code-input").length'), 36, '36 editable starter panels');
     assert.equal(await evaluate('document.querySelectorAll("[data-editable] textarea").length'), 36);
@@ -138,16 +138,75 @@ const root = path.resolve(__dirname, '../..');
       const {data} = await call('Page.captureScreenshot', {format:'png',captureBeyondViewport:false});
       fs.writeFileSync(path.join(root, `.tmp/code-editor-${width}.png`), Buffer.from(data,'base64'));
     }
-    await call('Page.navigate', {url:'file://' + path.join(root,'site/week1-notes.html')});
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation1.html')});
     await ready('.code-block .syntax-keyword');
-    assert.equal(await evaluate('document.querySelectorAll("textarea").length'),0);
+    assert.equal(await evaluate('document.querySelectorAll("#notes textarea").length'),0);
     assert.equal(await evaluate('document.querySelectorAll(".code-block pre code .syntax-keyword").length > 4'),true);
     console.log('PASS notes highlighted and read-only; desktop/mobile screenshots saved');
+    for (const width of [1440,390]) {
+      await call('Emulation.setDeviceMetricsOverride', {width,height:1100,deviceScaleFactor:1,mobile:width===390});
+      for (const name of ['index.html','intro.html',...Array.from({length:8},(_,n)=>`recitation${n}.html`)]) {
+        await call('Page.navigate',{url:'file://' + path.join(root,'site',name)});
+        await ready('.recitation-menu');
+        assert.equal(await evaluate('document.querySelectorAll(".recitation-options a").length'),8);
+        assert.equal(await evaluate('document.querySelector(".site-nav a.active").getAttribute("href")'),name);
+        await evaluate('document.querySelector(".recitation-menu summary").focus()');
+        await call('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',text:'\r',windowsVirtualKeyCode:13});
+        await call('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+        assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),true, name+" @"+width+" menu opened by keyboard; focus="+await evaluate('document.activeElement.outerHTML'));
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
+        assert.equal(await evaluate('var rect=document.querySelector(".recitation-options").getBoundingClientRect();rect.left>=0 && rect.right<=innerWidth'),true,name+' @'+width+' bounds='+await evaluate('JSON.stringify({left:rect.left,right:rect.right,width:innerWidth})'));
+        if (['index.html','recitation0.html','recitation1.html','recitation7.html'].includes(name)) {
+          const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+          fs.writeFileSync(path.join(root,`.tmp/${name}-menu-${width}.png`),Buffer.from(data,'base64'));
+        }
+        await call('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+        await call('Input.dispatchKeyEvent',{type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+        assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),false);
+      }
+    }
+    for (const [old,hash] of [['week1-notes.html','#merge-sort'],['week1-exercises.html','#problem-6']]) {
+      await call('Page.navigate',{url:'file://' + path.join(root,'site',old)+hash});
+      await ready('#p1-stub-java');
+      assert.equal(await evaluate('location.pathname.endsWith("recitation1.html") && location.hash==='+JSON.stringify(hash)),true);
+    }
+    await evaluate(`var field=document.querySelector('#p1-stub-java textarea');field.value='temporary navigation draft';field.dispatchEvent(new Event('input'));document.querySelector('a[href="#notes"]').click();`);
+    assert.equal(await evaluate('document.querySelector("#p1-stub-java textarea").value'), 'temporary navigation draft');
+    console.log('PASS all ten primary pages, keyboard dropdowns at two widths, legacy deep links, and same-page draft preservation');
+
+    await call('Page.navigate',{url:'file://' + path.join(root,'site/recitation0.html')});
+    await ready('#uv');
+    assert.ok(await evaluate('document.querySelectorAll(".code-block[data-language]").length > 10'), 'labeled setup code blocks');
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".code-block[data-language]")).every(block => block.querySelector(".lang-tag") && block.querySelector(".copy-btn:not([hidden])"))'),true);
+    assert.equal(await evaluate('document.querySelector("#uv [data-language=powershell] .syntax-comment") !== null'),true);
+    assert.equal(await evaluate('document.querySelector("#uv [data-language=zsh] .syntax-function") !== null'),true);
+    assert.equal(await evaluate('document.querySelector("#mise [data-language=bash] .syntax-function") !== null'),true);
+    await evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:text=>{window.setupCopied=text;return Promise.resolve();}}});
+      document.querySelector('#uv [data-language=powershell] .copy-btn').click();`);
+    assert.equal(await evaluate('window.setupCopied'), await evaluate('document.querySelector("#uv [data-language=powershell] pre code").textContent.replace(/\\s+$/, "")'));
+    assert.ok(await evaluate('window.setupCopied.includes("#") && !window.setupCopied.includes("<span")'));
+    assert.equal(await evaluate('document.querySelector("#create-folder").textContent.includes("mkdir") && !document.querySelector("#create-folder").textContent.includes("uv venv")'),true);
+    for (const width of [1440,390]) {
+      await call('Emulation.setDeviceMetricsOverride',{width,height:1200,deviceScaleFactor:1,mobile:width===390});
+      for (const anchor of ['uv','create-folder']) {
+        await evaluate(`document.getElementById('${anchor}').scrollIntoView({behavior:'instant',block:'start'})`);
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
+        const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+        fs.writeFileSync(path.join(root,`.tmp/rec0-shell-${anchor}-${width}.png`),Buffer.from(data,'base64'));
+      }
+    }
+    console.log('PASS shell labels/highlighting, literal command/comment copy, separate folder step, desktop/mobile layout');
+
     await call('Emulation.setScriptExecutionDisabled', {value:true});
-    await call('Page.navigate', {url:'file://' + path.join(root,'site/week1-exercises.html')});
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation1.html')});
     await ready('#p1-stub-java');
     assert.equal(await evaluate('document.querySelectorAll("textarea").length'),0);
     assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-panel")).filter(panel => getComputedStyle(panel).display !== "none").length'),72);
+    assert.equal(await evaluate('document.querySelectorAll(".recitation-options a").length'),8);
+    await evaluate('document.querySelector(".recitation-menu summary").focus()');
+    await call('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',text:'\r',windowsVirtualKeyCode:13});
+    await call('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+    assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),true);
     console.log('PASS no-JavaScript fallback: all 72 original code panels readable');
     console.log('ALL CODE UI CHECKS PASSED');
   } finally {

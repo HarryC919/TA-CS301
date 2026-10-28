@@ -1,0 +1,113 @@
+<section class="page-hero"><div class="container">
+<span class="eyebrow">Recitation 0 · Setup guide</span><h1>Environment &amp; notebook kernels</h1>
+<p class="subtitle">Install uv first, let it manage Python, and keep notebook packages inside a project environment. Reuse your CS201 JDK, or manage a new one with mise.</p>
+<div class="hero-actions"><a class="btn primary" href="#uv">Install uv</a><a class="btn ghost" href="#python">Python environment</a><a class="btn ghost" href="#java">Java kernel</a></div>
+</div></section>
+<div class="container">
+<section class="section" id="overview"><div class="section-title"><h2>Keep course tools separate from system software</h2></div>
+<p>Use <strong>uv</strong> as the Python version, environment, and package manager for this recitation. You do not need to install Python separately before installing uv. uv-managed Python installations live in a managed user directory; course packages belong in the project's <code>.venv</code>.</p>
+<div class="callout info"><span class="callout-title">One project, one environment</span><p>Follow the uv commands below instead of installing course packages into an operating-system Python or an unrelated application's Python. Keep notebook files beside <code>pyproject.toml</code>, outside <code>.venv</code>. Use <code>uv add</code> for dependencies and <code>uv run</code> for project commands; no manual environment activation is needed.</p></div>
+<p>JupyterLab provides the interface; a kernel executes a notebook's code. Python and Java need different kernels. Notes stay on this website, and notebook exercise downloads will be added later. Recitation 1 retains browser exercises during the transition.</p>
+<p>Each code block labels the intended shell or notebook language. The text after <code>#</code> (or <code>//</code> in Java) briefly explains the command; it is a comment and can be copied with the code.</p>
+<p>Run terminal commands in your terminal, not in a notebook cell. Windows instructions use <strong>PowerShell</strong>. Installer downloads need an internet connection.</p>
+</section>
+<section class="section" id="shell-comments"><div class="section-title"><h2>Before copying commands: Zsh only</h2></div>
+<p>If your terminal uses Zsh (the macOS default), run this first to enable interactive <code>#</code> comments in the current terminal. The explanation is on the next line because inline comments are not enabled yet. Repeat this after opening a new Zsh terminal. Bash and PowerShell users can skip this step.</p>
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · run first</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>setopt INTERACTIVE_COMMENTS
+# Enable comments in this Zsh session before copying the commands below</code></pre></div>
+</section>
+<section class="section" id="uv"><div class="section-title"><h2>1. Install uv before Python</h2></div>
+<h3>macOS / Linux</h3>
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Bash / Zsh · macOS &amp; Linux</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv with the official installer</code></pre></div>
+<h3>Windows — PowerShell</h3>
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" # Install uv in Windows PowerShell</code></pre></div>
+<p>Close and reopen the terminal after installation so the updated user PATH is available. Then check:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv --version # Check that uv is available</code></pre></div>
+<p class="note">Use one uv installation method. If you already have a working uv installation, verify its version and continue. The Windows installer command applies its execution-policy option to that installer process; you do not need to change the machine-wide PowerShell policy.</p>
+</section>
+<section class="section" id="create-folder"><div class="section-title"><h2>2. Create and enter your notebook folder</h2></div>
+<p>This step creates a normal working folder, not a virtual environment. Choose the parent location where you want to keep your course notebooks, then run these two commands:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mkdir cs301-notebooks # Create the notebook working folder
+cd cs301-notebooks # Enter the working folder</code></pre></div>
+<p>If this folder already exists, skip <code>mkdir</code> and enter it with <code>cd</code>. All commands in the next step run inside this folder. The <code>.venv</code> directory is created separately by uv.</p>
+</section>
+<section class="section" id="python"><div class="section-title"><h2>3. Install Python and create the course environment with uv</h2></div>
+<p>Run these commands inside the <code>cs301-notebooks</code> folder created in the previous step. They work in Bash, Zsh and PowerShell.</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv python install 3.13 # Install a uv-managed Python 3.13
+uv init --bare --python 3.13 # Create the project metadata
+uv python pin 3.13 # Record Python 3.13 for this project
+uv venv --python 3.13 --managed-python # Create .venv with managed Python
+uv add jupyterlab ipykernel # Add notebook tools to the project environment</code></pre></div>
+<p><code>uv python install</code> obtains a managed Python. <code>uv init</code> creates project metadata, and <code>uv python pin</code> records the chosen version in <code>.python-version</code>. The explicit <code>--managed-python</code> option ensures the virtual environment uses a uv-managed interpreter. <code>uv add</code> records dependencies in <code>pyproject.toml</code>, resolves them in <code>uv.lock</code>, and installs them into <code>.venv</code>.</p>
+<h3>Register and check the Python kernel</h3>
+<p>Stay in <code>cs301-notebooks</code> for these commands. The kernel registration is scoped to the project environment rather than a global kernel directory.</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv run python -m ipykernel install --sys-prefix --name cs301-python --display-name "Python (CS301)" # Register the project Python kernel
+uv run jupyter kernelspec list # List kernels visible to this project
+uv run python -c "import sys; print(sys.executable)" # Show the project Python executable
+uv run jupyter lab # Start JupyterLab from the project</code></pre></div>
+<p>The interpreter path should point inside this project's <code>.venv</code>. Keep the terminal running and create a notebook with the <strong>Python (CS301)</strong> kernel in JupyterLab. Run this notebook cell with Shift+Enter:</p>
+<div class="code-block" data-language="py"><div class="code-head"><span class="lang-tag">Python · notebook cell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>import sys # Load Python runtime information
+print(sys.executable) # Check which Python this notebook uses
+print(1 + 1) # Verify that the Python cell prints 2</code></pre></div>
+<p>Check that the notebook also uses the project's <code>.venv</code> and prints <code>2</code>. In later sessions, enter the project folder and use <code>uv run jupyter lab</code> again. To add a package, use <code>uv add package-name</code>, replacing the example name with the actual dependency.</p>
+</section>
+<section class="section" id="java"><div class="section-title"><h2>4. Check your existing Java JDK</h2></div>
+<p>CS201 normally already gives you a JDK. <strong>Keep using it if its major version is at least 17 (17 or newer)</strong>; you do not need to install another JDK or mise for this course. JDK 21 is one suitable example. Check in the terminal that will launch JupyterLab:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>java -version # Check the active Java runtime version
+javac -version # Check that the JDK compiler is available
+java --list-modules # Look for the jdk.jshell module</code></pre></div>
+<p>Confirm that Java and the compiler use the intended JDK and the module list includes <code>jdk.jshell</code>. A JRE alone is not enough. If your existing JDK meets these checks, skip the optional mise section and go directly to <a href="#java-kernel">Java kernel installation</a>.</p>
+</section>
+<section class="section" id="mise"><div class="section-title"><h2>5. Optional: install or manage a JDK with mise</h2></div>
+<p>If you have no JDK, or yours is older than version 17, use <strong>mise</strong> as a JDK version manager. The example below selects Temurin JDK 21 for this course project rather than replacing a system JDK.</p>
+<h3>macOS — default Zsh shell</h3>
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · macOS</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -fsSL https://mise.run/zsh | sh # Install mise and configure Zsh activation</code></pre></div>
+<h3>Linux — Bash shell</h3>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash · Linux</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -fsSL https://mise.run/bash | sh # Install mise and configure Bash activation</code></pre></div>
+<p>The shell-specific installers add mise activation to that shell's startup file. Open a new terminal afterward. For other shells, follow the official mise shell-setup instructions linked below.</p>
+<h3>Windows — PowerShell</h3>
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>winget install jdx.mise # Install mise on Windows</code></pre></div>
+<p>Open a new PowerShell window after installation. If <code>winget</code> is unavailable, use an alternative from the official mise installation guide. The commands below use <code>mise exec</code>, so they do not require a PowerShell profile activation step.</p>
+<h3>Select a project JDK — all platforms</h3>
+<p>Return to your <code>cs301-notebooks</code> folder, then run:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mise --version # Check that mise is available
+mise use java@temurin-21 # Install and select JDK 21 for this project
+mise exec -- java -version # Check the project-selected Java version
+mise exec -- javac -version # Check the selected JDK compiler
+mise exec -- java --list-modules # Check the selected JDK for jdk.jshell</code></pre></div>
+<p><code>mise use</code> installs the selected JDK and records it in the project's <code>mise.toml</code>. <code>mise exec</code> supplies that JDK and its <code>JAVA_HOME</code> to the command it launches. For Java notebooks on this path, launch JupyterLab from the course folder using:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mise exec -- uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
+<p>This lets the Java kernel inherit the selected JDK even without shell activation. Keep using the <code>mise exec --</code> prefix for Java-related project commands in later sessions.</p>
+</section>
+<section class="section" id="java-kernel"><div class="section-title"><h2>6. Install the Java kernel inside the uv environment</h2></div>
+<ol class="steps"><li>Complete the uv project setup first. Stop a running JupyterLab server with Ctrl+C in its terminal before installing a new kernel.</li><li>Download the binary distribution ZIP from the <a href="https://github.com/SpencerPark/IJava/releases">IJava releases page</a>, not the source-code ZIP.</li><li>Extract it into a folder named <code>ijava</code> inside <code>cs301-notebooks</code>. Ensure <code>ijava</code> directly contains both <code>install.py</code> and the <code>java</code> folder; move them out of an extra nested directory if necessary.</li></ol>
+<h3>Using an existing JDK — macOS/Linux and PowerShell</h3>
+<p>Start in <code>cs301-notebooks</code>. The installer runs from its own directory, while <code>--project ..</code> selects the parent uv project and its Python environment:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
+uv run --project .. python install.py --sys-prefix # Install the Java kernel into the parent project environment
+cd .. # Return to the notebook project folder
+uv run jupyter kernelspec list # List kernels visible to this project
+uv run jupyter lab # Start JupyterLab from the project</code></pre></div>
+<h3>Using the optional mise-managed JDK</h3>
+<p>Use this version instead, also starting in <code>cs301-notebooks</code>:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
+mise exec -- uv run --project .. python install.py --sys-prefix # Install the kernel using the managed JDK and project Python
+cd .. # Return to the notebook project folder
+mise exec -- uv run jupyter kernelspec list # List project kernels with the selected JDK
+mise exec -- uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
+<p>The kernel list should include <code>java</code>. In JupyterLab, create a notebook using <strong>Java</strong> and run this cell:</p>
+<div class="code-block" data-language="java"><div class="code-head"><span class="lang-tag">Java · notebook cell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>System.out.println(System.getProperty("java.version")); // Check the Java version used by the notebook
+System.out.println(1 + 1); // Verify that the Java cell prints 2</code></pre></div>
+<p>Check for a JDK major version of at least 17 and a final output of <code>2</code>. IJava uses JShell-style interactive execution; this simple test needs no <code>Main</code> class wrapper.</p>
+</section>
+<section class="section" id="workflow"><div class="section-title"><h2>7. Daily notebook workflow</h2></div>
+<ol class="steps"><li>Enter <code>cs301-notebooks</code>. Start JupyterLab with <code>uv run jupyter lab</code>, or <code>mise exec -- uv run jupyter lab</code> for a mise-managed Java environment.</li><li>Open the appropriate language notebook when exercises are released. Select <strong>Python (CS301)</strong> or <strong>Java</strong> to match its code; changing kernels does not translate a program.</li><li>Run cells from top to bottom with Shift+Enter. Save edits and outputs with Ctrl+S or Cmd+S.</li><li>Restart the kernel and run all cells before checking or sharing results. Unlike this website's temporary editors, notebook files can retain your edits.</li></ol>
+</section>
+<section class="section" id="troubleshooting"><div class="section-title"><h2>Common setup problems</h2></div>
+<ul><li><strong>uv or mise not found:</strong> reopen the terminal after installation and verify its user PATH. Use the official setup guide for your shell.</li><li><strong>Wrong Python or missing package:</strong> enter the course project, use <code>uv run python</code>, and add dependencies with <code>uv add</code>. Check <code>sys.executable</code> inside the notebook.</li><li><strong>Kernel missing:</strong> use <code>uv run jupyter kernelspec list</code> in the same project where you installed it. Avoid launching an unrelated system Jupyter.</li><li><strong>Java kernel fails:</strong> verify the JDK version, compiler, and <code>jdk.jshell</code>. mise users should run these checks and JupyterLab through <code>mise exec --</code>.</li><li><strong>Need help:</strong> bring your OS, shell, version outputs, selected kernel and exact error message to the TA.</li></ul>
+<p>Database tools and their environment will be announced separately once that part of the recitation plan is decided.</p>
+</section>
+<section class="section" id="sources"><div class="section-title"><h2>Official setup references</h2></div>
+<ul><li><a href="https://docs.astral.sh/uv/getting-started/installation/">Install uv on macOS, Linux and Windows</a></li><li><a href="https://docs.astral.sh/uv/guides/install-python/">Install and manage Python with uv</a></li><li><a href="https://docs.astral.sh/uv/guides/projects/">Manage a uv project and dependencies</a></li><li><a href="https://docs.astral.sh/uv/guides/integration/jupyter/">Use Jupyter with uv</a></li><li><a href="https://ipython.readthedocs.io/en/stable/install/kernel_install.html">IPython kernel registration</a></li><li><a href="https://mise.jdx.dev/installing-mise.html">Install mise</a></li><li><a href="https://mise.jdx.dev/shell-setup.html">Activate mise in your shell</a></li><li><a href="https://mise.jdx.dev/lang/java.html">Manage Java JDK versions with mise</a></li><li><a href="https://github.com/SpencerPark/IJava#installing">IJava installation</a></li></ul>
+<p class="note">Instructions checked against official documentation on October 27, 2026. Use the version and kernel checks above to verify your own installation.</p>
+</section></div>

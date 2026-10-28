@@ -5,6 +5,18 @@
 (function () {
   "use strict";
 
+  document.querySelectorAll(".recitation-menu").forEach(function (menu) {
+    document.addEventListener("click", function (event) {
+      if (!menu.contains(event.target)) menu.open = false;
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && menu.open) {
+        menu.open = false;
+        menu.querySelector("summary").focus();
+      }
+    });
+  });
+
   var STORAGE_KEY = "cs301-week1-lang";
   var DEFAULT_LANG = "java";
 
@@ -21,7 +33,8 @@
       "struct typedef unsigned signed sizeof auto switch case default this super extends " +
       "implements interface async await yield lambda nonlocal global assert to swap append " +
       "length floor both non empty end").split(/\s+/);
-    var isHashComment = lang === "py" || lang === "pseudo";
+    var isShell = ["bash", "zsh", "powershell"].indexOf(lang) !== -1;
+    var isHashComment = lang === "py" || lang === "pseudo" || isShell;
     var comments = isHashComment ? "#[^\\n]*" : "\\/\\*[\\s\\S]*?(?:\\*\\/|$)|\\/\\/[^\\n]*|#[ \\t]*(?:include|define|ifdef|ifndef|endif|else|pragma)";
     var strings = '\"\"\"[\\s\\S]*?(?:\"\"\"|$)|\'\'\'[\\s\\S]*?(?:\'\'\'|$)|"(?:\\\\.|[^"\\\\\\n])*"?|\'(?:\\\\.|[^\'\\\\\\n])*\'?|`(?:\\\\.|[^`\\\\])*`?';
     var pattern = new RegExp(comments + "|" + strings + "|\\b(?:0[xX][0-9a-fA-F]+|[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)[a-zA-Z]*\\b|[A-Za-z_$][\\w$]*", "g");
@@ -38,6 +51,8 @@
         type = "string";
       } else if (/^[0-9]/.test(token)) {
         type = "number";
+      } else if (isShell && ["uv", "mise", "curl", "sh", "powershell", "winget", "mkdir", "cd", "python", "java", "javac", "irm", "iex", "setopt"].indexOf(token) !== -1) {
+        type = "function";
       } else if (keywords.indexOf(token) !== -1 || token[0] === "#") {
         type = "keyword";
       } else if (/^\s*\(/.test(text.slice(pattern.lastIndex))) {
@@ -51,9 +66,43 @@
 
   document.querySelectorAll("pre code").forEach(function (code) {
     var panel = code.closest(".tab-panel");
-    code.innerHTML = highlight(code.textContent, panel ? panel.getAttribute("data-lang") : "pseudo");
+    var block = code.closest("[data-language]");
+    code.innerHTML = highlight(code.textContent, panel ? panel.getAttribute("data-lang") : block ? block.getAttribute("data-language") : "pseudo");
   });
 
+  document.querySelectorAll(".code-block[data-language] .copy-btn").forEach(function (button) {
+    button.hidden = false;
+  });
+
+  document.addEventListener("click", function (event) {
+    var button = event.target.closest(".copy-btn");
+    if (!button) {
+      return;
+    }
+    var group = button.closest(".tabs");
+    var panel = group ? group.querySelector(".tab-panel:not([hidden])") : button.closest(".code-block[data-language]");
+    if (!panel) {
+      return;
+    }
+    var input = panel.querySelector("textarea");
+    var code = panel.querySelector("pre code") || panel;
+    var text = (input ? input.value : code.textContent).replace(/\s+$/, "");
+    var original = button.textContent;
+    copyText(text)
+      .then(function () {
+        button.textContent = "Copied!";
+        button.classList.add("copied");
+      })
+      .catch(function () {
+        button.textContent = "Press Ctrl+C";
+      })
+      .finally(function () {
+        window.setTimeout(function () {
+          button.textContent = original;
+          button.classList.remove("copied");
+        }, 1400);
+      });
+  });
   var groups = Array.prototype.slice.call(document.querySelectorAll(".tabs[data-tabs]"));
   if (groups.length === 0) {
     return;
@@ -283,36 +332,5 @@
     });
   }
 
-  document.addEventListener("click", function (event) {
-    var button = event.target.closest(".copy-btn");
-    if (!button) {
-      return;
-    }
-    var group = button.closest(".tabs");
-    if (!group) {
-      return;
-    }
-    var panel = group.querySelector(".tab-panel:not([hidden])");
-    if (!panel) {
-      return;
-    }
-    var input = panel.querySelector("textarea");
-    var code = panel.querySelector("pre code") || panel;
-    var text = (input ? input.value : code.textContent).replace(/\s+$/, "");
-    var original = button.textContent;
-    copyText(text)
-      .then(function () {
-        button.textContent = "Copied!";
-        button.classList.add("copied");
-      })
-      .catch(function () {
-        button.textContent = "Press Ctrl+C";
-      })
-      .finally(function () {
-        window.setTimeout(function () {
-          button.textContent = original;
-          button.classList.remove("copied");
-        }, 1400);
-      });
-  });
+
 })();

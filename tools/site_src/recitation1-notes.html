@@ -1,0 +1,640 @@
+      <nav class="toc" aria-label="On this page">
+        <h2>On this page</h2>
+        <ol>
+          <li><a href="#big-picture">The big picture</a></li>
+          <li><a href="#bubble-sort">Bubble sort</a></li>
+          <li><a href="#insertion-sort">Insertion sort</a></li>
+          <li><a href="#merge-sort">Merge sort</a></li>
+          <li><a href="#quick-sort">Quick sort</a></li>
+          <li><a href="#stability">Stability and in-place</a></li>
+          <li><a href="#comparison">All four side by side</a></li>
+          <li><a href="#when-to-use">When to use which</a></li>
+          <li><a href="#order-statistics">Order statistics preview</a></li>
+          <li><a href="#before-exercises">Before the exercises</a></li>
+        </ol>
+      </nav>
+
+      <section class="section" id="takeaways">
+        <div class="section-title"><h2>Five things to remember</h2></div>
+        <div class="card notes-takeaways">
+          <ol>
+            <li>No comparison sort beats <strong>Ω(n log n)</strong> comparisons in the worst case: n
+              items come in n! orders, and every order must be told apart.</li>
+            <li><strong>Bubble and insertion sort use O(1) extra space</strong>; quick sort partitions in place
+              but also needs a recursion stack. Standard array merge sort uses O(n) extra space.</li>
+            <li>Insertion sort's <strong>shift count equals the number of inversions</strong>, I.
+              Its total time is Θ(n + I), so sorted input still takes Θ(n). Problem 2 builds on this.</li>
+            <li><strong>Stability</strong> means equal keys keep their original order, which matters as
+              soon as records carry several fields.</li>
+            <li>A <strong>random pivot plus 3-way partition</strong> avoids predictable bad splits
+              on sorted input and skips equal keys. Expected time is O(n log n); the O(n²) worst case remains.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="goals">
+        <div class="section-title"><h2>Learning goals</h2></div>
+        <p class="lead">By the end of this pass you should be able to:</p>
+        <ul>
+          <li>state what a comparison-based sort is and why Ω(n log n) bounds it;</li>
+          <li>trace bubble, insertion, merge and quick sort on a small array by hand;</li>
+          <li>read best, average and worst cases, keeping time separate from extra space;</li>
+          <li>define stable, in-place and adaptive, and label the four sorts with them;</li>
+          <li>choose a sort for a stated situation, including the hybrids libraries ship.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="big-picture">
+        <div class="section-title"><h2>The big picture</h2></div>
+        <p class="lead">Sorting is the warm-up problem of algorithm analysis: trivial to state, easy to
+          implement badly, and bounded below by Ω(n log n) once only comparisons are allowed.</p>
+
+        <h3>What sorting is for</h3>
+        <p>An ordered array is easier to work with everywhere. Binary search needs it, deduplication
+          becomes one scan, and grouping, medians and the greedy or dynamic-programming algorithms of
+          later weeks all start from an order. Databases do the same work with ORDER BY, sort-merge
+          joins and B-tree indexes.</p>
+
+        <h3>What "comparison-based" means</h3>
+        <p>All four sorts learn about two elements only by comparing them: less than, equal, greater
+          than. They never inspect digits, bytes or hashes, so the same code sorts integers, strings or
+          whole records whenever a total order exists. That restriction is exactly what makes the lower
+          bound apply; counting sort and radix sort escape it by looking at values.</p>
+
+        <h3>Why Ω(n log n) is a lower bound</h3>
+        <p>With n distinct values there are n! possible input orders, and the algorithm must tell all of
+          them apart, so its decision tree needs at least n! leaves. A binary tree with L leaves has
+          height at least log<sub>2</sub> L, so some input forces at least log<sub>2</sub>(n!)
+          comparisons. Since log<sub>2</sub>(n!) ≈ n log<sub>2</sub> n − 1.44n, that is Ω(n log n).
+          Merge sort matches the bound; quick sort matches it on average.</p>
+
+        <h3>In place, stable, adaptive</h3>
+        <p>Strictly in place: O(1) extra memory including the call stack. Quick sort's partition
+          is in place, but its recursion stack uses additional memory; the tables below exclude that stack
+          when labeling its data rearrangement as in place.
+          Stable: equal keys keep their relative order. Adaptive: already or nearly sorted input makes
+          the algorithm clearly faster. Table 1 applies all three to the four sorts.</p>
+
+        <h3>Why quadratic sorts still matter</h3>
+        <p>For n = 10, insertion sort needs at most 45 shifts. Its low overhead can make it
+          useful for small inputs, and its running time on nearly sorted data approaches O(n).
+          Practical hybrid sorts exploit this: Timsort extends short runs with insertion sort;
+          common introsort implementations use insertion sort on small partitions and heapsort
+          if recursion grows too deep. The useful cutoff depends on the implementation and data.</p>
+      </section>
+
+      <section class="algo" id="bubble-sort">
+        <div class="algo-head">
+          <span class="algo-num">1</span>
+          <h2>Bubble sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Average O(n²)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(1)</span>
+          <span class="pill orange">Stable, in place</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Bubble sort makes repeated passes, comparing neighbours and swapping them when they are out
+          of order. Each pass floats the largest remaining element to the end of the unsorted region, so
+          after k passes the last k elements are final and the next pass can be shorter. That growing
+          sorted tail is the picture worth remembering.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Compare the first two elements and swap them if the left one is larger, then move one
+            position right and repeat across the unsorted region.</li>
+          <li>The largest remaining element is now at the region's right end; shrink the region by one.</li>
+          <li>Set a flag on every swap. A full pass without swaps means the array is sorted, so stop
+            early.</li>
+          <li>Repeat until a pass is clean or one element is left.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Bubble sort on <code>[5, 2, 4, 1, 3]</code>:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing bubble sort on [5, 2, 4, 1, 3]. The sorted tail grows by one per pass.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Pass</th>
+                <th scope="col">Array after the pass</th>
+                <th scope="col">What the pass settled</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>start</td><td><code>[5, 2, 4, 1, 3]</code></td><td>nothing yet</td></tr>
+              <tr><td>1</td><td><code>[2, 4, 1, 3, 5]</code></td><td>5 reaches the end</td></tr>
+              <tr><td>2</td><td><code>[2, 1, 3, 4, 5]</code></td><td>4 joins the sorted tail</td></tr>
+              <tr><td>3</td><td><code>[1, 2, 3, 4, 5]</code></td><td>the array becomes sorted</td></tr>
+              <tr><td>4</td><td><code>[1, 2, 3, 4, 5]</code></td><td>no swaps, so stop</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Passes 1 to 3 make 4, 3 and 2 comparisons; pass 4 makes 1 and then stops early.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">bubble_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>for pass = 1 to n - 1:
+  swapped = false
+  for i = 0 to n - pass - 1:
+    if a[i] &gt; a[i + 1]:
+      swap a[i] and a[i + 1]
+      swapped = true
+  if not swapped:
+    break                    # array is already sorted: stop
+return a</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best case</dt>
+          <dd>O(n): sorted input, one pass of n − 1 comparisons, no swaps, early exit.</dd>
+          <dt>Average and worst</dt>
+          <dd>O(n²): about n(n − 1)/2 comparisons; reverse-sorted input swaps at every comparison.</dd>
+          <dt>Extra space</dt>
+          <dd>O(1): a temporary and two counters.</dd>
+          <dt>Stability</dt>
+          <dd>Stable: only strictly greater neighbours swap, so equal values never cross.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>Without the early-exit check, this bubble-sort loop makes Θ(n²) comparisons even on
+            sorted input. Reset the flag before every pass; otherwise a swap in an earlier pass can
+            prevent a later clean pass from stopping the loop. Bubble sort is a teaching tool for tracing, not a
+            sort to ship.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="insertion-sort">
+        <div class="algo-head">
+          <span class="algo-num">2</span>
+          <h2>Insertion sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Best O(n)</span>
+          <span class="pill blue">Average O(n²)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(1)</span>
+          <span class="pill orange">Stable, in place, adaptive</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Insertion sort grows a sorted prefix one element at a time, the way most people sort a hand
+          of cards: take the next card and slide it left until it sits in order. Everything before the
+          current position is already sorted, and the new element is inserted into that prefix.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Start with the first element as a sorted prefix of length one.</li>
+          <li>Take the next element as the key and scan left through the prefix.</li>
+          <li>Shift every element greater than the key one position right; one shift moves one element
+            exactly one place.</li>
+          <li>Stop at an element ≤ the key or at the start of the array, and put the key in the gap.</li>
+          <li>Repeat until the prefix spans the array.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Insertion sort on <code>[5, 2, 4, 1, 3]</code>, sorted prefix in bold:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing insertion sort on [5, 2, 4, 1, 3]. Seven shifts in total = seven inversions.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Insert</th>
+                <th scope="col">Array after inserting</th>
+                <th scope="col">Shifts used</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>start</td><td><code>[5 | 2, 4, 1, 3]</code></td><td>0</td></tr>
+              <tr><td>2</td><td><code><strong>[2, 5]</strong> | 4, 1, 3</code></td><td>1</td></tr>
+              <tr><td>4</td><td><code><strong>[2, 4, 5]</strong> | 1, 3</code></td><td>1</td></tr>
+              <tr><td>1</td><td><code><strong>[1, 2, 4, 5]</strong> | 3</code></td><td>3</td></tr>
+              <tr><td>3</td><td><code><strong>[1, 2, 3, 4, 5]</strong></code></td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">The shifts add up: 1 + 1 + 3 + 2 = 7, and the array has exactly 7 inversions.
+          An inversion is a pair i &lt; j with a[i] &gt; a[j]. Each shift lets the key pass one
+          larger predecessor, accounting for exactly one original inversion. Counting all such shifts
+          counts each inversion once. Problem 2 asks you to implement this count.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">insertion_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>for i = 1 to n - 1:
+  key = a[i]
+  j = i - 1
+  while j &gt;= 0 and a[j] &gt; key:
+    a[j + 1] = a[j]          # shift one position right
+    j = j - 1
+  a[j + 1] = key             # drop the key into the gap
+return a</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best case</dt>
+          <dd>O(n): sorted input, n − 1 comparisons, no shifts.</dd>
+          <dt>Average and worst</dt>
+          <dd>O(n²): reverse-sorted input needs n(n − 1)/2 shifts, about 12.5 million moves for
+            n = 5,000; random input averages roughly n²/4.</dd>
+          <dt>Extra space</dt>
+          <dd>O(1): the key and two indices.</dd>
+          <dt>Stability and adaptivity</dt>
+          <dd>Stable, and adaptive: exactly I shifts for I inversions in the original array, plus
+            Θ(n) loop overhead, giving Θ(n + I) total time.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>Binary-searching the insertion point only trades comparisons for shifts. The shifts still take
+            Θ(n²) moves in the worst case and dominate on arrays; cutting them needs a different data structure.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="merge-sort">
+        <div class="algo-head">
+          <span class="algo-num">3</span>
+          <h2>Merge sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Best O(n log n)</span>
+          <span class="pill blue">Average O(n log n)</span>
+          <span class="pill blue">Worst O(n log n)</span>
+          <span class="pill green">Space O(n)</span>
+          <span class="pill orange">Stable, not in place</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Merge sort splits the array in half, sorts each half recursively, then merges the two sorted
+          halves. Merging is where the work happens: compare the fronts, take the smaller element, and
+          repeat. Each half arrives sorted, so every element is touched once per recursion level, and
+          there are about log<sub>2</sub> n levels.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>A segment of length 0 or 1 is sorted: return it.</li>
+          <li>Split the segment at its midpoint and sort both halves recursively.</li>
+          <li>Merge: repeatedly append the smaller front element; on a tie take the left one, which
+            keeps the sort stable.</li>
+          <li>Append whatever is left over and copy the merged run back into place.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Merge sort on <code>[5, 2, 4, 1, 3]</code>, using the same floor midpoint as the pseudocode:</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing merge sort on [5, 2, 4, 1, 3]. Depth is ⌈log2 5⌉ = 3 levels.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Stage</th>
+                <th scope="col">Arrays</th>
+                <th scope="col">Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>split</td><td><code>[5, 2]</code> and <code>[4, 1, 3]</code></td><td>left has 2 elements; right has 3</td></tr>
+              <tr><td>left merge</td><td><code>[5]</code> + <code>[2]</code></td><td><code>[2, 5]</code></td></tr>
+              <tr><td>right inner merge</td><td><code>[1]</code> + <code>[3]</code></td><td><code>[1, 3]</code></td></tr>
+              <tr><td>right merge</td><td><code>[4]</code> + <code>[1, 3]</code></td><td><code>[1, 3, 4]</code></td></tr>
+              <tr><td>final merge</td><td><code>[2, 5]</code> + <code>[1, 3, 4]</code></td><td><code>[1, 2, 3, 4, 5]</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Five elements give ⌈log<sub>2</sub> 5⌉ = 3 levels, and the total merge work per level is at most proportional to five
+          elements (some branches reach singletons earlier): that is the O(n log n) argument.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">merge_sort(a)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>merge_sort(a):
+  if length(a) &lt;= 1:
+    return a
+  mid   = floor(length(a) / 2)
+  left  = merge_sort(a[0 .. mid - 1])
+  right = merge_sort(a[mid .. length(a) - 1])
+  return merge(left, right)
+
+merge(left, right):
+  result = []
+  i = 0
+  j = 0
+  while i &lt; length(left) and j &lt; length(right):
+    if left[i] &lt;= right[j]:   # &lt;= keeps equal keys in order
+      append left[i] to result
+      i = i + 1
+    else:
+      append right[j] to result
+      j = j + 1
+  append left[i .. end] and right[j .. end] to result
+  return result</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best, average, worst</dt>
+          <dd>All O(n log n): log<sub>2</sub> n levels with O(n) merging per level, whatever the input
+            order.</dd>
+          <dt>Extra space</dt>
+          <dd>O(n) for the merge buffer. Linked lists can be merged by relinking nodes instead, which is
+            why merge sort is the standard list sort.</dd>
+          <dt>Stability</dt>
+          <dd>Yes, if the merge takes from the left half on ties.</dd>
+          <dt>In place</dt>
+          <dd>No: the buffer is the price of the guaranteed bound.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>The tie-break is the stability switch: writing <code>&lt;</code> instead of
+            <code>&lt;=</code> flips equal keys across halves. Standard merge sort has Θ(n log n) time in the best, average and worst cases;
+            the exact comparison counts can differ. This array version uses O(n) extra memory.
+            Use indices when merging: removing the first element of a Python list takes linear time.</p>
+        </aside>
+      </section>
+
+      <section class="algo" id="quick-sort">
+        <div class="algo-head">
+          <span class="algo-num">4</span>
+          <h2>Quick sort</h2>
+        </div>
+        <div class="pill-row">
+          <span class="pill blue">Average O(n log n)</span>
+          <span class="pill blue">Worst O(n²)</span>
+          <span class="pill green">Space O(log n) average</span>
+          <span class="pill red">Not stable, in-place partition</span>
+        </div>
+
+        <h3>The idea</h3>
+        <p>Quick sort picks a pivot, partitions the segment so smaller elements lie left and larger
+          right, then sorts both sides recursively. Unlike merge sort, the hard part comes first: after
+          partitioning, the pivot sits in its final position and never moves again.</p>
+
+        <h3>How it works</h3>
+        <ol class="steps">
+          <li>Pick a pivot. The trace below uses the last element; the exercises want a random index.</li>
+          <li>Partition: swap every element smaller than the pivot into a growing left region, then swap
+            the pivot into the boundary.</li>
+          <li>The pivot is now final: everything left of it is smaller, everything right larger or
+            equal.</li>
+          <li>Recurse on both sides. A 3-way partition groups equal keys in the middle and keeps them out
+            of the recursion.</li>
+          <li>Stop at segments of zero or one element.</li>
+        </ol>
+
+        <h3>Worked example</h3>
+        <p>Quick sort on <code>[8, 3, 5, 1, 9, 2]</code>, last element as pivot (a simplified
+          illustration; the exercise requires a random pivot):</p>
+        <div class="table-wrap">
+          <table class="data notes-trace">
+            <caption>Tracing quick sort with last-element pivots: pivot 2, then 3, then 5, then 8.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Partition</th>
+                <th scope="col">Segment before</th>
+                <th scope="col">Pivot</th>
+                <th scope="col">Array after partitioning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><code>[8, 3, 5, 1, 9, 2]</code></td><td>2</td><td><code>[1, 2, 5, 8, 9, 3]</code></td></tr>
+              <tr><td>2</td><td><code>[5, 8, 9, 3]</code></td><td>3</td><td><code>[1, 2, 3, 8, 9, 5]</code></td></tr>
+              <tr><td>3</td><td><code>[8, 9, 5]</code></td><td>5</td><td><code>[1, 2, 3, 5, 9, 8]</code></td></tr>
+              <tr><td>4</td><td><code>[9, 8]</code></td><td>8</td><td><code>[1, 2, 3, 5, 8, 9]</code></td></tr>
+              <tr><td>done</td><td>singletons left</td><td>—</td><td><code>[1, 2, 3, 5, 8, 9]</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Each partition is one pass over its segment. The first split is uneven: one element
+          lies left of the pivot and four lie right. Each later split has an empty left side, so this
+          trace also illustrates poor balance. On sorted input, last-element pivots leave subproblems
+          of sizes 0 and n − 1, giving (n − 1) + (n − 2) + ... + 1 comparisons. Random pivots prevent
+          sorted order alone from forcing these bad splits; they do not eliminate the O(n²) worst case.</p>
+
+        <h3>Pseudocode</h3>
+        <div class="code-block">
+          <div class="code-head">
+            <span class="code-title">quick_sort(a, lo, hi)</span>
+            <span class="lang-tag">pseudocode</span>
+          </div>
+<pre><code>quick_sort(a, lo, hi):
+  if lo &gt;= hi:
+    return
+  p = partition(a, lo, hi)   # p is the pivot's final index
+  quick_sort(a, lo, p - 1)
+  quick_sort(a, p + 1, hi)
+
+partition(a, lo, hi):
+  pivot = a[hi]              # illustration: use a random index in practice
+  i = lo
+  for j = lo to hi - 1:
+    if a[j] &lt; pivot:
+      swap a[i] and a[j]
+      i = i + 1
+  swap a[i] and a[hi]        # the pivot lands at index i
+  return i</code></pre>
+        </div>
+
+        <h3>Complexity</h3>
+        <dl class="notes-facts">
+          <dt>Best and average</dt>
+          <dd>O(n log n): balanced partitions give log<sub>2</sub> n levels of O(n) work; random pivots
+            give expected O(n log n) time on distinct keys. For duplicate-heavy input,
+            use the 3-way partition required in P5.</dd>
+          <dt>Worst case</dt>
+          <dd>O(n²): maximally unbalanced partitions, as first or last pivots cause on sorted input, or
+            the illustrated Lomuto 2-way partition on all-equal input.</dd>
+          <dt>Extra space</dt>
+          <dd>O(log n) average recursion stack, O(n) worst case; the partitioning itself is in place.</dd>
+          <dt>Stability</dt>
+          <dd>Not stable: swaps move equal keys past each other.</dd>
+        </dl>
+
+        <aside class="callout warn">
+          <span class="callout-title">Watch out</span>
+          <p>The illustrated last-pivot Lomuto partition is quadratic on sorted or all-equal input. Use a random index plus a 3-way partition, which sets equal keys aside in one
+            pass. Randomization gives an expected bound, not a worst-case guarantee; 3-way partition
+            handles an all-equal segment in Θ(n). Quick sort is still not stable.</p>
+        </aside>
+      </section>
+
+      <section class="section" id="stability">
+        <div class="section-title"><h2>Stability, in place, and the words we use</h2></div>
+        <p class="lead">Three adjectives appear in every sorting discussion. They are independent, and the
+          four sorts cover most useful combinations.</p>
+
+        <h3>Stable</h3>
+        <p>A sort is stable when equal keys keep their original relative order. Take three student
+          records — <strong>(Alice, 90)</strong>, <strong>(Bob, 85)</strong>, <strong>(Cara, 90)</strong>
+          — and sort them by score ascending. Alice and Cara tie at 90, so the score alone does not
+          decide between them. A stable sort returns Bob 85, Alice 90, Cara 90 and keeps the tie in
+          place; an unstable sort may return Bob 85, Cara 90, Alice 90. That is fine when only scores
+          matter, and wrong when the records were in name order. Sorting by a second field after a first
+          only works when the second sort is stable.</p>
+
+        <h3>In place</h3>
+        <p>Strictly in place means O(1) extra memory, including the call stack. Quick sort is
+          often called in place because its partition rearranges the original array with O(1) workspace;
+          its recursive version still uses an expected O(log n) stack and O(n) stack in the worst case.
+          The tables use this conventional label with the stack shown separately. Standard array merge
+          sort uses an O(n) buffer. P5 returns a copy, so its complete function uses O(n) space even
+          though the sorting inside that copy partitions in place.</p>
+
+        <h3>Adaptive</h3>
+        <p>A sort is adaptive when it is clearly faster on partly ordered data. Insertion sort is the
+          model case: its shift count is I, the number of inversions, and total time is Θ(n + I). Bubble sort is
+          adaptive only with the early-exit flag. Merge and quick sort are not, because their split or
+          partition pattern ignores the order already present.</p>
+
+        <div class="table-wrap">
+          <table class="data">
+            <caption>Table 1. Which of the four sorts are stable, in place and adaptive.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Sort</th>
+                <th scope="col">Stable</th>
+                <th scope="col">In place</th>
+                <th scope="col">Adaptive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Bubble</td><td>Yes</td><td>Yes</td><td>Yes, with early exit</td></tr>
+              <tr><td>Insertion</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Merge</td><td>Yes</td><td>No (O(n) buffer)</td><td>No</td></tr>
+              <tr><td>Quick</td><td>No</td><td>Yes, excluding stack</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">The buffer is what buys merge sort stability and a guaranteed bound; quick sort
+          trades those for speed and locality.</p>
+      </section>
+
+      <section class="section" id="comparison">
+        <div class="section-title"><h2>All four side by side</h2></div>
+        <p class="lead">The pills from each section, collected in one table. Here n is the number of
+          elements. The quick-sort row describes the 2-way version above on distinct keys; its average
+          assumes random pivots. P5 uses 3-way partition, whose all-equal best case is Θ(n).
+          The in-place column excludes the recursion stack, which is counted under extra space.</p>
+
+        <div class="table-wrap">
+          <table class="data">
+            <caption>Table 2. Bubble, insertion, merge and quick sort side by side.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Algorithm</th>
+                <th scope="col">Best</th>
+                <th scope="col">Average</th>
+                <th scope="col">Worst</th>
+                <th scope="col">Extra space</th>
+                <th scope="col">Stable</th>
+                <th scope="col">In-place</th>
+                <th scope="col">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bubble</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td>
+                <td>Yes</td><td>O(n) best case only with the early-exit flag</td>
+              </tr>
+              <tr>
+                <td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td>
+                <td>Yes</td><td>Adaptive; shifts equal inversions</td>
+              </tr>
+              <tr>
+                <td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td>
+                <td>Yes</td><td>No</td><td>Guaranteed bound; linked lists and external sorting</td>
+              </tr>
+              <tr>
+                <td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td>
+                <td>O(log n) avg</td><td>No</td><td>Yes</td>
+                <td>2-way trace above; P5 adds 3-way partition</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Constants matter as well as notation. Insertion sort can be faster on small arrays;
+          the crossover depends on the implementation, element type and input. Practical libraries
+          therefore often combine several algorithms.</p>
+      </section>
+
+      <section class="section" id="when-to-use">
+        <div class="section-title"><h2>When to use which</h2></div>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Small or nearly sorted</h3>
+            <p>Insertion sort is a useful choice for small or nearly sorted arrays. Its time is
+              Θ(n + I), where I is the number of inversions; the useful size cutoff depends on the implementation.</p>
+          </div>
+          <div class="card">
+            <h3>Guaranteed worst case, stable</h3>
+            <p>Use merge sort when O(n) memory is acceptable. It is also the natural choice for linked
+              lists and external sorting, where sequential passes are all the disk gives you.</p>
+          </div>
+          <div class="card">
+            <h3>General-purpose arrays</h3>
+            <p>Quick sort with a random pivot and a 3-way partition is often efficient on arrays.
+              This recursive version uses expected O(log n) stack space, O(n) in the worst case.</p>
+          </div>
+          <div class="card">
+            <h3>Teaching only</h3>
+            <p>Bubble sort, for tracing by hand and counting swaps in a demonstration. It is rarely a practical first choice.</p>
+          </div>
+          <div class="card">
+            <h3>Bounded integer keys</h3>
+            <p>Use counting sort or radix sort. They are not comparison-based, so they can beat the
+              Ω(n log n) bound for special data; they come later in the course.</p>
+          </div>
+        </div>
+        <p>Real libraries ship hybrids: Timsort merges runs that insertion sort extends, and introsort
+          mixes quick sort, heapsort and insertion sort. Library choices depend on the language, element type and implementation; do not
+          assume one algorithm or one performance ranking applies everywhere.</p>
+      </section>
+
+      <section class="section" id="order-statistics">
+        <div class="section-title"><h2>A preview: order statistics</h2></div>
+        <p><strong>Optional exploration — not covered in class.</strong> If only one order statistic
+          is needed, sorting the whole array does extra work. For the k-th largest value (1-based k),
+          the target index in ascending order is n − k. Quickselect partitions and continues only in
+          the region containing that target. With 3-way partition, stop if the target is in the equal band.</p>
+        <p>Uniform random pivots give expected O(n) time, with O(n²) worst case. The retained region
+          does not necessarily halve on each step. One way to see the expected bound: a pivot in the
+          middle half occurs with probability at least 1/2 and leaves at most about 3/4 of the elements;
+          only a constant expected number of partitions is needed for each such shrinkage. The work
+          then forms a geometric sum. This is an intuition for the expected bound, not a guarantee
+          that every partition is balanced.</p>
+        <p>An iterative implementation needs O(1) selection workspace and no recursion stack. The
+          reference answers copy the input except in C, so those complete functions use O(n) extra space.
+          Median-of-medians is a different pivot rule that can guarantee O(n) worst-case time.</p>
+        <p>Problem 6 on the exercises page builds directly on quick sort's partition.
+          <a class="more-link" href="#problem-6">See Problem 6 on the exercises page</a></p>
+      </section>
+
+      <section class="section" id="before-exercises">
+        <div class="section-title"><h2>Before you start the exercises</h2></div>
+        <p>The exercises page has six problems mapped to the four sorts. Use whichever language is
+          fastest for you: C, C++, C#, Java, Python and JavaScript are all fine. Reference solutions are
+          provided, but only after a real attempt; nothing is submitted.</p>
+        <ul>
+          <li>Trace the four worked examples above by hand before writing any code.</li>
+          <li>Pick one language and stay with it. Porting a finished solution is cheap; switching
+            mid-problem is not.</li>
+          <li>Open the reference solution only after your code runs, or after you can name the exact
+            line where you are stuck.</li>
+          <li>Bring your attempt, or the exact place it breaks, to the practice session.</li>
+        </ul>
+        <p><a class="btn primary" href="#exercises">Open the Recitation 1 exercises</a></p>
+      </section>

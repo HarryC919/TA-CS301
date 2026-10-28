@@ -894,3 +894,28 @@ details[open] { padding-bottom: 16px; }
   .tabs[data-editable] .tab-panel > pre[hidden] { display: block; }
   .reset-btn { display: none; }
 }
+
+/* Fixed recitation directory, usable with keyboard/touch and without JavaScript. */
+.recitation-menu { position: relative; margin: 0; }
+.recitation-menu > summary {
+  list-style: none; cursor: pointer; padding: 6px 11px; border-radius: 9px;
+  color: var(--muted); font-size: 0.92rem; font-weight: 600;
+}
+.recitation-menu > summary::-webkit-details-marker { display: none; }
+.recitation-menu > summary::after { content: " ▾"; }
+.recitation-menu > summary.active { background: var(--accent-soft); color: var(--accent-dark); }
+.recitation-menu > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.recitation-menu[open] > summary { background: #eef2f7; }
+.recitation-options {
+  position: absolute; right: 18px; top: calc(100% + 8px); z-index: 100;
+  width: min(360px, calc(100vw - 36px)); max-height: 65vh; overflow-y: auto;
+  padding: 8px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
+}
+.site-nav .recitation-options a { display: block; white-space: normal; }
+.menu-label { color: var(--muted); }
+html { scroll-padding-top: 150px; }
+/* Anchor the list to the full header so it also fits when navigation wraps. */
+.header-inner { position: relative; }
+.recitation-menu, .recitation-menu[open] { position: static; border: 0; padding: 0; background: transparent; }
+.recitation-menu > summary::before { display: none; }

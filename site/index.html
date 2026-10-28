@@ -3,38 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>COMPSCI 301 · Week 1: Sorting Algorithms</title>
-  <meta name="description" content="Week 1 course materials for COMPSCI 301: sorting algorithms (bubble, insertion, merge, quick), complexity analysis, and six practice exercises with solutions in C, C++, C#, Java, Python and JavaScript.">
+  <title>COMPSCI 301 · Recitations</title>
+  <meta name="description" content="COMPSCI 301 recitation materials: environment setup and a fixed directory of Recitations 0–7.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
 </head>
 <body>
 
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
-      <nav class="site-nav" aria-label="Site">
-        <a href="index.html" class="active">Home</a>
-        <a href="intro.html">Introduction</a>
-        <a href="week1-notes.html">Week 1 Notes</a>
-        <a href="week1-exercises.html">Week 1 Exercises</a>
-      </nav>
-    </div>
-  </header>
+  <div class="container header-inner">
+    <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="index.html" class="active" aria-current="page">Home</a>
+      <a href="intro.html">Introduction</a>
+      <details class="recitation-menu">
+        <summary class="menu-label">Recitation</summary>
+        <div class="recitation-options"><a href="recitation0.html">Recitation 0 — Environment & kernels</a>
+<a href="recitation1.html">Recitation 1 — Sorting algorithms</a>
+<a href="recitation2.html">Recitation 2 — Content to be announced</a>
+<a href="recitation3.html">Recitation 3 — Content to be announced</a>
+<a href="recitation4.html">Recitation 4 — Content to be announced</a>
+<a href="recitation5.html">Recitation 5 — Content to be announced</a>
+<a href="recitation6.html">Recitation 6 — Content to be announced</a>
+<a href="recitation7.html">Recitation 7 — Content to be announced</a></div>
+      </details>
+    </nav>
+  </div>
+</header>
 
   <section class="page-hero">
     <div class="container">
-      <span class="eyebrow">Week 1 · Course materials</span>
-      <h1>Sorting Algorithms</h1>
-      <p class="subtitle">
-        Bubble, insertion, merge, and quick sort: how each one works, how to reason about
-        its running time, and how to choose between them — followed by six exercises that
-        make it stick.
-      </p>
+      <span class="eyebrow">COMPSCI 301 · Course materials</span>
+      <h1>Recitation materials</h1>
+      <p class="subtitle">A fixed home for Recitations 0–7. Set up your notebook environment, review concept notes, and work through practice problems.</p>
       <p class="hero-meta">COMPSCI 301 · Algorithms &amp; Databases · optional practice session</p>
       <div class="hero-actions">
-        <a class="btn primary" href="week1-notes.html">Start with the concepts</a>
-        <a class="btn ghost" href="week1-exercises.html">Go straight to the exercises</a>
+        <a class="btn primary" href="recitation0.html">Set up your environment</a>
+        <a class="btn ghost" href="#recitations">Browse recitations</a>
       </div>
     </div>
   </section>
@@ -42,126 +48,106 @@
   <main class="container">
 
     <section class="section" id="at-a-glance">
-      <div class="section-title"><h2>Week 1 at a glance</h2></div>
-      <p class="lead">
-        Week 1 is a quick pass over the four classic comparison sorts, then hands-on practice.
-        Everything is on two pages — read the notes first, then work through the exercises at
-        your own pace.
-      </p>
+      <div class="section-title"><h2>Recitation Content</h2></div>
+      <p class="lead">Each recitation connects concept review, hands-on practice, and a discussion
+        of solutions. Choose a session from the recitation list to find its available materials.</p>
       <div class="card-grid">
         <div class="card">
-          <span class="pill blue">Notes</span>
-          <h3>Sorting concepts, step by step</h3>
-          <p>One short section per algorithm: the idea, a worked example you can follow by hand,
-            the complexity table, and the pitfall that usually shows up on exams.</p>
-          <a class="more-link" href="week1-notes.html">Read the Week 1 notes</a>
+          <span class="pill blue">Note</span>
+          <h3>Review the concepts</h3>
+          <p>Read the key ideas, worked examples, and explanations on the recitation page.
+            Use the notes to prepare for practice or revisit a topic after the session.</p>
+          <a class="more-link" href="#recitations">Browse recitation notes</a>
         </div>
         <div class="card">
           <span class="pill green">Practice</span>
-          <h3>Six LeetCode-style exercises</h3>
-          <p>Each problem states the task, the exact input/output format, constraints, and the
-            function signature to implement — with hints if you get stuck.</p>
-          <a class="more-link" href="week1-exercises.html">Open the exercises</a>
+          <h3>Try the problems</h3>
+          <p>Apply the concepts through exercises. Work independently or with a partner,
+            test your ideas, and bring the parts you find difficult to the discussion.</p>
+          <a class="more-link" href="#recitations">Find practice materials</a>
         </div>
         <div class="card">
-          <span class="pill orange">Solutions</span>
-          <h3>Answers in six languages</h3>
-          <p>Reference solutions for C, C++, C#, Java, Python, and JavaScript, verified by running
-            their test cases. Pick a language once and it stays selected across problems.</p>
-          <a class="more-link" href="week1-exercises.html#problem-1">See Problem 1</a>
-        </div>
-        <div class="card">
-          <span class="pill gray">Introduction</span>
-          <h3>Who runs the recitation</h3>
-          <p>Your TA, office hours, who the session is for, what we do in each session, and the
-            AI policy.</p>
-          <a class="more-link" href="intro.html">Meet your TA</a>
+          <span class="pill orange">Solution</span>
+          <h3>Understand the reasoning</h3>
+          <p>Compare approaches after making your own attempt. Focus on the key insight,
+            why the method works, and how to check the result; consult reference solutions
+            when they are available.</p>
+          <a class="more-link" href="#recitations">Find solution discussions</a>
         </div>
       </div>
     </section>
 
     <section class="section" id="session">
       <div class="section-title"><h2>How our session runs</h2></div>
-      <p>
-        The session is informal and optional, usually with 5–15 people. Come for all of it or
-        drop in for the part you need.
-      </p>
+      <p>Sessions are informal and optional. Bring your questions and work at a pace that
+        helps you understand the material.</p>
       <ol class="steps">
-        <li><strong>Introduction (5–10 min).</strong> Meet your TA, find the materials, and go over
-          the session format and AI policy.</li>
-        <li><strong>Concept review (10–15 min).</strong> Review the main sorting ideas, stability,
-          and time and space costs using the notes page.</li>
-        <li><strong>Practice (30 min).</strong> Choose problems at your level and work alone or
-          in pairs. You do not need to finish all six. Problem 6 is optional exploration and will
-          not be covered in class.</li>
-        <li><strong>Discuss approaches (15 min).</strong> Discuss selected problems based on your
-          questions: the key idea, why it works, and its complexity. This is a discussion of
-          reasoning rather than a line-by-line code walkthrough.</li>
-        <li><strong>Questions (remaining time).</strong> Ask about your attempts or anything from
-          lecture you want to revisit.</li>
-        <li><strong>No submission.</strong> The exercises are for you, not for a grade. Nothing
-          needs to be uploaded, and no account is required.</li>
+        <li><strong>Concept review (about 15–20 min).</strong> Review the session's key ideas
+          and examples using the notes, with time to clarify unfamiliar concepts.</li>
+        <li><strong>Practice (30 min).</strong> Work on problems independently or in pairs.
+          Choose tasks that match your level; you do not need to finish every problem.</li>
+        <li><strong>Solution discussion and questions (remaining time).</strong> Discuss
+          approaches to selected problems, explain the reasoning, and address questions
+          from your attempts or the lecture.</li>
       </ol>
+      <p class="note">Recitation exercises are optional, ungraded practice. Nothing needs to be submitted.</p>
       <div class="callout info">
         <span class="callout-title">Why this site exists</span>
-        <p>The official course website is temporarily unavailable, so Week 1 materials are
-          mirrored here so you can start right away. Instructor announcements remain the
-          authoritative source for everything else.</p>
+        <p>The official course website is temporarily unavailable, so recitation materials
+          are shared here. Instructor announcements remain the authoritative source for
+          course requirements and logistics.</p>
       </div>
     </section>
 
     <section class="section" id="prerequisites">
       <div class="section-title"><h2>What you should already know</h2></div>
       <p>
-        These materials assume CS201 (basic Java programming and basic data structures:
+        These materials build on CS201 (basic programming and data structures:
         arrays, linked lists, trees, heaps). In particular you should be comfortable with:
       </p>
       <ul>
+        <li>
+          Java <img src="assets/icons/java.svg" alt="Java icon" width="16" height="16" />
+          and/or Python <img src="assets/icons/python.svg" alt="Python icon" width="16" height="16" />
+          as programming languages;</li>
         <li>arrays and indexing, including swapping two elements;</li>
         <li><code>for</code>/<code>while</code> loops and nested loops over a range;</li>
-        <li>comparing numbers and strings, and sorting rules like "ascending order";</li>
-        <li>reading Java-style pseudocode — every algorithm is also given in plain language.</li>
+        <li>comparing values and following basic algorithm steps;</li>
+        <li>understanding the basic concept of time complexity and space complexity;</li>
+        <li>object-oriented programming concepts such as classes, objects, and methods;</li>
+        <li>reading pseudocode and relating it to code in a familiar programming language.</li>
       </ul>
       <p class="note">
-        Merge sort (and quick sort) use recursion. If recursion still feels shaky, read the merge
-        sort section of the notes slowly — it is the best place to practice the idea of "solve a
-        smaller piece the same way, then combine".
+        If a prerequisite feels unfamiliar, revisit the relevant notes or ask the TA before
+        beginning the practice problems. Use Recitation 0 to prepare your notebook environment.
       </p>
     </section>
 
-    <section class="section" id="weeks">
-      <div class="section-title"><h2>Weeks</h2></div>
-      <div class="week-list">
-        <div class="week-row available">
-          <div>
-            <div class="week-name">Week 1 — Sorting Algorithms <span class="pill blue">Available</span></div>
-            <div class="week-topics">Bubble sort · Insertion sort · Merge sort · Quick sort · Complexity &amp; stability</div>
-          </div>
-          <div class="week-links">
-            <a class="btn" href="week1-notes.html">Notes</a>
-            <a class="btn primary" href="week1-exercises.html">Exercises</a>
-          </div>
-        </div>
-        <div class="week-row">
-          <div>
-            <div class="week-name">Week 2 — Order statistics &amp; binary search <span class="pill gray">Coming soon</span></div>
-            <div class="week-topics">Selection, k-th smallest/largest, binary search and variants</div>
-          </div>
-          <div class="week-links"><span class="note">Materials will be posted here</span></div>
-        </div>
-        <div class="week-row">
-          <div>
-            <div class="week-name">Later weeks <span class="pill gray">Planned</span></div>
-            <div class="week-topics">Dynamic programming · greedy algorithms · graph algorithms · MST · shortest paths · SQL · file organization · hashing · transactions · concurrency · recovery · distributed databases</div>
-          </div>
-          <div class="week-links"><span class="note">Follow the instructor's schedule</span></div>
-        </div>
-      </div>
-      <p class="note">
-        The official course site is down at the moment; this page will fill in week by week.
-        If you need a topic earlier, tell the TA.
-      </p>
-    </section>
+<section class="section" id="recitations"><div class="section-title"><h2>Recitations 0–7</h2></div><p>Eight fixed slots: environment setup, Recitation 1, and six reserved sessions. Topics for the reserved sessions will be announced later.</p><div class="week-list"><div class="week-row available"><div>
+<div class="week-name">Recitation 0 — Environment & kernels <span class="pill blue">Setup guide</span></div>
+<div class="week-topics">Environment setup and language kernels</div></div>
+<div class="week-links"><a class="btn primary" href="recitation0.html">Open</a></div></div><div class="week-row available"><div>
+<div class="week-name">Recitation 1 — Sorting algorithms <span class="pill blue">Available</span></div>
+<div class="week-topics">Notes and six practice problems on one page</div></div>
+<div class="week-links"><a class="btn primary" href="recitation1.html">Open</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 2 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation2.html">View placeholder</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 3 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation3.html">View placeholder</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 4 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation4.html">View placeholder</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 5 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation5.html">View placeholder</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 6 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation6.html">View placeholder</a></div></div><div class="week-row"><div>
+<div class="week-name">Recitation 7 — Content to be announced <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Reserved session; details will be posted here.</div></div>
+<div class="week-links"><a class="btn" href="recitation7.html">View placeholder</a></div></div></div></section>
 
   </main>
 

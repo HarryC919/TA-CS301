@@ -1,7 +1,7 @@
-"""Content for the Week 1 exercises page (COMPSCI 301).
+"""Content for the Recitation 1 exercises (COMPSCI 301).
 
 This module is build-time only: `build_exercises.py` renders it into
-`site/week1-exercises.html`. The published site has no build step.
+`site/recitation1.html`. The published site has no build step.
 
 Prose fields are trusted HTML fragments authored by the TA (they may contain
 `<code>` markup). Reference solutions and starter templates are read from
@@ -264,7 +264,7 @@ PROBLEMS = [
         "difficulty_class": "medium",
         "topics": ["Quickselect", "Order statistics", "Partition"],
         "statement": [
-            "<strong>Optional exploration &mdash; not covered in class.</strong> Try this independently if you want to explore next week's order-statistics topic.",
+            "<strong>Optional exploration &mdash; not covered in class.</strong> Try this independently if you want to explore order statistics beyond this session.",
             "Given an integer array <code>nums</code> and an integer <code>k</code>, return the <strong>k-th largest</strong> element in "
             "sorted order &mdash; that is, the element at index <code>n - k</code> if the array were sorted ascending. <code>k</code> is "
             "1-based, so <code>k = 1</code> asks for the maximum.",
