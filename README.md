@@ -8,13 +8,16 @@ site that can be published on GitHub Pages.
 
 ```
 site/                            static site (the only folder that should be published)
-  index.html                     home page + week-by-week navigation
+  index.html                     home page + fixed Recitation 0–7 directory
   intro.html                     TA introduction: office hours, session format, AI policy
-  week1-notes.html               Week 1 concept notes: bubble, insertion, merge, quick
-  week1-exercises.html           6 LeetCode-style exercises with 6-language answers
+  recitation0.html              environment and Python/Java kernel setup
+  recitation1.html              GENERATED: sorting notes + six exercises
+  recitation2.html … recitation7.html  reserved session placeholders
+  week1-notes.html / week1-exercises.html  compatibility redirects
   assets/style.css               shared design system
   assets/notes.css               notes-page additions only
   assets/app.js                  local highlighting, temporary editors, synced tabs, copy/reset
+  assets/icons/                 local Java/Python language icons on Home
   assets/favicon.svg
   assets/logos/                  brand marks for the AI tools shown on the introduction page
 material/week1/Intro.md           source text for site/intro.html (keep both in sync)
@@ -23,8 +26,12 @@ material/week1/solutions/        reference material behind the exercise page
   p1 … p6/                       per problem: 6 solutions, 6 stubs, 6 test harnesses
 tools/
   verify_all.sh                  compiles/runs all 36 harnesses (6 problems x 6 languages)
+  site_src/build_site.py         builds all recitation pages and shared navigation
+  site_src/recitation1-notes.html hand-authored concept source fragment
+  site_src/recitation0-content.html environment guide source
+  site_src/site_layout.py        shared header, page shell and session labels
   site_src/problems.py           problem statements, examples, hints, signatures
-  site_src/build_exercises.py    renders site/week1-exercises.html from problems + solutions
+  site_src/build_exercises.py    renders site/recitation1.html from notes + problems + solutions
   site_src/check_site.py         structural QA: nesting, ids, links, furniture, nav consistency
   site_src/shot_page.py          section screenshots via headless Chrome (QA helper)
   site_src/page_offsets.py       element offsets for cropping screenshots (QA helper)
@@ -35,19 +42,32 @@ CLAUDE.md                        points Claude-style agents at AGENTS.md
 .tmp/                            local scratch (screenshots, logs); safe to delete
 ```
 
-## The Week 1 material
+## Recitation structure
+
+Recitation 0 uses uv to install managed Python, create a project-local virtual
+environment, add notebook dependencies and register kernels. Windows examples use
+PowerShell. Setup command blocks show shell labels, highlighting, copy buttons and
+inline explanations; creating the working folder is a separate step. Existing CS201
+JDKs at least 17 are accepted; mise is optional for
+installing/managing a suitable JDK, with Jupyter launched through `mise exec`. Recitation 1 combines the existing
+sorting notes and exercises. Recitations 2–7 are reserved placeholders; later topics
+and the database environment remain undecided. No notebook exercise downloads have
+been published yet. Legacy Week 1 links redirect to Recitation 1 and retain hashes
+when JavaScript is enabled.
+
+## The Recitation 1 material
 
 - **Introduction** (`site/intro.html`): who runs the recitation, contact details and
   office hours, who the session is for, what happens in a session, and the AI policy
   (AI tools allowed during the recitation, but you must be able to explain your solution).
   The recommended models are listed with their logos, stored locally in `assets/logos/`
   so the page needs no network access.
-- **Notes** (`site/week1-notes.html`): a quick concept pass. Five key takeaways,
+- **Notes** (`site/recitation1.html#notes`): a quick concept pass. Five key takeaways,
   learning goals, the Ω(n log n) decision-tree argument, one section per algorithm
   (idea → steps → worked trace → pseudocode → complexity → pitfall), stability /
   in-place / adaptive vocabulary, a side-by-side table, when to use which, and a
-  quickselect preview for Week 2.
-- **Exercises** (`site/week1-exercises.html`): six problems, each with a description,
+  optional order-statistics preview.
+- **Exercises** (`site/recitation1.html#exercises`): six problems, each with a description,
   worked examples with input/output, constraints, the exact function signature, a
   starter template with a `TODO`, hints, and a collapsible reference solution in
   **C, C++, C#, Java, Python and JavaScript**. A single language choice is remembered
@@ -76,6 +96,10 @@ time for questions. Java is the default language because it is the CS201 languag
 
 ## Publish the site
 
+For the existing `origin` repository, rebuild and verify first, then commit and push
+to `main` when authorized. The existing GitHub Actions workflow publishes only `site/`.
+The alternatives below describe setting up a new repository.
+
 The site is plain static HTML/CSS/JS with **no build step**. It works from any
 subdirectory (all links are relative).
 
@@ -95,8 +119,8 @@ Then open **Settings → Pages** and choose **Deploy from a branch → `main` �
 `/ (root)`**. The site appears at `https://<your-user>.github.io/<repo-name>/`, and
 only the contents of `site/` are public.
 
-**Option B — publish from this folder's repository.** The workspace root already has an
-empty git repository (branch `main`, no commits, no remote). Its `.gitignore` keeps
+**Option B — publish from this folder's repository.** The workspace root already has a
+Git repository on `main`, with `origin` pointing to `https://github.com/HarryC919/TA-CS301.git`. Its `.gitignore` keeps
 `application/` and `.tmp/` out, and `.github/workflows/pages.yml` publishes only the
 `site/` folder through GitHub Actions:
 
@@ -128,7 +152,9 @@ cd site && python3 -m http.server 8000
 
 ## Rebuild and verify
 
-The exercise page is generated, so edit the **sources** and regenerate:
+Recitation 1 is generated. Edit `tools/site_src/recitation1-notes.html` for concepts,
+`recitation0-content.html` for setup instructions, and `problems.py` or the solution
+files for exercises. Edit `site_layout.py` for navigation, then rebuild the whole site:
 
 ```bash
 # 1. edit statements/examples/hints
@@ -136,7 +162,7 @@ $EDITOR tools/site_src/problems.py
 # 2. edit the reference solutions and stubs
 $EDITOR material/week1/solutions/p4/py.solution.py
 # 3. regenerate the page
-python3 tools/site_src/build_exercises.py
+python3 tools/site_src/build_site.py
 # 4. structural QA (fails on broken links or malformed HTML)
 python3 tools/site_src/check_site.py --strict-links
 # browser checks for editing, highlighting, refresh reset, copy, and no-JS fallback
@@ -163,5 +189,4 @@ Python 3.13, Node 24. Two implementation details worth remembering:
 - Answers deliberately do not use library sorts; harnesses may use them as oracles.
 - The notes page traces were verified by hand and (for quick sort) by re-running the
   page's own pseudocode; keep them exact if the page is edited.
-- Week 2 (order statistics and binary search) is scaffolded in the navigation on the
-  home page ("Coming soon") but has no content yet.
+- Recitations 2–7 are unassigned placeholders. The database portion is still to be decided.

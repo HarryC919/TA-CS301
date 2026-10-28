@@ -10,13 +10,16 @@ optional (~5–15 students, mostly Data Science sophomores/juniors who know Pyth
 
 ```text
 site/                       publishable static site (publish this folder, not the root)
-  index.html                home page + week-by-week navigation
+  index.html                home page + fixed Recitation 0–7 directory
   intro.html                TA introduction: contact, office hours, session format, AI policy
-  week1-notes.html          Week 1 concept notes (hand-written)
-  week1-exercises.html      GENERATED — never hand-edit; run build_exercises.py
+  recitation0.html          GENERATED — environment and Python/Java kernel guide
+  recitation1.html          GENERATED — merged notes and exercises
+  recitation2.html … recitation7.html  GENERATED — placeholders
+  week1-notes.html / week1-exercises.html  legacy deep-link redirects
   assets/style.css          shared design system
   assets/notes.css          notes-page-only additions
   assets/app.js             local highlighting, temporary editors, synced language tabs, copy/reset
+  assets/icons/             local Java/Python icons used on Home
   assets/favicon.svg
   assets/logos/             AI-tool brand marks used on intro.html (local files, no CDN)
 material/week1/Intro.md               source text behind site/intro.html (keep the two in sync)
@@ -26,7 +29,11 @@ material/week1/solutions/             CONTRACTS.md + p1 … p6, exactly 20 files
   pN/c.test.c, cpp.test.cpp, Main.java, py.test.py, js.test.js, csproj/   6 harnesses
 tools/verify_all.sh                   runs all 36 harnesses (6 problems × 6 languages)
 tools/site_src/problems.py            single source of truth: statements, examples, hints, signatures
-tools/site_src/build_exercises.py     renders site/week1-exercises.html
+tools/site_src/build_exercises.py     renders site/recitation1.html
+tools/site_src/build_site.py          builds all pages and shared navigation
+tools/site_src/site_layout.py         single source of shared navigation
+tools/site_src/recitation1-notes.html  hand-authored notes source fragment
+tools/site_src/recitation0-content.html setup guide source
 tools/site_src/check_site.py          structural QA for every site/*.html page
 tools/site_src/shot_page.py           section screenshots (QA helper)
 tools/site_src/page_offsets.py        element offsets for cropping screenshots (QA helper)
@@ -37,7 +44,8 @@ application/                PRIVATE — CV, statement of purpose, transcript, gr
 CLAUDE.md                   just `@ AGENTS.md` so Claude-style agents load this file
 ```
 
-The workspace root is a git repository (branch `main`, no commits yet, no remote). Its
+The workspace root is a git repository on `main` with remote `origin` at
+`https://github.com/HarryC919/TA-CS301.git`. Its
 `.gitignore` excludes `application/` and `.tmp/`, and `.github/workflows/pages.yml` publishes
 only the `site/` folder through GitHub Actions. Alternatively `site/` can be initialized as its
 own repository (`cd site && git init -b main`) and published from its root. Never commit
@@ -47,7 +55,8 @@ repository root as a "Deploy from a branch" Pages source.
 ## Commands
 
 ```bash
-python3 tools/site_src/build_exercises.py      # regenerate site/week1-exercises.html
+python3 tools/site_src/build_site.py           # rebuild all recitation pages and navigation
+python3 tools/site_src/build_exercises.py      # rebuild only Recitation 1
 python3 tools/site_src/check_site.py --strict-links   # structural QA; expect 0 errors, 0 warnings
 node tools/site_src/test_code_ui.cjs           # Chrome behavior checks; expect ALL CODE UI CHECKS PASSED
 bash tools/verify_all.sh                       # 36 harnesses; expect "ALL 36 HARNESSES PASSED"
@@ -60,10 +69,13 @@ OpenJDK 21, Python 3.13, Node 24. Chrome is at
 
 ## Exercise page pipeline (important)
 
-`site/week1-exercises.html` is generated from `tools/site_src/problems.py` plus the code files
+`site/recitation1.html` is generated from `tools/site_src/recitation1-notes.html`,
+`tools/site_src/problems.py` plus the code files
 in `material/week1/solutions/pN/`. Editing the generated HTML directly will be overwritten.
 
-- To change wording, examples, constraints, hints or signatures: edit `problems.py`, then rebuild.
+- To change concept notes, edit `tools/site_src/recitation1-notes.html`; for setup edit
+  `tools/site_src/recitation0-content.html`. Rebuild with `python3 tools/site_src/build_site.py`.
+- To change exercise wording, examples, constraints, hints or signatures: edit `problems.py`, then rebuild.
 - To change code: edit `material/week1/solutions/pN/` (solution **and** stub), then rebuild.
 - The builder is strict. It fails if a solution/stub is missing or empty, if a solution calls a
   library sort (`Arrays.sort`, `std::sort`, `qsort`, `sorted(`, `.sort(`, …), or if the function
@@ -79,6 +91,9 @@ in `material/week1/solutions/pN/`. Editing the generated HTML directly will be o
   language choice may use localStorage; never persist code drafts in storage or send
   them to a server. Reset restores the current template; page load/pageshow restores
   all templates. Copy must read the textarea value for starters.
+- Setup code blocks use `.code-block[data-language]` with an explicit Bash/Zsh/PowerShell
+  or notebook language label and a copy button. Copy/highlighting must work on pages
+  without exercise tabs, such as Recitation 0. Keep command comments as literal code.
 - `app.js` also highlights the notes' read-only pseudocode. Always escape source text
   before inserting highlight spans. This is lexical highlighting, not syntax validation.
 - For editor changes, run `node tools/site_src/test_code_ui.cjs`; it checks real typing,
@@ -111,11 +126,13 @@ in `material/week1/solutions/pN/`. Editing the generated HTML directly will be o
   copy, with no build step at publish time.
 - Every page needs: `lang="en"`, a `<title>`, `assets/style.css`, the shared `.site-header`
   (with nav), the shared `.site-footer`, and a `<main>`.
-- The nav is hard-coded on each page and in the `HEADER` constant of `build_exercises.py`:
-  **Home → Introduction → Week 1 Notes → Week 1 Exercises**. Mark the current page with
-  `class="active"`. If you add a page, update every page's nav **and** the generator template,
-  then rebuild. `check_site.py` verifies nav order/active-page consistency.
-- Links inside the site must stay relative (`index.html`, `week1-notes.html#bubble-sort`, …) so
+- Navigation is defined in `tools/site_src/site_layout.py`: Home → Introduction → a native
+  details/summary Recitation dropdown containing Recitations 0–7. Build with `build_site.py`
+  to synchronize every page, including compatibility redirects. Mark exactly one link active.
+- Recitations 2–7 stay unassigned placeholders. Do not assign database topics, tools or
+  environments until the owner decides. Notebook downloads must not be advertised as
+  available before the files exist. Recitation 1 keeps its current exercises for now.
+- Links inside the site must stay relative (`index.html`, `recitation1.html#bubble-sort`, …) so
   the site works from `file://` and from any GitHub Pages subpath. External `http(s)` and
   `mailto:` links are allowed but are not fetched by QA; `javascript:` links are rejected.
 - Reuse classes from `assets/style.css` (`page-hero`, `section`, `section-title`, `lead`,
@@ -150,17 +167,20 @@ Before claiming work is complete:
 2. `python3 tools/site_src/check_site.py --strict-links` → must print `OK: 0 errors, 0 warning(s)`.
 3. `bash tools/verify_all.sh` (if any solution/stub/harness changed) → `ALL 36 HARNESSES PASSED`.
 4. Visual check of changed pages via headless Chrome; if layout changed, recapture.
-5. Confirm `site/` contains only the expected files (`index.html`, `intro.html`,
-   `week1-notes.html`, `week1-exercises.html`, `assets/{style.css, notes.css, app.js, favicon.svg}`,
-   `assets/logos/*` for the eight brand marks) and no build artifacts or scratch files.
+5. Confirm `site/` contains only Home, Introduction, Recitations 0–7, the two legacy
+   Week 1 redirects, and the existing assets (style.css, notes.css, app.js, favicon.svg,
+   eight logo SVGs, and two local Home language icons): 12 HTML pages + 14 assets. No build artifacts or scratch files.
 
 Report exact commands run and their results; do not claim a check passed without running it.
 
 ## Current status
 
-- Site: 4 pages (home, intro, notes, exercises), 6 exercises × 6 languages, all static and
-  verified (36/36 harnesses pass, `check_site.py` 0 errors / 0 warnings, HTTP smoke test 200).
-- Week 2 (order statistics & binary search) exists only as a "Coming soon" row on the home page;
-  there is no Week 2 material yet. Later weeks are listed as planned.
-- The exercises, notes, README, build tooling and AGENTS.md are the current source of truth;
-  keep them consistent when adding content.
+- Site: Home/Introduction, Recitations 0–7, and two legacy Week 1 redirects.
+- Recitation 0 documents uv-managed Python/project environments and Java/IJava setup;
+  Windows uses PowerShell, existing JDK >=17 is accepted, and mise is the optional JDK manager.
+  Kernel specs belong in the project environment (`--sys-prefix`), not global user storage;
+  documentation verification does not establish installation success on student machines.
+- Recitation 1 combines preserved concept notes and six exercises in six languages, with
+  temporary code editors. Notes/Exercises anchors stay within one page and preserve drafts.
+- Recitations 2–7 are placeholders. Database planning and notebook exercise migration remain open.
+- Keep README, sources, generated pages and validation tooling consistent.

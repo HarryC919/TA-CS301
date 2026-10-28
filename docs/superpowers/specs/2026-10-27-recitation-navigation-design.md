@@ -1,0 +1,5 @@
+# Fixed recitation structure
+
+User request: retain Home/Introduction, replace week navigation with a Recitation 0–7 list, combine current notes and exercises into Recitation 1, write environment/kernel guidance in Recitation 0, and reserve 2–7 without assigning database content.
+
+Implementation choice: native details/summary dropdown (works without JS), one generated Recitation 1 page with Notes/Exercises anchors, a hand-written notes source fragment outside site/, shared header generation, legacy Week 1 redirects retaining hashes, and a build_site.py entry point. Keep exercises, editor behavior and private-folder protections. No notebook downloads are advertised until real files exist. Recitation 0 covers Python/Jupyter and Java/IJava, with official sources, uv-managed Python and project environments, Windows PowerShell commands, existing JDK >=17 support, and optional mise-managed Java through mise exec. Command blocks include shell labels, highlighting, copy buttons, and brief explanations; folder creation is a separate step.
