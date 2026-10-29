@@ -253,7 +253,12 @@ def render_code_block(node: Node) -> str:
     if titles:
         parts.append(f"**{collapse(titles[0].text())}**"
                      + (f" ({label})" if label else ""))
-    parts.append(f"{FENCE}\n{code}\n{FENCE}")
+    language = node.attrs.get("data-language") or label.split("·", 1)[0].strip().lower()
+    language = {"pseudo": "pseudocode", "py": "python", "js": "javascript",
+                "cs": "csharp"}.get(language, language)
+    if not re.fullmatch(r"[a-zA-Z0-9_+-]+", language):
+        language = "text"
+    parts.append(f"{FENCE}{language}\n{code}\n{FENCE}")
     return "\n\n".join(parts)
 
 

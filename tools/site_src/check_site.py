@@ -231,6 +231,26 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
         if "TODO" not in raw:
             errors.append(f"{rel}: no TODO text found in starter templates")
 
+    if rel.name == "recitation2.html":
+        required = {"overview", "notes", "notation", "divide-conquer", "exercises",
+                    "exercise-1", "exercise-2", "exercise-3", "optional-practice",
+                    "discussion", "references", "notebooks"}
+        missing = required - parser.ids.keys()
+        if missing:
+            errors.append(f"{rel}: missing Recitation 2 sections: {sorted(missing)}")
+        panels = [a for a in parser.attrs_by_tag["div"] if a.get("role") == "tabpanel"]
+        if len(panels) != 12 or any(sum(a.get("data-lang") == lang for a in panels) != 2 for lang in LANGS):
+            errors.append(f"{rel}: expected two six-language code groups")
+        selected = [a for a in parser.attrs_by_tag["button"] if a.get("aria-selected") == "true"]
+        if len(selected) != 2 or any(a.get("data-lang") != "java" for a in selected):
+            errors.append(f"{rel}: both code groups must default to Java")
+        for name in ("python", "java"):
+            href = f"notebooks/recitation2-{name}.ipynb"
+            if not any(a.get("href") == href and "download" in a for a in parser.attrs_by_tag["a"]):
+                errors.append(f"{rel}: missing downloadable {name} notebook")
+        if any("open" in a for a in parser.attrs_by_tag["details"] if a.get("data-kind") == "answer"):
+            errors.append(f"{rel}: reference answers should start collapsed")
+
     # aria-controls / aria-labelledby integrity.
     ids = parser.ids
     for tag, attrs_list in parser.attrs_by_tag.items():

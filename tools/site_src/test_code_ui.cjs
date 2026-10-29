@@ -156,7 +156,7 @@ const root = path.resolve(__dirname, '../..');
         assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),true, name+" @"+width+" menu opened by keyboard; focus="+await evaluate('document.activeElement.outerHTML'));
         assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
         assert.equal(await evaluate('var rect=document.querySelector(".recitation-options").getBoundingClientRect();rect.left>=0 && rect.right<=innerWidth'),true,name+' @'+width+' bounds='+await evaluate('JSON.stringify({left:rect.left,right:rect.right,width:innerWidth})'));
-        if (['index.html','recitation0.html','recitation1.html','recitation7.html'].includes(name)) {
+        if (['index.html','recitation0.html','recitation1.html','recitation2.html','recitation7.html'].includes(name)) {
           const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
           fs.writeFileSync(path.join(root,`.tmp/${name}-menu-${width}.png`),Buffer.from(data,'base64'));
         }
@@ -194,6 +194,44 @@ const root = path.resolve(__dirname, '../..');
     }
     console.log('PASS shell labels/highlighting, literal command/comment copy, separate folder step, desktop/mobile layout');
 
+    await evaluate('localStorage.removeItem("cs301-week1-lang")');
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation2.html')});
+    await ready('#r2-p3-stub-java textarea');
+    assert.equal(await evaluate('document.querySelectorAll("textarea.code-input").length'),6);
+    assert.equal(await evaluate('document.querySelectorAll("[id*=solution] textarea").length'),0);
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-btn[aria-selected=true]")).every(b=>b.dataset.lang==="java")'),true);
+    assert.equal(await evaluate('document.querySelectorAll("details[data-kind=answer][open]").length'),0);
+    for (const lang of ['c','cpp','cs','java','py','js']) {
+      await evaluate(`document.querySelector('#r2-p3-stub-${lang}-tab').click()`);
+      assert.equal(await evaluate(`document.querySelector('#r2-p3-stub-${lang}').hidden || document.querySelector('#r2-p3-solution-${lang}').hidden`),false);
+    }
+    await evaluate(`document.querySelector('#r2-p3-stub-java-tab').click();var field=document.querySelector('#r2-p3-stub-java textarea');field.value='// temporary <draft> & text';field.dispatchEvent(new Event('input'));document.querySelector('a[href="#notes"]').click();`);
+    assert.equal(await evaluate('document.querySelector("#r2-p3-stub-java textarea").value'),'// temporary <draft> & text');
+    await evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:text=>{window.mergeCopied=text;return Promise.resolve();}}});document.querySelector('#r2-p3-stub-java').closest('.tabs').querySelector('.copy-btn').click();`);
+    assert.equal(await evaluate('window.mergeCopied'),'// temporary <draft> & text');
+    await call('Page.reload');
+    await ready('#r2-p3-stub-java textarea');
+    assert.equal(await evaluate('document.querySelector("#r2-p3-stub-java textarea").value.includes("UnsupportedOperationException")'),true);
+    for (const width of [1440,390]) {
+      await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:width===390});
+      for (const anchor of ['top','notation','divide-conquer','exercise-1','exercise-2','exercise-3','optional-practice','notebooks']) {
+        await evaluate(`document.documentElement.style.scrollBehavior='auto';document.getElementById('${anchor}').scrollIntoView({behavior:'instant',block:'start'})`);
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,`Recitation 2 ${anchor} @${width}`);
+        const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+        fs.writeFileSync(path.join(root,`.tmp/rec2-${anchor}-${width}.png`),Buffer.from(data,'base64'));
+      }
+    }
+    for (const width of [1440,390]) {
+      await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:width===390});
+      for (const kind of ['stub','solution']) {
+        await evaluate(`var panel=document.querySelector('#r2-p3-${kind}-java');var details=panel.closest('details');if(details) details.open=true;panel.closest('.tabs').scrollIntoView({behavior:'instant',block:'start'});`);
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
+        const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+        fs.writeFileSync(path.join(root,`.tmp/rec2-code-${kind}-${width}.png`),Buffer.from(data,'base64'));
+      }
+    }
+    console.log('PASS Recitation 2 six-language drafts/copy/reload, collapsed answers, downloads, desktop/mobile layout');
+
     await call('Emulation.setScriptExecutionDisabled', {value:true});
     await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation1.html')});
     await ready('#p1-stub-java');
@@ -205,6 +243,11 @@ const root = path.resolve(__dirname, '../..');
     await call('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
     assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),true);
     console.log('PASS no-JavaScript fallback: all 72 original code panels readable');
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation2.html')});
+    await ready('#r2-p3-stub-java');
+    assert.equal(await evaluate('document.querySelectorAll("textarea").length'),0);
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-panel")).filter(panel=>getComputedStyle(panel).display!=="none").length'),12);
+    console.log('PASS Recitation 2 no-JavaScript fallback: all 12 code panels accessible');
     console.log('ALL CODE UI CHECKS PASSED');
   } finally {
     if (socket) socket.close();

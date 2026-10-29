@@ -27,15 +27,22 @@ site builders live in `tools/site_src/`.
   `tools/site_src/problems.py` for statements/examples/hints/signatures, and
   `material/week1/solutions/pN/` for solutions and stubs. These generate
   `site/recitation1.html`; preserve the combined Notes/Exercises anchors and drafts.
-- **Notebooks:** `tools/site_src/build_notebooks.py` generates the Python/Java files
+- **Recitation 2:** edit `tools/site_src/recitation2-content.html` for shared notes,
+  prompts, hints, and explanations; merge code/contracts live in `material/week2/solutions/`,
+  notebook checks in `material/week2/checks/`. `build_recitation2.py` generates the
+  page and Python/Java notebooks; it reuses existing tabs and markdown conversion.
+- **Notebooks (Recitation 1):** `tools/site_src/build_notebooks.py` generates the Python/Java files
   under `site/notebooks/` from the same notes, problems, and stubs. Edit notebook-only
   prose and self-check cells in that script. Do not embed reference solutions or
   advertise downloads before the files exist. Notebooks are also distributed via Canvas.
 - **Navigation:** edit `tools/site_src/site_layout.py`, then run `build_site.py`.
   Keep Home → Introduction → native details/summary Recitation 0–7 dropdown
   and the Home directory.
-- **Recitations 2–7:** unassigned placeholders. Do not assign topics, database tools,
+- **Recitations 3–7:** unassigned placeholders. Do not assign topics, database tools,
   or environments without the owner's decision. `docs/planning/` is not course content.
+
+Notebook Markdown fences must declare a language (`text` if unspecified,
+`pseudocode` for pseudocode). Written-answer placeholders must be Markdown cells.
 
 ## Site behavior
 
@@ -48,8 +55,8 @@ site builders live in `tools/site_src/`.
 - Drafts stay temporary: never persist or transmit code. Only language choice may
   use `localStorage["cs301-week1-lang"]`. Load/pageshow restores templates; reset
   restores the current template; copy reads the current starter textarea.
-- Default to Java; synchronize language across all 12 tab groups. Without JavaScript,
-  reveal all panels. Keep highlighting/copy functional on pages without exercise tabs.
+- Default to Java; synchronize language across all code tab groups (12 in Recitation 1,
+  two in Recitation 2). Without JavaScript, reveal all panels. Keep highlighting/copy functional on pages without exercise tabs.
 - Setup blocks use `.code-block[data-language]`, an explicit shell/notebook language
   label, and a copy button. Preserve literal command comments; escape all source text
   before adding highlight spans. Highlighting is lexical, not syntax validation.
@@ -62,7 +69,8 @@ site builders live in `tools/site_src/`.
 ## Solutions and harnesses
 
 - Keep six languages: `c`, `cpp`, `cs`, `java`, `py`, `js`. Signatures must match
-  `problems.py`, `CONTRACTS.md`, solutions, stubs, and harnesses exactly.
+  the relevant builder/content signatures (`problems.py` for Recitation 1),
+  `CONTRACTS.md`, solutions, stubs, and harnesses exactly.
 - Code changes must keep solutions and stubs aligned. Use beginner-readable code,
   short complexity headers, and algorithm-step comments. No library sorts in solutions;
   harnesses may use them as oracles. Honor all contract edge cases, performance limits,
@@ -81,20 +89,23 @@ Never claim an unrun check passed. Repository-doc edits alone need no site rebui
 
 - Generated content/navigation: `python3 tools/site_src/build_site.py` rebuilds all
   pages and notebooks. For Recitation 1 only, use `build_exercises.py`; for notebooks
-  only, use `build_notebooks.py` (both under `tools/site_src/`).
+  only, use `build_notebooks.py` for Recitation 1; `build_recitation2.py` rebuilds
+  Recitation 2 and its notebooks (all under `tools/site_src/`).
 - Site changes: `python3 tools/site_src/check_site.py --strict-links`
   → `OK: 0 errors, 0 warning(s)`.
 - Editor changes: `node tools/site_src/test_code_ui.cjs`
   → `ALL CODE UI CHECKS PASSED`.
 - Solutions/stubs/harnesses: `bash tools/verify_all.sh`
-  → `ALL 36 HARNESSES PASSED`.
+  → `ALL 36 HARNESSES PASSED` for Recitation 1. For Recitation 2, run
+  `bash tools/verify_week2.sh` → `ALL 6 WEEK 2 HARNESSES PASSED`.
 - Notebook inputs (problems, stubs, notes, notebook prose):
   `bash tools/verify_notebooks.sh` → `ALL NOTEBOOK CHECKS PASSED`.
 - Visually inspect changed pages in headless Chrome, including mobile; recapture after
   layout changes. Use `--user-data-dir=<tmp dir>` and `--disable-gpu-sandbox`.
   Store screenshots only in `.tmp/`; helpers: `shot_page.py` and `page_offsets.py`.
-- Keep `site/` free of scratch/build artifacts: currently 10 HTML pages, two generated
-  notebooks, and 22 assets (two CSS, one JS, favicon, eight logos, ten icons).
+- Keep `site/` free of scratch/build artifacts: currently 10 HTML pages, four generated
+  notebooks (Python/Java for Recitations 1–2), and 22 assets (two CSS, one JS, favicon,
+  eight logos, ten icons).
 
 ## Publishing
 

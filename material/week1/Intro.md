@@ -21,7 +21,8 @@
 
 - Site organization: Home, Introduction, and a Recitation 0–7 dropdown
 - Recitation 0: environment and Python/Java kernel setup; Recitation 1: notes and exercises combined
-- Recitations 2–7: reserved placeholders; database planning remains open
+- Recitation 2: asymptotic notation and divide and conquer, with written and coding practice
+- Recitations 3–7: reserved placeholders; database planning remains open
 - Current website: [https://harryc919.github.io/TA-CS301/](https://harryc919.github.io/TA-CS301/)
 - Introduction: 5–10 minutes (TA, website, session format, AI policy)
 - Concept review: 10–15 minutes (sorting ideas, stability, complexity)

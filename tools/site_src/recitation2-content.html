@@ -1,0 +1,113 @@
+<section class="section" id="overview">
+<div class="section-title"><h2>What we are practicing</h2></div>
+<p>This Tuesday session connects Week 1's asymptotic notation with Week 2's divide and conquer. Work from the latter half of last week's lectures and this week's material taught before recitation. Dynamic programming is outside this session.</p>
+<ul><li>Distinguish O, Ω, and Θ and justify a tight growth bound.</li><li>Separate the bound notation from best, worst, and expected running time.</li><li>Identify the subproblems, base case, and combining work in a recursive algorithm.</li><li>Explain a recurrence using a recursion tree, then implement a linear merge step.</li></ul>
+<p>Prerequisites: arrays, loops, functions, basic recursion, and the lecture material already covered. A recursive call solves a smaller instance of the same problem; a base case returns directly. Every chain of calls must reach a base case.</p>
+<div class="callout info"><span class="callout-title">Suggested session path</span><p>Spend 10–15 minutes reviewing the notes, then about 30 minutes on Exercises 1–3 (6 + 8 + 16 minutes). Allow about 15 minutes for discussion and use remaining time for questions. Timing is a guide, not a completion requirement. Optional practice is outside the core path.</p></div>
+<p>These exercises are optional and ungraded. Use hints when needed. AI tools are allowed during recitation, but you should be able to explain, verify, and modify your answer. Follow the instructor's separate assignment and exam policies.</p>
+</section>
+<section class="section" id="notation">
+<div class="section-title"><h2>1. Bounds describe functions</h2></div>
+<p>Let f(n) and g(n) be nonnegative for sufficiently large integer n, with g(n) positive there. We compare their growth as n increases, ignoring a finite initial range and constant factors.</p>
+<ul><li><strong>f ∈ O(g):</strong> there exist c &gt; 0 and n₀ such that 0 ≤ f(n) ≤ c·g(n) for every n ≥ n₀. This is an upper bound.</li><li><strong>f ∈ Ω(g):</strong> there exist c &gt; 0 and n₀ such that 0 ≤ c·g(n) ≤ f(n) for every n ≥ n₀. This is a lower bound.</li><li><strong>f ∈ Θ(g):</strong> there exist c₁, c₂ &gt; 0 and n₀ such that 0 ≤ c₁·g(n) ≤ f(n) ≤ c₂·g(n) for every n ≥ n₀. This is a tight bound.</li></ul>
+<p>We often write f(n) = O(g(n)) as shorthand for membership in a set of functions; it is not ordinary equality. A tight bound matches the function's order of growth, not its exact value.</p>
+<h3>One example, several valid statements</h3>
+<p>For f(n) = 5n + 8 and n ≥ 1, we have 5n ≤ f(n) ≤ 13n. Thus f ∈ Θ(n), using c₁ = 5, c₂ = 13, and n₀ = 1. It is also true that f ∈ O(n²), since 13n ≤ 13n² for n ≥ 1. That upper bound is valid but loose.</p>
+<p>For a fixed logarithm base greater than 1, the following functions have strictly increasing asymptotic growth: <code>1, log n, n, n log n, n², n³, 2ⁿ</code>. Constant factors such as <code>100n</code> versus <code>n</code> do not change the Θ class. Asymptotic analysis alone does not predict which implementation is faster for a particular small input.</p>
+<h3>Case analysis comes first</h3>
+<p>A running time depends on the input, not just its length. First choose the function: best case, worst case, or an expectation under a stated input distribution or algorithmic randomness. Then bound that function with O, Ω, or Θ.</p>
+<p>For standard insertion sort on length n ≥ 2, the best-case time is Θ(n) on an already sorted array and the worst-case time is Θ(n²) on a reverse-sorted array with distinct keys. Both functions have upper and lower bounds. <strong>O does not mean worst case; Ω does not mean best case.</strong></p>
+</section>
+<section class="section" id="divide-conquer">
+<div class="section-title"><h2>2. Count calls and combining work</h2></div>
+<ol><li><strong>Divide:</strong> form smaller subproblems and account for that work.</li><li><strong>Conquer:</strong> recursively solve the required subproblems.</li><li><strong>Combine:</strong> construct the full answer from their answers.</li><li><strong>Base case:</strong> handle small inputs directly; ensure recursion makes progress.</li></ol>
+<p>For two equally sized recursive subproblems, a typical recurrence is <code>T(n) = 2T(n/2) + work outside the recursive calls</code>. The outside work includes dividing, combining, and other local operations. The size of a subproblem alone does not determine total time.</p>
+<h3>Binary search: one surviving half</h3>
+<p>With constant-time array indexing and index bounds (no copied slices), worst-case binary search follows one half-sized subproblem after constant work: <code>B(n) = B(⌊n/2⌋) + Θ(1)</code> until a constant-size base case. There are Θ(log n) calls, so worst-case time is Θ(log n). A successful search that finds the target at the first midpoint takes Θ(1) time. Binary search is more precisely called <em>decrease-and-conquer</em>: only one smaller problem remains.</p>
+<h3>Merge sort: solve both halves, then merge</h3>
+<p>For the standard implementation that merges every pair of sorted halves, assume n = 2ᵏ, n ≥ 1, and a constant-time singleton base case. Then <code>M(n) = 2M(n/2) + Θ(n)</code>. The two recursive calls sort both halves. Copying/dividing and merging together take linear work per internal node.</p>
+<ul><li>At depth d, there are 2ᵈ subproblems of size n/2ᵈ.</li><li>At each internal level, the total local work is Θ(2ᵈ · n/2ᵈ) = Θ(n).</li><li>There are log₂ n internal levels and n constant-cost leaves.</li><li>Total time is Θ(n log n) for n ≥ 2. Non-power-of-two sizes need floors/ceilings but have the same asymptotic bound.</li></ul>
+<p>No Master Theorem is needed: count the work per level and how many levels there are. Standard array merge sort also uses O(n) auxiliary storage when its merge buffers are reused across calls; the recursion stack adds O(log n).</p>
+<h3>Trace a combine step</h3>
+<p>Merge <code>[1, 4, 9]</code> and <code>[2, 2, 3, 10]</code>. Compare only the two unconsumed heads. The output grows as <code>[1]</code>, <code>[1, 2]</code>, <code>[1, 2, 2]</code>, <code>[1, 2, 2, 3]</code>, <code>[1, 2, 2, 3, 4]</code>, <code>[1, 2, 2, 3, 4, 9]</code>. The left side is now exhausted; append the right tail <code>[10]</code>.</p>
+<p>Choose the left head first when values tie. For integer values the two copies look identical; for tagged records this rule preserves their relative order across the left and right halves.</p>
+</section>
+<section class="section" id="exercises">
+<div class="section-title"><h2>Core practice · about 30 minutes</h2></div>
+<p>Try the prompts before opening the reference explanations. Written answers may be short equations, annotated diagrams, or sentences. Use your IDE or the downloadable notebook to run code: the website's editors display and copy code but do not execute or grade it.</p>
+<ol class="steps"><li><a href="#exercise-1">Exercise 1 · classify and justify bounds</a> — 6 minutes.</li><li><a href="#exercise-2">Exercise 2 · account for recursive work</a> — 8 minutes.</li><li><a href="#exercise-3">Exercise 3 · implement the merge step</a> — 16 minutes.</li></ol>
+<p class="note">Browser code drafts are temporary. Copy your work before leaving the page. Tab indents, Shift+Tab unindents, and Escape then Tab leaves the editor. Refresh restores templates; Reset code restores the selected language's template.</p>
+</section>
+<section class="section" id="exercise-1">
+<div class="section-title"><h2>Exercise 1 · Is the bound justified?</h2></div>
+<p><strong>Written reasoning · 6 minutes.</strong> Let <code>f(n) = 3n² + 2n + 7</code> for integers n ≥ 1.</p>
+<ol><li>For each claim, decide whether it is valid. For a valid upper bound, state whether it is tight: <code>f ∈ O(n²)</code>, <code>f ∈ O(n³)</code>, <code>f ∈ Ω(n³)</code>.</li><li>Prove the first claim by giving one suitable pair c and n₀ and an inequality valid for every n ≥ n₀.</li><li>A classmate says, “O describes the worst case and Ω describes the best case.” Correct the statement in one or two sentences.</li></ol>
+<details data-kind="hint"><summary>Hint 1 · Compare with the leading term</summary><p>For n ≥ 1, each constant or linear term can be bounded above by a constant multiple of n². To test a claimed cubic lower bound, consider f(n)/n³ as n grows.</p></details>
+<details data-kind="hint"><summary>Hint 2 · Name the function being bounded</summary><p>Ask whether you are discussing the maximum, minimum, or expected runtime over inputs of size n. The notation alone does not choose that function.</p></details>
+<details data-kind="answer"><summary>Reference explanation · open after attempting</summary><p><strong>First claim:</strong> valid and tight as an upper bound: for n ≥ 1, <code>3n² ≤ f(n) ≤ 3n² + 2n² + 7n² = 12n²</code>. For O(n²), choose c = 12 and n₀ = 1. Together with the lower bound, this gives f ∈ Θ(n²).</p><p><strong>Second claim:</strong> valid but loose, because <code>f(n) ≤ 12n² ≤ 12n³</code> for n ≥ 1.</p><p><strong>Third claim:</strong> false. The ratio <code>f(n)/n³ = 3/n + 2/n² + 7/n³</code> tends to zero, so it cannot stay at least any fixed c &gt; 0 for all sufficiently large n.</p><p>O and Ω are upper and lower growth bounds on whichever function is under discussion. They can bound best-case, worst-case, or expected time; those are separate choices.</p></details>
+</section>
+<section class="section" id="exercise-2">
+<div class="section-title"><h2>Exercise 2 · Where does the work go?</h2></div>
+<p><strong>Written reasoning and a recursion tree · 8 minutes.</strong> Use this simplified cost model for merge sort: singleton input costs 1, and the local work of a call on n &gt; 1 elements costs exactly n. Let n be a power of two.</p>
+<ol><li>Complete <code>T(1) = ___</code> and <code>T(n) = ___ · T(___) + ___</code>.</li><li>For n = 8, list the number of calls, subproblem size, and total <em>local</em> work at depths 0, 1, 2, and 3. Count child calls' work only at their own depth.</li><li>Generalize: how many internal levels and leaves are there? Give the exact total in this simplified model and then its tight asymptotic bound.</li></ol>
+<details data-kind="hint"><summary>Hint 1 · Count work at one depth</summary><p>At depth d there are 2ᵈ calls on size n/2ᵈ inputs. Stop expanding when each input has size 1. Treat leaves using their base-case cost.</p></details>
+<details data-kind="hint"><summary>Hint 2 · Add levels, not just one path</summary><p>There are log₂ n internal levels. Each costs n in this model; the final n leaves each cost 1.</p></details>
+<details data-kind="answer"><summary>Reference explanation · open after attempting</summary><p><code>T(1) = 1</code>; <code>T(n) = 2T(n/2) + n</code> for n &gt; 1.</p><div class="table-wrap"><table class="data"><thead><tr><th>Depth</th><th>Calls</th><th>Size per call</th><th>Total local work</th></tr></thead><tbody><tr><td>0</td><td>1</td><td>8</td><td>8</td></tr><tr><td>1</td><td>2</td><td>4</td><td>8</td></tr><tr><td>2</td><td>4</td><td>2</td><td>8</td></tr><tr><td>3 · leaves</td><td>8</td><td>1</td><td>8</td></tr></tbody></table></div><p>For n = 8, total work is 32. In general, <code>T(n) = n log₂ n + n</code>, hence Θ(n log n) for n ≥ 2. The exact expression belongs to this cost model; real instruction counts have different constants.</p><p>Binary search follows only one child per level with constant local work. Merge sort follows both children and does linear local work per call. Halving the input alone therefore does not determine total runtime.</p></details>
+</section>
+<section class="section" id="exercise-3">
+<div class="section-title"><h2>Exercise 3 · Implement the combine step</h2></div>
+<p><strong>Coding and explanation · 16 minutes.</strong> Given two integer arrays <code>left</code> and <code>right</code>, each already sorted in nondecreasing order, return a new sorted array containing every occurrence from both. Do not modify either input and do not use a library sort or merge routine. You only need the merge helper, not a complete merge sort.</p>
+<ul><li>Each input has 0–100,000 elements. Values are between −1,000,000,000 and 1,000,000,000.</li><li>Inputs are non-null arrays; in C, NULL is allowed for an input with length zero. Sortedness is guaranteed.</li><li>The result length is the sum of the input lengths. Duplicates must be retained. Choose from the left input first on equal values.</li><li>Target: Θ(n+m) time when n+m &gt; 0 and Θ(1) for two empty inputs; O(n+m) output storage and O(1) working space excluding the result. Dynamic-array appends have amortized constant cost.</li></ul>
+<h3>Examples and checks</h3>
+<div class="table-wrap"><table class="data"><thead><tr><th>Left</th><th>Right</th><th>Result</th><th>What to check</th></tr></thead><tbody><tr><td><code>[1, 4, 9]</code></td><td><code>[2, 2, 3, 10]</code></td><td><code>[1, 2, 2, 3, 4, 9, 10]</code></td><td>Unequal lengths and right tail</td></tr><tr><td><code>[]</code></td><td><code>[-2, 5]</code></td><td><code>[-2, 5]</code></td><td>Return a new array, not the right input</td></tr><tr><td><code>[2, 2]</code></td><td><code>[2]</code></td><td><code>[2, 2, 2]</code></td><td>Keep every occurrence</td></tr><tr><td><code>[]</code></td><td><code>[]</code></td><td><code>[]</code></td><td>Empty result; in C, NULL with size 0</td></tr></tbody></table></div>
+<h3>Function interfaces</h3>
+<!-- MERGE_SIGNATURES -->
+<p>In C, write the result length through <code>returnSize</code>; the caller frees a nonempty result. Return NULL with size 0 for an empty result or allocation failure. Other languages return a new array/list/vector. Keep the selected interface unchanged.</p>
+<h3>Starter template · edit or copy</h3>
+<!-- MERGE_STARTER -->
+<details data-kind="hint"><summary>Hint 1 · Track the unconsumed heads</summary><p>Use i for the left input and j for the right. Compare heads only while both indices are in range. Append the smaller head and advance only its index. In fixed-size output arrays, also keep output index k.</p></details>
+<details data-kind="hint"><summary>Hint 2 · Finish the job</summary><p>The main loop stops as soon as one input is exhausted. Copy the remaining left tail, then the remaining right tail. At most one of these loops will copy anything.</p></details>
+<p><strong>Explain your answer:</strong> why is choosing the smaller head safe? Why are no elements lost or duplicated? What happens when one input is empty? Give time, output-space, and extra-working-space bounds.</p>
+<details data-kind="answer"><summary>Reference explanation and code · open after attempting</summary><p><strong>Invariant:</strong> the result contains exactly the consumed prefixes of both inputs, in sorted order; its last element, if any, is no larger than any unconsumed element. Since each input is sorted, the smallest unconsumed value must be one of its heads. Appending the smaller head preserves the invariant, and advancing exactly one index consumes exactly one occurrence.</p><p>Each step reduces the total number of unconsumed elements. When one input is exhausted, the other tail is already sorted and can be copied. Thus every occurrence appears once, in order, without writing to either input.</p><p>The algorithm writes n+m output values and advances the indices n+m times: Θ(n+m) time for positive total length, Θ(1) if both are empty. It stores n+m result values and only a constant number of indices; output storage is linear, while working space excluding the output is O(1).</p>
+<!-- MERGE_SOLUTION -->
+</details>
+</section>
+<section class="section" id="optional-practice">
+<div class="section-title"><h2>Optional practice · outside the core 30 minutes</h2></div>
+<p>These are additional exercises on syllabus topics, not the separate non-exam Extra Content. Skip them during the core path. Use the quicksort exercise only if partitioning has already been covered in lecture.</p>
+<h3>A. Count iterations, not indentation</h3>
+<p>Assume integer n ≥ 1, unbounded integer counters, and unit-cost arithmetic for this pseudocode. Give a tight bound on the number of <code>work()</code> calls for each fragment and justify it.</p>
+<div class="code-block" data-language="pseudo"><div class="code-head"><span class="lang-tag">Pseudocode · independent fragments</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code># A: sequential loops
+for i = 1 to n:
+    work()
+for j = 1 to n:
+    work()
+
+# B: triangular nested loops
+for i = 1 to n:
+    for j = 1 to i:
+        work()
+
+# C: doubling counter
+k = 1
+while k &lt;= n:
+    work()
+    k = 2 * k</code></pre></div>
+<details data-kind="hint"><summary>Hint · Write a count before a bound</summary><p>For B, sum the inner-loop lengths. For C, list k = 1, 2, 4, … and determine the last exponent that stays at most n.</p></details>
+<details data-kind="answer"><summary>Reference explanation</summary><p>A calls work 2n times: Θ(n). B calls it n(n+1)/2 times: Θ(n²). C calls it ⌊log₂ n⌋+1 times: Θ(log n) as n grows. Sequential loops add their counts; nested loops require accounting for the actual inner-loop lengths.</p></details>
+<h3>B. Same partition procedure, different recursion shape</h3>
+<p>Assume a conventional two-way quicksort partition places one pivot, costs Θ(n), and excludes the pivot from later recursive calls. All keys are distinct. Compare approximately balanced partitions with repeated splits of sizes 0 and n−1. Sketch the recursion shapes and explain the total work. This model is not the three-way duplicate-aware implementation from Recitation 1.</p>
+<details data-kind="hint"><summary>Hint · Compare levels with a chain</summary><p>Balanced partitions give logarithmic depth and linear total partition work per early level. A 0 and n−1 split gives one long chain with shrinking partition costs.</p></details>
+<details data-kind="answer"><summary>Reference explanation</summary><p>Balanced splits give Θ(n log n) time. Repeated 0 and n−1 splits give <code>Q(n) = Q(n−1) + Θ(n)</code>; summing the shrinking linear costs gives Θ(n²). These are particular recursion shapes, not an average-case proof. For distinct keys and uniformly random pivots, the expected time is Θ(n log n), but the worst case remains Θ(n²).</p></details>
+</section>
+<section class="section" id="discussion">
+<div class="section-title"><h2>Discussion and exit check</h2></div>
+<p>Compare the growth arguments in Exercise 1 and the level accounting in Exercise 2. Then diagnose this proposed merge shortcut: “When either input ends, return the output immediately.” Use <code>left = [1]</code>, <code>right = [2, 3]</code> to show what is lost, and explain which loop repairs it.</p>
+<p><strong>Exit check:</strong> why is “the array is halved, so the algorithm takes O(log n) time” insufficient? Your explanation should name both the number of recursive calls and the work outside them. Explain which running-time case you are discussing.</p>
+<details data-kind="answer"><summary>Discussion notes</summary><p>The shortcut returns only [1], losing [2, 3]; copying the remaining right tail repairs this case, and a symmetric loop handles the left tail. Halving describes the length of one chain, not the work across all chains: binary search follows one constant-work child; merge sort solves two children and merges their results. Their worst-case time bounds differ accordingly.</p></details>
+<p>Before leaving, keep your own copy of the notebook or code and write down one remaining question for the TA.</p>
+</section>
+<section class="section" id="references">
+<div class="section-title"><h2>References and related material</h2></div>
+<ul><li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-3-insertion-sort-merge-sort/">MIT 6.006 · Insertion sort, merge sort, and recursion-tree analysis</a></li><li><a href="recitation1.html#merge-sort">Recitation 1 · merge-sort reference notes</a> — optional review, not required pre-work.</li><li><a href="recitation0.html">Recitation 0 · notebook environment and kernels</a></li></ul>
+</section>
