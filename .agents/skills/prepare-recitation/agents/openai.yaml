@@ -1,0 +1,4 @@
+interface:
+  display_name: "CS301 Recitation Workflow"
+  short_description: "Prepare, validate, and commit weekly recitation material"
+  default_prompt: "Use $prepare-recitation to prepare the next CS301 recitation, beginning with its Markdown layout."

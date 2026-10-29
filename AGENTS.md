@@ -12,6 +12,11 @@ must be in English. Preserve existing user edits and unrelated content.
 - Introduction contact information is approved; ask before adding other personal data.
 - Commit and push only when explicitly authorized, after rebuilding and verification.
 
+## Local workflow
+
+For weekly content preparation through an authorized commit, use
+[prepare-recitation](.agents/skills/prepare-recitation/SKILL.md).
+
 ## Sources of truth
 
 Never hand-edit generated HTML or notebooks. Paths below are relative to the root;
