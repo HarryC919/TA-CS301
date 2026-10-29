@@ -83,8 +83,8 @@ javac -version # Check that the JDK compiler is available
 java --list-modules # Look for the jdk.jshell module</code></pre></div>
 <p>Confirm that Java and the compiler use the intended JDK and the module list includes <code>jdk.jshell</code>. A JRE alone is not enough. If your existing JDK meets these checks, skip the optional mise section and go directly to <a href="#java-kernel">Java kernel installation</a>.</p>
 </section>
-<section class="section" id="mise"><div class="section-title"><h2>5. Optional: install or manage a JDK with mise</h2></div>
-<p>If you have no JDK, or yours is older than version 17, use <strong>mise</strong> as a JDK version manager. The example below selects Temurin JDK 21 for this course project rather than replacing a system JDK.</p>
+<section class="section" id="mise"><div class="section-title"><h2>5. Optional: install a global JDK with mise</h2></div>
+<p>If you have no JDK, or yours is older than version 17, use <strong>mise</strong> to install a <strong>Microsoft JDK</strong> as your global default. Choose version <strong>17</strong>, <strong>21</strong>, or <strong>25</strong>; the example below uses 21. A global selection makes <code>java</code> and <code>javac</code> available directly in an activated shell, without a <code>mise exec</code> prefix.</p>
 <h3>macOS — default Zsh shell</h3>
 <div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · macOS</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -fsSL https://mise.run/zsh | sh # Install mise and configure Zsh activation</code></pre></div>
 <h3>Linux — Bash shell</h3>
@@ -92,49 +92,50 @@ java --list-modules # Look for the jdk.jshell module</code></pre></div>
 <p>The shell-specific installers add mise activation to that shell's startup file. Open a new terminal afterward. For other shells, follow the official mise shell-setup instructions linked below.</p>
 <h3>Windows — PowerShell</h3>
 <div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>winget install jdx.mise # Install mise on Windows</code></pre></div>
-<p>Open a new PowerShell window after installation. If <code>winget</code> is unavailable, use an alternative from the official mise installation guide. The commands below use <code>mise exec</code>, so they do not require a PowerShell profile activation step.</p>
-<h3>Select a project JDK — all platforms</h3>
-<p>Return to your <code>cs301-notebooks</code> folder, then run:</p>
+<p>Open a new PowerShell window after installation, then add mise activation to your PowerShell profile. If <code>winget</code> is unavailable, use an alternative from the official mise installation guide.</p>
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · activate mise</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>if (-not (Test-Path $PROFILE)) {
+    New-Item -ItemType File -Path $PROFILE -Force | Out-Null # Create the profile if needed
+}
+$activation = '(&amp;mise activate pwsh) | Out-String | Invoke-Expression'
+if (-not (Select-String -Path $PROFILE -SimpleMatch $activation -Quiet)) {
+    Add-Content $PROFILE $activation # Add the activation line once
+}</code></pre></div>
+<p>Open another new PowerShell window so the profile takes effect. Shell activation is required for the global JDK to appear on <code>PATH</code> and for mise to set <code>JAVA_HOME</code>.</p>
+<h3>Select a global Microsoft JDK — all platforms</h3>
+<p>In a terminal where mise is activated, run:</p>
 <div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mise --version # Check that mise is available
-mise use java@temurin-21 # Install and select JDK 21 for this project
-mise exec -- java -version # Check the project-selected Java version
-mise exec -- javac -version # Check the selected JDK compiler
-mise exec -- java --list-modules # Check the selected JDK for jdk.jshell</code></pre></div>
-<p><code>mise use</code> installs the selected JDK and records it in the project's <code>mise.toml</code>. <code>mise exec</code> supplies that JDK and its <code>JAVA_HOME</code> to the command it launches. For Java notebooks on this path, launch JupyterLab from the course folder using:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mise exec -- uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
-<p>This lets the Java kernel inherit the selected JDK even without shell activation. Keep using the <code>mise exec --</code> prefix for Java-related project commands in later sessions.</p>
+mise use --global java@microsoft-21 # Install Microsoft JDK 21 as the global default
+# You may instead choose java@microsoft-17 or java@microsoft-25</code></pre></div>
+<p><code>mise use --global</code> installs the selected JDK and records it in your global mise configuration rather than the course project's <code>mise.toml</code>. Open a new terminal after changing the global selection, then check the JDK directly:</p>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>java -version # Check the global Java runtime version
+javac -version # Check the global JDK compiler
+java --list-modules # Check the global JDK for jdk.jshell</code></pre></div>
+<p>The version output should identify Microsoft and the major version you selected. In later sessions, use ordinary <code>java</code>, <code>javac</code>, and JupyterLab commands; no <code>mise exec --</code> prefix is needed.</p>
 </section>
 <section class="section" id="java-kernel"><div class="section-title"><h2>6. Install the Java kernel inside the uv environment</h2></div>
 <ol class="steps"><li>Complete the uv project setup first. Stop a running JupyterLab server with Ctrl+C in its terminal before installing a new kernel.</li><li>Download the binary distribution ZIP from the <a href="https://github.com/SpencerPark/IJava/releases">IJava releases page</a>, not the source-code ZIP.</li><li>Extract it into a folder named <code>ijava</code> inside <code>cs301-notebooks</code>. Ensure <code>ijava</code> directly contains both <code>install.py</code> and the <code>java</code> folder; move them out of an extra nested directory if necessary.</li></ol>
-<h3>Using an existing JDK — macOS/Linux and PowerShell</h3>
-<p>Start in <code>cs301-notebooks</code>. The installer runs from its own directory, while <code>--project ..</code> selects the parent uv project and its Python environment:</p>
+<h3>Install and check the kernel — all platforms</h3>
+<p>Start in <code>cs301-notebooks</code> using a terminal where your existing or globally mise-managed JDK is available. The installer runs from its own directory, while <code>--project ..</code> selects the parent uv project and its Python environment:</p>
 <div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
 uv run --project .. python install.py --sys-prefix # Install the Java kernel into the parent project environment
 cd .. # Return to the notebook project folder
 uv run jupyter kernelspec list # List kernels visible to this project
-uv run jupyter lab # Start JupyterLab from the project</code></pre></div>
-<h3>Using the optional mise-managed JDK</h3>
-<p>Use this version instead, also starting in <code>cs301-notebooks</code>:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
-mise exec -- uv run --project .. python install.py --sys-prefix # Install the kernel using the managed JDK and project Python
-cd .. # Return to the notebook project folder
-mise exec -- uv run jupyter kernelspec list # List project kernels with the selected JDK
-mise exec -- uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
+uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
 <p>The kernel list should include <code>java</code>. In JupyterLab, create a notebook using <strong>Java</strong> and run this cell:</p>
 <div class="code-block" data-language="java"><div class="code-head"><span class="lang-tag">Java · notebook cell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>System.out.println(System.getProperty("java.version")); // Check the Java version used by the notebook
 System.out.println(1 + 1); // Verify that the Java cell prints 2</code></pre></div>
 <p>Check for a JDK major version of at least 17 and a final output of <code>2</code>. IJava uses JShell-style interactive execution; this simple test needs no <code>Main</code> class wrapper.</p>
 </section>
 <section class="section" id="workflow"><div class="section-title"><h2>7. Daily notebook workflow</h2></div>
-<ol class="steps"><li>Enter <code>cs301-notebooks</code>. Start JupyterLab with <code>uv run jupyter lab</code>, or <code>mise exec -- uv run jupyter lab</code> for a mise-managed Java environment.</li><li>Open the appropriate language notebook when exercises are released. Select <strong>Python (CS301)</strong> or <strong>Java</strong> to match its code; changing kernels does not translate a program.</li><li>Run cells from top to bottom with Shift+Enter. Save edits and outputs with Ctrl+S or Cmd+S.</li><li>Restart the kernel and run all cells before checking or sharing results. Unlike this website's temporary editors, notebook files can retain your edits.</li></ol>
+<ol class="steps"><li>Enter <code>cs301-notebooks</code>. Start JupyterLab with <code>uv run jupyter lab</code>. This works for Python and for Java with either an existing JDK or a globally mise-managed JDK.</li><li>Open the appropriate language notebook when exercises are released. Select <strong>Python (CS301)</strong> or <strong>Java</strong> to match its code; changing kernels does not translate a program.</li><li>Run cells from top to bottom with Shift+Enter. Save edits and outputs with Ctrl+S or Cmd+S.</li><li>Restart the kernel and run all cells before checking or sharing results. Unlike this website's temporary editors, notebook files can retain your edits.</li></ol>
 </section>
 <section class="section" id="troubleshooting"><div class="section-title"><h2>Common setup problems</h2></div>
-<ul><li><strong>uv or mise not found:</strong> reopen the terminal after installation and verify its user PATH. Use the official setup guide for your shell.</li><li><strong>Wrong Python or missing package:</strong> enter the course project, use <code>uv run python</code>, and add dependencies with <code>uv add</code>. Check <code>sys.executable</code> inside the notebook.</li><li><strong>Kernel missing:</strong> use <code>uv run jupyter kernelspec list</code> in the same project where you installed it. Avoid launching an unrelated system Jupyter.</li><li><strong>Java kernel fails:</strong> verify the JDK version, compiler, and <code>jdk.jshell</code>. mise users should run these checks and JupyterLab through <code>mise exec --</code>.</li><li><strong>Need help:</strong> bring your OS, shell, version outputs, selected kernel and exact error message to the TA.</li></ul>
+<ul><li><strong>uv or mise not found:</strong> reopen the terminal after installation and verify its user PATH. Use the official setup guide for your shell.</li><li><strong>Wrong Python or missing package:</strong> enter the course project, use <code>uv run python</code>, and add dependencies with <code>uv add</code>. Check <code>sys.executable</code> inside the notebook.</li><li><strong>Kernel missing:</strong> use <code>uv run jupyter kernelspec list</code> in the same project where you installed it. Avoid launching an unrelated system Jupyter.</li><li><strong>Java kernel fails:</strong> verify the JDK version, compiler, and <code>jdk.jshell</code> in the terminal that launches JupyterLab. mise users should also run <code>mise doctor</code> and confirm that shell activation is enabled.</li><li><strong>Need help:</strong> bring your OS, shell, version outputs, selected kernel and exact error message to the TA.</li></ul>
 <p>Database tools and their environment will be announced separately once that part of the recitation plan is decided.</p>
 </section>
 <section class="section" id="sources"><div class="section-title"><h2>Official setup references</h2></div>
 <ul><li><a href="https://docs.astral.sh/uv/getting-started/installation/">Install uv on macOS, Linux and Windows</a></li><li><a href="https://docs.astral.sh/uv/guides/install-python/">Install and manage Python with uv</a></li><li><a href="https://docs.astral.sh/uv/guides/projects/">Manage a uv project and dependencies</a></li><li><a href="https://docs.astral.sh/uv/guides/integration/jupyter/">Use Jupyter with uv</a></li><li><a href="https://ipython.readthedocs.io/en/stable/install/kernel_install.html">IPython kernel registration</a></li><li><a href="https://mise.jdx.dev/installing-mise.html">Install mise</a></li><li><a href="https://mise.jdx.dev/shell-setup.html">Activate mise in your shell</a></li><li><a href="https://mise.jdx.dev/lang/java.html">Manage Java JDK versions with mise</a></li><li><a href="https://github.com/SpencerPark/IJava#installing">IJava installation</a></li></ul>
-<p class="note">Instructions checked against official documentation on October 27, 2026. Use the version and kernel checks above to verify your own installation.</p>
+<p class="note">Instructions checked against official documentation on October 29, 2026. Use the version and kernel checks above to verify your own installation.</p>
 </section></div>
 </main><footer class="site-footer"><div class="container">
 <p>COMPSCI 301 · course materials for the recitation sessions.</p>

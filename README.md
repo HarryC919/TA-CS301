@@ -44,8 +44,8 @@ website mirrors the same notes and exercises in the browser.
 
 - **Recitation 0** covers uv-managed Python and project-local environments, notebook
   dependencies, Python and Java/IJava kernels, and JDK setup. Windows examples use
-  PowerShell. Existing JDK 17 or newer installations are accepted, and mise is an
-  optional JDK manager.
+  PowerShell. Existing JDK 17 or newer installations are accepted; mise can optionally
+  install Microsoft JDK 17, 21, or 25 as a global default.
 - **Recitation 1** combines sorting concept notes with six practice problems in C,
   C++, C#, Java, Python, and JavaScript, plus Python and Java Jupyter notebooks.
 - **Recitations 2–7** are reserved placeholders. Later topics and the database
