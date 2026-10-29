@@ -31,6 +31,9 @@
   - Other languages are welcome, but not supported in sample solutions
 - Discuss approaches: 15 minutes (key ideas, correctness, complexity; no line-by-line code walkthrough)
 - Questions: remaining time; bring attempts, homework questions, or lecture topics to revisit
+- Recommended IDEs (choose either):
+  - Visual Studio Code: lightweight, customizable editor with extensions for all six recitation languages.
+  - PyCharm: Python-focused IDE with code completion, visual debugging, refactoring, and notebook support.
 - AI Policy: AI tool fully allowed **during the recitation**, but students should understand the solution and be able to explain it in their own words.
 - This permission applies to recitation practice. Follow the instructor's rules for assignments and exams; those rules are not changed by this policy.
 - Recommended AI tools:

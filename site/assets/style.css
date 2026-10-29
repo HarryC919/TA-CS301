@@ -275,9 +275,10 @@ summary:focus-visible {
   margin: 20px 0;
 }
 
-/* AI tool lists on the introduction page (logo + model name) */
+/* Tool and IDE styles on the introduction page */
 .tool-grid { align-items: stretch; }
 .tool-card-title { margin: 0 0 0.5rem; font-size: 1.05rem; }
+.ide-card-title { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.75rem; }
 .tool-list { list-style: none; margin: 0; padding: 0; }
 .tool-item {
   display: flex;
