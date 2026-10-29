@@ -23,6 +23,7 @@
 - Recitation 0: environment and Python/Java kernel setup; Recitation 1: notes and exercises combined
 - Recitation 2: asymptotic notation and divide and conquer, with written and coding practice
 - Recitations 3–7: reserved placeholders; database planning remains open
+- This is the permanent recitation website; instructor announcements remain authoritative for course logistics and assessment.
 - Current website: [https://harryc919.github.io/TA-CS301/](https://harryc919.github.io/TA-CS301/)
 - Introduction: 5–10 minutes (TA, website, session format, AI policy)
 - Concept review: 10–15 minutes (sorting ideas, stability, complexity)

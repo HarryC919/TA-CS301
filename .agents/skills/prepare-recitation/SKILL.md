@@ -47,7 +47,7 @@ Write an English `material/weekN/Layout.md` with:
 
 When the request is layout-first, deliver this file and wait for its review before
 writing full problems or changing the website. Existing approval in the conversation
-satisfies this boundary: “没问题，继续” starts development without another permission
+satisfies this boundary: “Looks good, continue” starts development without another permission
 round. Respect explicit requests to skip layout review.
 
 ## 2. Develop the approved materials

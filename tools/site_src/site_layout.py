@@ -29,7 +29,7 @@ def header(current: str) -> str:
 
 FOOTER = '''<footer class="site-footer"><div class="container">
 <p>COMPSCI 301 · course materials for the recitation sessions.</p>
-<p class="muted small">The official course site is temporarily unavailable. If you spot a mistake, tell the TA.</p>
+<p class="muted small">If you spot a mistake, tell the TA.</p>
 </div></footer>'''
 
 
