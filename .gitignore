@@ -11,6 +11,8 @@ bin/
 obj/
 *.o
 *.out
+.venv/
+tests/
 
 # OS noise.
 .DS_Store
