@@ -14,7 +14,7 @@ def header(current: str) -> str:
     label = 'Recitation ' + current.removeprefix('recitation').removesuffix('.html') if selected else 'Recitation'
     return f'''<header class="site-header">
   <div class="container header-inner">
-    <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
+    <a class="site-title" href="index.html"><span class="course-mark" aria-hidden="true">301</span><span class="site-title-copy"><span class="site-title-course">COMPSCI 301</span><span class="site-title-sub">Algorithms &amp; Databases</span></span></a>
     <nav class="site-nav" aria-label="Site">
       {link('index.html', 'Home')}
       {link('intro.html', 'Introduction')}

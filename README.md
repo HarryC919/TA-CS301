@@ -75,14 +75,14 @@ selection guidance, and an optional order-statistics preview.
 problem includes a statement, examples, constraints, exact function signatures,
 starter templates, hints, and collapsible reference solutions in all six languages.
 
-| # | Problem | Difficulty | Main topic |
-|---|---------|------------|------------|
-| 1 | Bubble Sort with Early Exit | Easy | Loop bounds, `swapped`, O(n) best case |
-| 2 | Insertion Sort: Count the Shifts | Easy | Insertion steps and inversions |
-| 3 | Stable Sort by Word Length | Easy–Medium | Stability and sort choice |
-| 4 | Count Inversions | Medium | Merge-sort merging and 64-bit answers |
-| 5 | Quick Sort: Random Pivot, 3-Way Partition | Medium | Partitioning and duplicates |
-| 6 | Kth Largest Element (Quickselect) | Medium+ | Optional iterative 3-way partition exploration |
+| #   | Problem                                   | Difficulty  | Main topic                                     |
+| --- | ----------------------------------------- | ----------- | ---------------------------------------------- |
+| 1   | Bubble Sort with Early Exit               | Easy        | Loop bounds, `swapped`, O(n) best case         |
+| 2   | Insertion Sort: Count the Shifts          | Easy        | Insertion steps and inversions                 |
+| 3   | Stable Sort by Word Length                | Easy–Medium | Stability and sort choice                      |
+| 4   | Count Inversions                          | Medium      | Merge-sort merging and 64-bit answers          |
+| 5   | Quick Sort: Random Pivot, 3-Way Partition | Medium      | Partitioning and duplicates                    |
+| 6   | Kth Largest Element (Quickselect)         | Medium+     | Optional iterative 3-way partition exploration |
 
 Problem 6 is independent exploration and is not covered in class. Java is the default
 displayed language because it is the CS201 language. The browser editors support
