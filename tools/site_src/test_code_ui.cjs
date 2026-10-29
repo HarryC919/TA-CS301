@@ -165,14 +165,11 @@ const root = path.resolve(__dirname, '../..');
         assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),false);
       }
     }
-    for (const [old,hash] of [['week1-notes.html','#merge-sort'],['week1-exercises.html','#problem-6']]) {
-      await call('Page.navigate',{url:'file://' + path.join(root,'site',old)+hash});
-      await ready('#p1-stub-java');
-      assert.equal(await evaluate('location.pathname.endsWith("recitation1.html") && location.hash==='+JSON.stringify(hash)),true);
-    }
+    await call('Page.navigate',{url:'file://' + path.join(root,'site/recitation1.html')});
+    await ready('#p1-stub-java');
     await evaluate(`var field=document.querySelector('#p1-stub-java textarea');field.value='temporary navigation draft';field.dispatchEvent(new Event('input'));document.querySelector('a[href="#notes"]').click();`);
     assert.equal(await evaluate('document.querySelector("#p1-stub-java textarea").value'), 'temporary navigation draft');
-    console.log('PASS all ten primary pages, keyboard dropdowns at two widths, legacy deep links, and same-page draft preservation');
+    console.log('PASS all ten primary pages, keyboard dropdowns at two widths, and same-page draft preservation');
 
     await call('Page.navigate',{url:'file://' + path.join(root,'site/recitation0.html')});
     await ready('#uv');

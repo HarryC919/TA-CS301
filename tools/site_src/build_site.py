@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the fixed Recitation 0–7 static site, including legacy Week 1 redirects."""
+"""Build the fixed Recitation 0–7 static site and Recitation 1 notebooks."""
 from pathlib import Path
 import re
 from build_exercises import build
@@ -43,13 +43,7 @@ def main():
             else:
                 text = re.sub(r'<section class="section" id="recitations">.*?</section>', lambda _: directory(), text, flags=re.S)
         p.write_text(text, encoding='utf-8')
-    for name, anchor in [('week1-notes.html', 'notes'), ('week1-exercises.html', 'exercises')]:
-        body = f'''<section class="page-hero"><div class="container"><h1>Materials moved to Recitation 1</h1><p>The notes and exercises now share one page.</p>
-<a class="btn primary" href="recitation1.html#{anchor}">Open Recitation 1 — {anchor}</a></div></section>'''
-        # Preserve deep links when JS is available; the visible link works without JS.
-        script = f'''<script>location.replace("recitation1.html" + (location.hash || "#{anchor}"));</script>'''
-        (SITE / name).write_text(page('recitation1.html', 'Moved to Recitation 1', body, script), encoding='utf-8')
-    print('Built Home/Introduction navigation, Recitations 0–7, two legacy redirects, and the Recitation 1 notebooks.')
+    print('Built Home/Introduction navigation, Recitations 0–7, and the Recitation 1 notebooks.')
 
 
 if __name__ == '__main__':

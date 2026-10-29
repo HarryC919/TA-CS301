@@ -39,7 +39,7 @@ window.addEventListener("load", function () {{
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("page", help="page file name under site/, e.g. week1-exercises.html")
+    parser.add_argument("page", help="page file name under site/, e.g. recitation1.html")
     parser.add_argument("anchor", help="element id to scroll to")
     parser.add_argument("out", help="output PNG path")
     parser.add_argument("--height", type=int, default=2600)

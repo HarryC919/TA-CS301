@@ -142,8 +142,7 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
                 nav_active.append(href)
         if nav_hrefs != NAV_ORDER:
             errors.append(f"{rel}: navigation should be {NAV_ORDER}, found {nav_hrefs}")
-        expected_active = "recitation1.html" if rel.name in {"week1-notes.html", "week1-exercises.html"} else rel.name
-        if nav_active != [expected_active]:
+        if nav_active != [rel.name]:
             errors.append(
                 f"{rel}: navigation should mark only {rel.name!r} as active, "
                 f"found {nav_active}"
