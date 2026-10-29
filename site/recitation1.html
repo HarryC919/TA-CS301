@@ -19,7 +19,7 @@
 <body>
 <header class="site-header">
   <div class="container header-inner">
-    <a class="site-title" href="index.html">COMPSCI 301 <span class="site-title-sub">Algorithms &amp; Databases</span></a>
+    <a class="site-title" href="index.html"><span class="course-mark" aria-hidden="true">301</span><span class="site-title-copy"><span class="site-title-course">COMPSCI 301</span><span class="site-title-sub">Algorithms &amp; Databases</span></span></a>
     <nav class="site-nav" aria-label="Site">
       <a href="index.html">Home</a>
       <a href="intro.html">Introduction</a>
@@ -835,14 +835,16 @@ partition(a, lo, hi):
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-c-tab" data-lang="c" aria-controls="p1-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-cpp-tab" data-lang="cpp" aria-controls="p1-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-cs-tab" data-lang="cs" aria-controls="p1-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-java-tab" data-lang="java" aria-controls="p1-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-py-tab" data-lang="py" aria-controls="p1-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-stub-js-tab" data-lang="js" aria-controls="p1-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-c-tab" data-lang="c" aria-controls="p1-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-cpp-tab" data-lang="cpp" aria-controls="p1-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-cs-tab" data-lang="cs" aria-controls="p1-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-java-tab" data-lang="java" aria-controls="p1-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-py-tab" data-lang="py" aria-controls="p1-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-stub-js-tab" data-lang="js" aria-controls="p1-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p1-stub-c" aria-labelledby="p1-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement bubble sort with the early-exit optimization.
@@ -901,14 +903,16 @@ module.exports = { bubbleSort };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-c-tab" data-lang="c" aria-controls="p1-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-cpp-tab" data-lang="cpp" aria-controls="p1-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-cs-tab" data-lang="cs" aria-controls="p1-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-java-tab" data-lang="java" aria-controls="p1-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-py-tab" data-lang="py" aria-controls="p1-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p1-solution-js-tab" data-lang="js" aria-controls="p1-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-c-tab" data-lang="c" aria-controls="p1-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-cpp-tab" data-lang="cpp" aria-controls="p1-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-cs-tab" data-lang="cs" aria-controls="p1-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-java-tab" data-lang="java" aria-controls="p1-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-py-tab" data-lang="py" aria-controls="p1-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p1-solution-js-tab" data-lang="js" aria-controls="p1-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p1-solution-c" aria-labelledby="p1-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Time: O(n^2) worst, O(n) best (early exit). Space: O(1).
@@ -1106,14 +1110,16 @@ module.exports = { bubbleSort };
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-c-tab" data-lang="c" aria-controls="p2-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-cpp-tab" data-lang="cpp" aria-controls="p2-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-cs-tab" data-lang="cs" aria-controls="p2-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-java-tab" data-lang="java" aria-controls="p2-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-py-tab" data-lang="py" aria-controls="p2-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-stub-js-tab" data-lang="js" aria-controls="p2-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-c-tab" data-lang="c" aria-controls="p2-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-cpp-tab" data-lang="cpp" aria-controls="p2-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-cs-tab" data-lang="cs" aria-controls="p2-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-java-tab" data-lang="java" aria-controls="p2-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-py-tab" data-lang="py" aria-controls="p2-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-stub-js-tab" data-lang="js" aria-controls="p2-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p2-stub-c" aria-labelledby="p2-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement insertion sort and return the total number of shifts.
@@ -1174,14 +1180,16 @@ module.exports = { insertionSort };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-c-tab" data-lang="c" aria-controls="p2-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-cpp-tab" data-lang="cpp" aria-controls="p2-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-cs-tab" data-lang="cs" aria-controls="p2-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-java-tab" data-lang="java" aria-controls="p2-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-py-tab" data-lang="py" aria-controls="p2-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p2-solution-js-tab" data-lang="js" aria-controls="p2-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-c-tab" data-lang="c" aria-controls="p2-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-cpp-tab" data-lang="cpp" aria-controls="p2-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-cs-tab" data-lang="cs" aria-controls="p2-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-java-tab" data-lang="java" aria-controls="p2-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-py-tab" data-lang="py" aria-controls="p2-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p2-solution-js-tab" data-lang="js" aria-controls="p2-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p2-solution-c" aria-labelledby="p2-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Insertion sort: sorts nums in place and returns the total number of shifts
@@ -1388,14 +1396,16 @@ module.exports = { insertionSort };
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-c-tab" data-lang="c" aria-controls="p3-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-cpp-tab" data-lang="cpp" aria-controls="p3-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-cs-tab" data-lang="cs" aria-controls="p3-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-java-tab" data-lang="java" aria-controls="p3-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-py-tab" data-lang="py" aria-controls="p3-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-stub-js-tab" data-lang="js" aria-controls="p3-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-c-tab" data-lang="c" aria-controls="p3-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-cpp-tab" data-lang="cpp" aria-controls="p3-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-cs-tab" data-lang="cs" aria-controls="p3-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-java-tab" data-lang="java" aria-controls="p3-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-py-tab" data-lang="py" aria-controls="p3-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-stub-js-tab" data-lang="js" aria-controls="p3-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p3-stub-c" aria-labelledby="p3-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement a stable sort by length (sort the pointer array in place).
@@ -1456,14 +1466,16 @@ module.exports = { sortByLength };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-c-tab" data-lang="c" aria-controls="p3-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-cpp-tab" data-lang="cpp" aria-controls="p3-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-cs-tab" data-lang="cs" aria-controls="p3-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-java-tab" data-lang="java" aria-controls="p3-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-py-tab" data-lang="py" aria-controls="p3-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p3-solution-js-tab" data-lang="js" aria-controls="p3-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-c-tab" data-lang="c" aria-controls="p3-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-cpp-tab" data-lang="cpp" aria-controls="p3-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-cs-tab" data-lang="cs" aria-controls="p3-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-java-tab" data-lang="java" aria-controls="p3-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-py-tab" data-lang="py" aria-controls="p3-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p3-solution-js-tab" data-lang="js" aria-controls="p3-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p3-solution-c" aria-labelledby="p3-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;string.h&gt;
@@ -1690,14 +1702,16 @@ module.exports = { sortByLength };
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-c-tab" data-lang="c" aria-controls="p4-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-cpp-tab" data-lang="cpp" aria-controls="p4-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-cs-tab" data-lang="cs" aria-controls="p4-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-java-tab" data-lang="java" aria-controls="p4-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-py-tab" data-lang="py" aria-controls="p4-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-stub-js-tab" data-lang="js" aria-controls="p4-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-c-tab" data-lang="c" aria-controls="p4-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-cpp-tab" data-lang="cpp" aria-controls="p4-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-cs-tab" data-lang="cs" aria-controls="p4-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-java-tab" data-lang="java" aria-controls="p4-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-py-tab" data-lang="py" aria-controls="p4-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-stub-js-tab" data-lang="js" aria-controls="p4-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p4-stub-c" aria-labelledby="p4-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement count inversions by extending merge sort.
@@ -1758,14 +1772,16 @@ module.exports = { countInversions };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-c-tab" data-lang="c" aria-controls="p4-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-cpp-tab" data-lang="cpp" aria-controls="p4-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-cs-tab" data-lang="cs" aria-controls="p4-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-java-tab" data-lang="java" aria-controls="p4-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-py-tab" data-lang="py" aria-controls="p4-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p4-solution-js-tab" data-lang="js" aria-controls="p4-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-c-tab" data-lang="c" aria-controls="p4-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-cpp-tab" data-lang="cpp" aria-controls="p4-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-cs-tab" data-lang="cs" aria-controls="p4-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-java-tab" data-lang="java" aria-controls="p4-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-py-tab" data-lang="py" aria-controls="p4-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p4-solution-js-tab" data-lang="js" aria-controls="p4-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p4-solution-c" aria-labelledby="p4-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>// Count inversions in O(n log n) by extending merge sort.
@@ -2303,14 +2319,16 @@ module.exports = { countInversions };
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-c-tab" data-lang="c" aria-controls="p5-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-cpp-tab" data-lang="cpp" aria-controls="p5-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-cs-tab" data-lang="cs" aria-controls="p5-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-java-tab" data-lang="java" aria-controls="p5-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-py-tab" data-lang="py" aria-controls="p5-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-stub-js-tab" data-lang="js" aria-controls="p5-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-c-tab" data-lang="c" aria-controls="p5-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-cpp-tab" data-lang="cpp" aria-controls="p5-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-cs-tab" data-lang="cs" aria-controls="p5-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-java-tab" data-lang="java" aria-controls="p5-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-py-tab" data-lang="py" aria-controls="p5-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-stub-js-tab" data-lang="js" aria-controls="p5-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p5-stub-c" aria-labelledby="p5-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement quick sort with a random pivot and a 3-way partition.
@@ -2371,14 +2389,16 @@ module.exports = { quickSort };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-c-tab" data-lang="c" aria-controls="p5-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-cpp-tab" data-lang="cpp" aria-controls="p5-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-cs-tab" data-lang="cs" aria-controls="p5-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-java-tab" data-lang="java" aria-controls="p5-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-py-tab" data-lang="py" aria-controls="p5-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p5-solution-js-tab" data-lang="js" aria-controls="p5-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-c-tab" data-lang="c" aria-controls="p5-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-cpp-tab" data-lang="cpp" aria-controls="p5-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-cs-tab" data-lang="cs" aria-controls="p5-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-java-tab" data-lang="java" aria-controls="p5-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-py-tab" data-lang="py" aria-controls="p5-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p5-solution-js-tab" data-lang="js" aria-controls="p5-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p5-solution-c" aria-labelledby="p5-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdlib.h&gt;
@@ -2855,14 +2875,16 @@ module.exports = { quickSort };
 <div class="tabs" data-tabs data-editable>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-c-tab" data-lang="c" aria-controls="p6-stub-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-cpp-tab" data-lang="cpp" aria-controls="p6-stub-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-cs-tab" data-lang="cs" aria-controls="p6-stub-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-java-tab" data-lang="java" aria-controls="p6-stub-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-py-tab" data-lang="py" aria-controls="p6-stub-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-stub-js-tab" data-lang="js" aria-controls="p6-stub-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-c-tab" data-lang="c" aria-controls="p6-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-cpp-tab" data-lang="cpp" aria-controls="p6-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-cs-tab" data-lang="cs" aria-controls="p6-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-java-tab" data-lang="java" aria-controls="p6-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-py-tab" data-lang="py" aria-controls="p6-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-stub-js-tab" data-lang="js" aria-controls="p6-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p6-stub-c" aria-labelledby="p6-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Starter template</span><span class="lang-tag">C</span></div><pre><code>// TODO: implement findKthLargest with iterative 3-way quickselect (expected O(n)).
@@ -2923,14 +2945,16 @@ module.exports = { findKthLargest };
 <div class="tabs" data-tabs>
   <div class="tab-bar">
     <div class="tab-btns" role="tablist" aria-label="Choose a language">
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-c-tab" data-lang="c" aria-controls="p6-solution-c" aria-selected="false" tabindex="-1">C</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-cpp-tab" data-lang="cpp" aria-controls="p6-solution-cpp" aria-selected="false" tabindex="-1">C++</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-cs-tab" data-lang="cs" aria-controls="p6-solution-cs" aria-selected="false" tabindex="-1">C#</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-java-tab" data-lang="java" aria-controls="p6-solution-java" aria-selected="true" tabindex="0">Java</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-py-tab" data-lang="py" aria-controls="p6-solution-py" aria-selected="false" tabindex="-1">Python</button>
-      <button class="tab-btn" type="button" role="tab" id="p6-solution-js-tab" data-lang="js" aria-controls="p6-solution-js" aria-selected="false" tabindex="-1">JavaScript</button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-c-tab" data-lang="c" aria-controls="p6-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-cpp-tab" data-lang="cpp" aria-controls="p6-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-cs-tab" data-lang="cs" aria-controls="p6-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-java-tab" data-lang="java" aria-controls="p6-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-py-tab" data-lang="py" aria-controls="p6-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="p6-solution-js-tab" data-lang="js" aria-controls="p6-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
     </div>
-    <button class="copy-btn" type="button">Copy code</button>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
   </div>
   <div class="tab-panels">
     <div class="tab-panel" role="tabpanel" id="p6-solution-c" aria-labelledby="p6-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Reference solution</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdlib.h&gt;

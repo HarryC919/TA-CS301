@@ -13,27 +13,27 @@
 </section>
 <section class="section" id="shell-comments"><div class="section-title"><h2>Before copying commands: Zsh only</h2></div>
 <p>If your terminal uses Zsh (the macOS default), run this first to enable interactive <code>#</code> comments in the current terminal. The explanation is on the next line because inline comments are not enabled yet. Repeat this after opening a new Zsh terminal. Bash and PowerShell users can skip this step.</p>
-<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · run first</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>setopt INTERACTIVE_COMMENTS
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · run first</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>setopt INTERACTIVE_COMMENTS
 # Enable comments in this Zsh session before copying the commands below</code></pre></div>
 </section>
 <section class="section" id="uv"><div class="section-title"><h2>1. Install uv before Python</h2></div>
 <h3>macOS / Linux</h3>
-<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Bash / Zsh · macOS &amp; Linux</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv with the official installer</code></pre></div>
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Bash / Zsh · macOS &amp; Linux</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv with the official installer</code></pre></div>
 <h3>Windows — PowerShell</h3>
-<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" # Install uv in Windows PowerShell</code></pre></div>
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" # Install uv in Windows PowerShell</code></pre></div>
 <p>Close and reopen the terminal after installation so the updated user PATH is available. Then check:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv --version # Check that uv is available</code></pre></div>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>uv --version # Check that uv is available</code></pre></div>
 <p class="note">Use one uv installation method. If you already have a working uv installation, verify its version and continue. The Windows installer command applies its execution-policy option to that installer process; you do not need to change the machine-wide PowerShell policy.</p>
 </section>
 <section class="section" id="create-folder"><div class="section-title"><h2>2. Create and enter your notebook folder</h2></div>
 <p>This step creates a normal working folder, not a virtual environment. Choose the parent location where you want to keep your course notebooks, then run these two commands:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mkdir cs301-notebooks # Create the notebook working folder
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>mkdir cs301-notebooks # Create the notebook working folder
 cd cs301-notebooks # Enter the working folder</code></pre></div>
 <p>If this folder already exists, skip <code>mkdir</code> and enter it with <code>cd</code>. All commands in the next step run inside this folder. The <code>.venv</code> directory is created separately by uv.</p>
 </section>
 <section class="section" id="python"><div class="section-title"><h2>3. Install Python and create the course environment with uv</h2></div>
 <p>Run these commands inside the <code>cs301-notebooks</code> folder created in the previous step. They work in Bash, Zsh and PowerShell.</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv python install 3.13 # Install a uv-managed Python 3.13
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>uv python install 3.13 # Install a uv-managed Python 3.13
 uv init --bare --python 3.13 # Create the project metadata
 uv python pin 3.13 # Record Python 3.13 for this project
 uv venv --python 3.13 --managed-python # Create .venv with managed Python
@@ -41,19 +41,19 @@ uv add jupyterlab ipykernel # Add notebook tools to the project environment</cod
 <p><code>uv python install</code> obtains a managed Python. <code>uv init</code> creates project metadata, and <code>uv python pin</code> records the chosen version in <code>.python-version</code>. The explicit <code>--managed-python</code> option ensures the virtual environment uses a uv-managed interpreter. <code>uv add</code> records dependencies in <code>pyproject.toml</code>, resolves them in <code>uv.lock</code>, and installs them into <code>.venv</code>.</p>
 <h3>Register and check the Python kernel</h3>
 <p>Stay in <code>cs301-notebooks</code> for these commands. The kernel registration is scoped to the project environment rather than a global kernel directory.</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>uv run python -m ipykernel install --sys-prefix --name cs301-python --display-name "Python (CS301)" # Register the project Python kernel
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>uv run python -m ipykernel install --sys-prefix --name cs301-python --display-name "Python (CS301)" # Register the project Python kernel
 uv run jupyter kernelspec list # List kernels visible to this project
 uv run python -c "import sys; print(sys.executable)" # Show the project Python executable
 uv run jupyter lab # Start JupyterLab from the project</code></pre></div>
 <p>The interpreter path should point inside this project's <code>.venv</code>. Keep the terminal running and create a notebook with the <strong>Python (CS301)</strong> kernel in JupyterLab. Run this notebook cell with Shift+Enter:</p>
-<div class="code-block" data-language="py"><div class="code-head"><span class="lang-tag">Python · notebook cell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>import sys # Load Python runtime information
+<div class="code-block" data-language="py"><div class="code-head"><span class="lang-tag">Python · notebook cell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>import sys # Load Python runtime information
 print(sys.executable) # Check which Python this notebook uses
 print(1 + 1) # Verify that the Python cell prints 2</code></pre></div>
 <p>Check that the notebook also uses the project's <code>.venv</code> and prints <code>2</code>. In later sessions, enter the project folder and use <code>uv run jupyter lab</code> again. To add a package, use <code>uv add package-name</code>, replacing the example name with the actual dependency.</p>
 </section>
 <section class="section" id="java"><div class="section-title"><h2>4. Check your existing Java JDK</h2></div>
 <p>CS201 normally already gives you a JDK. <strong>Keep using it if its major version is at least 17 (17 or newer)</strong>; you do not need to install another JDK or mise for this course. JDK 21 is one suitable example. Check in the terminal that will launch JupyterLab:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>java -version # Check the active Java runtime version
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>java -version # Check the active Java runtime version
 javac -version # Check that the JDK compiler is available
 java --list-modules # Look for the jdk.jshell module</code></pre></div>
 <p>Confirm that Java and the compiler use the intended JDK and the module list includes <code>jdk.jshell</code>. A JRE alone is not enough. If your existing JDK meets these checks, skip the optional mise section and go directly to <a href="#java-kernel">Java kernel installation</a>.</p>
@@ -61,14 +61,14 @@ java --list-modules # Look for the jdk.jshell module</code></pre></div>
 <section class="section" id="mise"><div class="section-title"><h2>5. Optional: install a global JDK with mise</h2></div>
 <p>If you have no JDK, or yours is older than version 17, use <strong>mise</strong> to install a <strong>Microsoft JDK</strong> as your global default. Choose version <strong>17</strong>, <strong>21</strong>, or <strong>25</strong>; the example below uses 21. A global selection makes <code>java</code> and <code>javac</code> available directly in an activated shell, without a <code>mise exec</code> prefix.</p>
 <h3>macOS — default Zsh shell</h3>
-<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · macOS</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -fsSL https://mise.run/zsh | sh # Install mise and configure Zsh activation</code></pre></div>
+<div class="code-block" data-language="zsh"><div class="code-head"><span class="lang-tag">Zsh · macOS</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>curl -fsSL https://mise.run/zsh | sh # Install mise and configure Zsh activation</code></pre></div>
 <h3>Linux — Bash shell</h3>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash · Linux</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>curl -fsSL https://mise.run/bash | sh # Install mise and configure Bash activation</code></pre></div>
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash · Linux</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>curl -fsSL https://mise.run/bash | sh # Install mise and configure Bash activation</code></pre></div>
 <p>The shell-specific installers add mise activation to that shell's startup file. Open a new terminal afterward. For other shells, follow the official mise shell-setup instructions linked below.</p>
 <h3>Windows — PowerShell</h3>
-<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>winget install jdx.mise # Install mise on Windows</code></pre></div>
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · Windows</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>winget install jdx.mise # Install mise on Windows</code></pre></div>
 <p>Open a new PowerShell window after installation, then add mise activation to your PowerShell profile. If <code>winget</code> is unavailable, use an alternative from the official mise installation guide.</p>
-<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · activate mise</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>if (-not (Test-Path $PROFILE)) {
+<div class="code-block" data-language="powershell"><div class="code-head"><span class="lang-tag">PowerShell · activate mise</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>if (-not (Test-Path $PROFILE)) {
     New-Item -ItemType File -Path $PROFILE -Force | Out-Null # Create the profile if needed
 }
 $activation = '(&amp;mise activate pwsh) | Out-String | Invoke-Expression'
@@ -78,11 +78,11 @@ if (-not (Select-String -Path $PROFILE -SimpleMatch $activation -Quiet)) {
 <p>Open another new PowerShell window so the profile takes effect. Shell activation is required for the global JDK to appear on <code>PATH</code> and for mise to set <code>JAVA_HOME</code>.</p>
 <h3>Select a global Microsoft JDK — all platforms</h3>
 <p>In a terminal where mise is activated, run:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>mise --version # Check that mise is available
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>mise --version # Check that mise is available
 mise use --global java@microsoft-21 # Install Microsoft JDK 21 as the global default
 # You may instead choose java@microsoft-17 or java@microsoft-25</code></pre></div>
 <p><code>mise use --global</code> installs the selected JDK and records it in your global mise configuration rather than the course project's <code>mise.toml</code>. Open a new terminal after changing the global selection, then check the JDK directly:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>java -version # Check the global Java runtime version
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>java -version # Check the global Java runtime version
 javac -version # Check the global JDK compiler
 java --list-modules # Check the global JDK for jdk.jshell</code></pre></div>
 <p>The version output should identify Microsoft and the major version you selected. In later sessions, use ordinary <code>java</code>, <code>javac</code>, and JupyterLab commands; no <code>mise exec --</code> prefix is needed.</p>
@@ -91,13 +91,13 @@ java --list-modules # Check the global JDK for jdk.jshell</code></pre></div>
 <ol class="steps"><li>Complete the uv project setup first. Stop a running JupyterLab server with Ctrl+C in its terminal before installing a new kernel.</li><li>Download the binary distribution ZIP from the <a href="https://github.com/SpencerPark/IJava/releases">IJava releases page</a>, not the source-code ZIP.</li><li>Extract it into a folder named <code>ijava</code> inside <code>cs301-notebooks</code>. Ensure <code>ijava</code> directly contains both <code>install.py</code> and the <code>java</code> folder; move them out of an extra nested directory if necessary.</li></ol>
 <h3>Install and check the kernel — all platforms</h3>
 <p>Start in <code>cs301-notebooks</code> using a terminal where your existing or globally mise-managed JDK is available. The installer runs from its own directory, while <code>--project ..</code> selects the parent uv project and its Python environment:</p>
-<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
+<div class="code-block" data-language="bash"><div class="code-head"><span class="lang-tag">Bash / Zsh / PowerShell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>cd ijava # Enter the extracted Java-kernel installer folder
 uv run --project .. python install.py --sys-prefix # Install the Java kernel into the parent project environment
 cd .. # Return to the notebook project folder
 uv run jupyter kernelspec list # List kernels visible to this project
 uv run jupyter lab # Start JupyterLab with the selected JDK</code></pre></div>
 <p>The kernel list should include <code>java</code>. In JupyterLab, create a notebook using <strong>Java</strong> and run this cell:</p>
-<div class="code-block" data-language="java"><div class="code-head"><span class="lang-tag">Java · notebook cell</span><button class="copy-btn" type="button" hidden>Copy code</button></div><pre><code>System.out.println(System.getProperty("java.version")); // Check the Java version used by the notebook
+<div class="code-block" data-language="java"><div class="code-head"><span class="lang-tag">Java · notebook cell</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>System.out.println(System.getProperty("java.version")); // Check the Java version used by the notebook
 System.out.println(1 + 1); // Verify that the Java cell prints 2</code></pre></div>
 <p>Check for a JDK major version of at least 17 and a final output of <code>2</code>. IJava uses JShell-style interactive execution; this simple test needs no <code>Main</code> class wrapper.</p>
 </section>

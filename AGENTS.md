@@ -25,7 +25,7 @@ site/                       publishable static site; never publish the repositor
   assets/style.css          shared design system
   assets/notes.css          notes-page-only additions
   assets/app.js             highlighting, temporary editors, tabs, copy/reset
-  assets/icons/             local language and IDE icons used on Home and Introduction
+  assets/icons/             local language, IDE, and code-action icons
   assets/logos/             local AI-tool brand marks used on Introduction
   assets/favicon.svg
 material/week1/Intro.md     source text behind site/intro.html; keep the two in sync
@@ -198,21 +198,10 @@ Before claiming work is complete:
    `bash tools/verify_notebooks.sh`; expect `ALL NOTEBOOK CHECKS PASSED`.
 6. Visually inspect changed pages in headless Chrome and recapture after layout changes.
 7. Confirm `site/` contains only the 12 HTML pages, the two generated notebooks under
-   `site/notebooks/`, and 16 expected assets: style.css, notes.css, app.js, favicon.svg,
-   eight logo SVGs, and four language/IDE icons. Leave no build artifacts or scratch
+   `site/notebooks/`, and 22 expected assets: style.css, notes.css, app.js, favicon.svg,
+   eight logo SVGs, and ten language/IDE/code-action icons. Leave no build artifacts or scratch
    files there.
 8. Report the exact commands and results. Never claim an unrun check passed.
-
-## Local preview
-
-Open `site/index.html` directly; `file://` supports the language tabs and copy buttons.
-Alternatively, run:
-
-```bash
-cd site && python3 -m http.server 8000
-```
-
-Then open `http://localhost:8000`.
 
 ## GitHub Pages publishing
 

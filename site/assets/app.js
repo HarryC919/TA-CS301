@@ -87,18 +87,21 @@
     var input = panel.querySelector("textarea");
     var code = panel.querySelector("pre code") || panel;
     var text = (input ? input.value : code.textContent).replace(/\s+$/, "");
-    var original = button.textContent;
+    var original = button.dataset.tooltip;
     copyText(text)
       .then(function () {
-        button.textContent = "Copied!";
+        button.dataset.tooltip = "Copied!";
+        button.setAttribute("aria-label", "Copied!");
         button.classList.add("copied");
       })
       .catch(function () {
-        button.textContent = "Press Ctrl+C";
+        button.dataset.tooltip = "Press Ctrl+C";
+        button.setAttribute("aria-label", "Press Ctrl+C");
       })
       .finally(function () {
         window.setTimeout(function () {
-          button.textContent = original;
+          button.dataset.tooltip = original;
+          button.setAttribute("aria-label", original);
           button.classList.remove("copied");
         }, 1400);
       });
@@ -213,9 +216,14 @@
   groups.filter(function (group) { return group.hasAttribute("data-editable"); }).forEach(function (group) {
     var reset = document.createElement("button");
     reset.type = "button";
-    reset.className = "reset-btn";
-    reset.textContent = "Reset code";
-    group.querySelector(".tab-bar").appendChild(reset);
+    reset.className = "reset-btn icon-btn";
+    reset.setAttribute("aria-label", "Reset code");
+    reset.dataset.tooltip = "Reset code";
+    var resetIcon = document.createElement("img");
+    resetIcon.src = "assets/icons/reset-right-fill.svg";
+    resetIcon.alt = "";
+    reset.appendChild(resetIcon);
+    group.querySelector(".code-actions").appendChild(reset);
     panelsOf(group).forEach(function (panel) {
       var original = panel.querySelector("pre");
       var initial = original.textContent;

@@ -36,6 +36,14 @@ DEFAULT_OUT = SITE / "recitation1.html"
 
 LANG_EXT = {key: ext for key, _label, ext in LANGS}
 LANG_LABEL = {key: label for key, label, _ext in LANGS}
+LANG_ICON = {
+    "c": "c.svg",
+    "cpp": "c-plusplus.svg",
+    "cs": "csharp.svg",
+    "java": "java.svg",
+    "py": "python.svg",
+    "js": "javascript.svg",
+}
 
 # Calls to a library sort inside a *solution* defeat the exercise.
 BANNED_IN_SOLUTIONS = [
@@ -126,7 +134,9 @@ def render_tabs(group_id: str, title: str, codes: dict[str, str]) -> str:
             f'<button class="tab-btn" type="button" role="tab" id="{button_id}" '
             f'data-lang="{key}" aria-controls="{panel_id}" '
             f'aria-selected="{"true" if selected else "false"}" '
-            f'tabindex="{0 if selected else -1}">{label}</button>'
+            f'tabindex="{0 if selected else -1}"><span>{label}</span>'
+            f'<img class="lang-icon" src="assets/icons/{LANG_ICON[key]}" alt="" '
+            f'width="16" height="16"></button>'
         )
         panels.append(
             f'<div class="tab-panel" role="tabpanel" id="{panel_id}" '
@@ -142,7 +152,10 @@ def render_tabs(group_id: str, title: str, codes: dict[str, str]) -> str:
         '    <div class="tab-btns" role="tablist" aria-label="Choose a language">\n'
         f"      {'\n      '.join(buttons)}\n"
         "    </div>\n"
-        '    <button class="copy-btn" type="button">Copy code</button>\n'
+        '    <div class="code-actions">\n'
+        '      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" '
+        'data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>\n'
+        "    </div>\n"
         "  </div>\n"
         '  <div class="tab-panels">\n'
         f"    {'\n    '.join(panels)}\n"
