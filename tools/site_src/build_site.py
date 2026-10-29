@@ -3,6 +3,7 @@
 from pathlib import Path
 import re
 from build_exercises import build
+from build_notebooks import build_notebooks
 from site_layout import header, page, RECITATIONS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,6 +22,7 @@ def directory():
 
 
 def main():
+    build_notebooks()
     (SITE / 'recitation1.html').write_text(build(False), encoding='utf-8')
     body = (SOURCE / 'recitation0-content.html').read_text(encoding='utf-8')
     (SITE / 'recitation0.html').write_text(page('recitation0.html', 'Recitation 0 · Environment & kernels', body), encoding='utf-8')
@@ -47,7 +49,7 @@ def main():
         # Preserve deep links when JS is available; the visible link works without JS.
         script = f'''<script>location.replace("recitation1.html" + (location.hash || "#{anchor}"));</script>'''
         (SITE / name).write_text(page('recitation1.html', 'Moved to Recitation 1', body, script), encoding='utf-8')
-    print('Built Home/Introduction navigation, Recitations 0–7, and two legacy redirects.')
+    print('Built Home/Introduction navigation, Recitations 0–7, two legacy redirects, and the Recitation 1 notebooks.')
 
 
 if __name__ == '__main__':
