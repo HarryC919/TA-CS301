@@ -38,7 +38,8 @@ with open(sys.argv[2], encoding="utf-8") as handle:
     notebook = json.load(handle)
 for cell in notebook["cells"]:
     if cell["id"] == sys.argv[1]:
-        print(cell["source"], end="")
+        source = cell["source"]
+        print("".join(source) if isinstance(source, list) else source, end="")
         break
 else:
     sys.exit(f"cell {sys.argv[1]!r} not found in {sys.argv[2]}")

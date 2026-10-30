@@ -641,13 +641,15 @@ def problem_markdown(problem: dict, lang: str) -> str:
 # ---------------------------------------------------------------------------
 
 def md_cell(cell_id: str, source: str) -> dict:
+    # Match notebook editors: store one string per line, preserving newlines.
     return {"cell_type": "markdown", "id": cell_id,
-            "metadata": {}, "source": source}
+            "metadata": {}, "source": source.splitlines(keepends=True)}
 
 
 def code_cell(cell_id: str, source: str) -> dict:
-    return {"cell_type": "code", "id": cell_id, "metadata": {},
-            "execution_count": None, "outputs": [], "source": source}
+    return {"cell_type": "code", "execution_count": None,
+            "id": cell_id, "metadata": {}, "outputs": [],
+            "source": source.splitlines(keepends=True)}
 
 
 def build_notebook(lang: str, notes_root: Node) -> dict:
