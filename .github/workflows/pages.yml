@@ -19,6 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      # Fail if site/ was hand-edited or not rebuilt after a source change.
+      - name: Check site/ matches its generators
+        run: |
+          python3 tools/site_src/build_site.py
+          if [ -n "$(git status --porcelain -- site)" ]; then
+            git status --short -- site
+            echo "::error::site/ is out of date; run python3 tools/site_src/build_site.py and commit the result."
+            exit 1
+          fi
+      - name: Check site structure and links
+        run: python3 tools/site_src/check_site.py --strict-links
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

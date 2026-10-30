@@ -7,7 +7,7 @@
 - NetID: hj175
 - Email: [henghao.jiang@dukekunshan.edu.cn](mailto:henghao.jiang@dukekunshan.edu.cn)
 - Major: Data Science
-- Office Hours: Tue, Thu 15:00-16:00 (planned, not decided), By appointment
+- Office Hours: Tue, Thu 15:00-16:00, By appointment
 
 ## Student Background
 
