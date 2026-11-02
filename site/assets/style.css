@@ -347,45 +347,39 @@ summary:focus-visible {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.hero-panel-title {
-  margin: 26px 0 18px;
-  color: #fff;
-  font-size: clamp(2rem, 4vw, 2.7rem);
-  font-weight: 750;
-  line-height: 1.06;
-  letter-spacing: -0.045em;
-}
-.hero-panel-title span { color: #8eb7ff; font-weight: 400; }
-.hero-panel-caption {
-  color: #b8cbe2;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 .hero-slots {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin: 16px 0 24px;
+  gap: 10px;
+  margin: 24px 0;
 }
-.hero-slots span {
+.hero-slots > * {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
+  min-height: 56px;
   border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 9px;
+  border-radius: 12px;
   background: rgba(4, 17, 34, 0.18);
   color: #91a6bf;
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.9rem;
+  text-decoration: none;
 }
-.hero-slots span.available {
+.hero-slots a {
   border-color: rgba(115, 165, 255, 0.48);
   background: rgba(62, 121, 238, 0.25);
   color: #fff;
+  font-weight: 700;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+.hero-slots a:hover, .hero-slots a:focus-visible {
+  background: rgba(62, 121, 238, 0.45);
+  color: #fff;
+  transform: translateY(-1px);
 }
 .hero-panel-foot {
   display: flex;
@@ -824,6 +818,9 @@ details[open] { padding-bottom: 16px; }
 .week-row .week-topics { color: var(--muted); font-size: 0.87rem; margin-top: 4px; }
 .week-links { display: flex; gap: 8px; flex-wrap: wrap; }
 .week-links .btn { min-height: 38px; padding: 8px 14px; }
+.week-row.reserved { background: transparent; border-style: dashed; box-shadow: none; }
+.week-row.reserved:hover { transform: none; box-shadow: none; }
+.week-row.reserved::before { content: attr(data-range); width: auto; flex-basis: auto; padding: 0 10px; font-size: 0.72rem; }
 
 /* --------------------------------------------------------------------------
    Exercises page
@@ -1104,8 +1101,7 @@ details[open] { padding-bottom: 16px; }
   .home-hero { padding: 46px 0 42px; }
   .home-hero-grid { gap: 32px; }
   .home-hero .hero-copy h1 { margin-bottom: 16px; }
-  .hero-panel { padding: 22px; border-radius: 18px; }
-  .hero-panel-title { margin: 22px 0 16px; }
+  .home-hero .hero-panel { display: none; }
   .page-hero::before { background-size: 42px 42px; }
   .section { margin: 46px 0; }
   .card { padding: 22px; }
@@ -1125,8 +1121,6 @@ details[open] { padding-bottom: 16px; }
 @media (max-width: 520px) {
   .site-title-sub { font-size: 0.69rem; }
   .course-mark { width: 36px; height: 36px; flex-basis: 36px; }
-  .hero-panel-top { font-size: 0.6rem; }
-  .hero-panel-foot { font-size: 0.65rem; }
   .week-links { width: 100%; margin-left: 56px; }
 }
 
@@ -1242,6 +1236,7 @@ html { scroll-padding-top: 150px; }
     grid-template-columns: 44px minmax(0, 1fr);
     align-items: start;
   }
+  .week-row.reserved { grid-template-columns: auto minmax(0, 1fr); }
   .week-row::before { grid-column: 1; grid-row: 1; }
   .week-row > div:first-child { grid-column: 2; grid-row: 1; }
   .week-links { grid-column: 2; grid-row: 2; width: auto; margin: 2px 0 0; }

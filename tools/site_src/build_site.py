@@ -2,6 +2,7 @@
 """Build the fixed Recitation 0–7 static site and practice notebooks."""
 from pathlib import Path
 import re
+from html import escape
 from build_exercises import build
 from build_notebooks import build_notebooks
 from build_recitation2 import build_recitation2
@@ -13,13 +14,31 @@ SOURCE = Path(__file__).resolve().parent
 
 
 def directory():
-    rows = []
+    rows, reserved = [], []
     for n, (title, status) in enumerate(RECITATIONS):
-        rows.append(f'''<div class="week-row{' available' if n < 3 else ''}"><div>
-<div class="week-name">Recitation {n} — {title} <span class="pill {'blue' if n < 3 else 'gray'}">{status}</span></div>
-<div class="week-topics">{'Environment setup and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise' if n == 2 else 'Reserved session; details will be posted here.'}</div></div>
-<div class="week-links"><a class="btn{' primary' if n < 3 else ''}" href="recitation{n}.html">{'Open' if n < 3 else 'View placeholder'}</a></div></div>''')
-    return '<section class="section" id="recitations"><div class="section-title"><h2>Recitations 0–7</h2></div><p>Eight fixed slots: environment setup, two practice sessions, and five reserved sessions. Topics for the reserved sessions will be announced later.</p><div class="week-list">' + ''.join(rows) + '</div></section>'
+        if status == 'Coming soon':
+            reserved.append(n)
+            continue
+        rows.append(f'''<div class="week-row available"><div>
+<div class="week-name">Recitation {n} — {title} <span class="pill blue">{status}</span></div>
+<div class="week-topics">{'Environment setup and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise'}</div></div>
+<div class="week-links"><a class="btn primary" href="recitation{n}.html">Open</a></div></div>''')
+    if reserved:
+        first, last = reserved[0], reserved[-1]
+        rows.append(f'''<div class="week-row reserved" data-range="{first:02d}–{last:02d}"><div>
+<div class="week-name">Recitations {first}–{last} <span class="pill gray">Coming soon</span></div>
+<div class="week-topics">Topics follow lecture progress; materials are posted here before each session.</div></div></div>''')
+    return '<section class="section" id="recitations"><div class="section-title"><h2>Recitations</h2></div><div class="week-list">' + ''.join(rows) + '</div></section>'
+
+
+def hero_slots():
+    slots = []
+    for n, (title, status) in enumerate(RECITATIONS):
+        if status == 'Coming soon':
+            slots.append(f'<span aria-hidden="true">{n:02d}</span>')
+        else:
+            slots.append(f'<a href="recitation{n}.html" aria-label="Recitation {n}: {escape(title)}">{n:02d}</a>')
+    return '<div class="hero-slots">' + ''.join(slots) + '</div>'
 
 
 def main():
@@ -44,6 +63,7 @@ def main():
                 text = text.replace('<!-- RECITATION_DIRECTORY -->', directory())
             else:
                 text = re.sub(r'<section class="section" id="recitations">.*?</section>', lambda _: directory(), text, flags=re.S)
+            text = re.sub(r'<div class="hero-slots">.*?</div>', lambda _: hero_slots(), text, count=1, flags=re.S)
         p.write_text(text, encoding='utf-8')
     print('Built Home/Introduction navigation, Recitations 0–7, and the Recitation 1–2 notebooks.')
 
