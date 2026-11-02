@@ -33,9 +33,9 @@ def jump_bar(items) -> str:
     return f'<nav class="page-jump" aria-label="On this page"><div class="page-jump-inner">{links}</div></nav>'
 
 
-FOOTER = '''<footer class="site-footer"><div class="container">
-<p>COMPSCI 301 · course materials for the recitation sessions.</p>
-<p class="muted small">If you spot a mistake, tell the TA.</p>
+FOOTER = '''<footer class="site-footer"><div class="container footer-inner">
+<p>COMPSCI 301 recitation materials · Instructor announcements remain authoritative.</p>
+<p class="muted">If you spot a mistake, tell the TA.</p>
 </div></footer>'''
 
 

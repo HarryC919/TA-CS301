@@ -28,7 +28,7 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 
 from problems import DEFAULT_LANG, LANGS, PROBLEMS, SIGNATURES  # noqa: E402
-from site_layout import header, jump_bar
+from site_layout import FOOTER as SHARED_FOOTER, header, jump_bar
 
 SOL = ROOT / "material" / "week1" / "solutions"
 SITE = ROOT / "site"
@@ -321,7 +321,6 @@ HERO = """<section class="page-hero" id="top"><div class="container">
 <p class="subtitle">Concept notes and six practice problems in one place: bubble, insertion, merge and quick sort.</p>
 <p class="hero-meta">Read the notes, try the exercises, and use Problem 6 for independent exploration.</p>
 <div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Exercises</a><a class="btn ghost" href="#notebooks">Notebooks</a></div>
-<div class="callout info"><span class="callout-title">Course materials</span><p>These materials support the recitation; instructor announcements remain authoritative.</p></div>
 </div></section>"""
 
 INTRO = """    <section class="section" id="how-to-use">
@@ -420,12 +419,7 @@ FINISHED_EARLY = """    <section class="section" id="finished-early">
     </section>
 """
 
-FOOTER = """  <footer class="site-footer">
-    <div class="container">
-      <p>COMPSCI 301 · course materials for the recitation sessions.</p>
-      <p class="muted small">If you spot a mistake, tell the TA.</p>
-    </div>
-  </footer>
+FOOTER = "  " + SHARED_FOOTER + """
 
 </body>
 </html>

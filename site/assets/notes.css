@@ -13,7 +13,7 @@
   background: var(--surface);
   color: var(--accent-dark);
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--r-md);
   font-weight: 600;
   text-decoration: none;
 }
@@ -40,19 +40,19 @@
   gap: 4px 20px;
   margin: 12px 0 18px;
   padding: 14px 18px;
-  background: #f8fafc;
+  background: var(--surface-alt);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--r-md);
 }
 
 .notes-facts dt {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
 }
 
 .notes-facts dd {
   margin: 0;
-  font-size: 0.93rem;
+  font-size: var(--fs-sm);
 }
 
 /* Quick-takeaway card: the list is the last thing in the card. */
