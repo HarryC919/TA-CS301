@@ -5,6 +5,20 @@ RECITATIONS = [('Environment & kernels', 'Setup guide'), ('Sorting algorithms', 
 PAGES = ['index.html', 'intro.html'] + [f'recitation{n}.html' for n in range(8)]
 
 
+# Runs before first paint so a saved theme never flashes the other one.
+THEME_BOOT = ('<script>try{var t=localStorage.getItem("cs301-theme");'
+              'if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>')
+
+# Shown by app.js; cycles follow system → light → dark.
+THEME_TOGGLE = (
+    '<button class="theme-toggle" type="button" hidden aria-label="Color theme">'
+    '<svg class="icon-auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>'
+    '<svg class="icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+    '<svg class="icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+    '</button>'
+)
+
+
 def header(current: str) -> str:
     def link(href, label):
         active = ' class="active" aria-current="page"' if current == href else ''
@@ -23,6 +37,7 @@ def header(current: str) -> str:
         <div class="recitation-options">{items}</div>
       </details>
     </nav>
+    {THEME_TOGGLE}
   </div>
 </header>'''
 
@@ -45,5 +60,6 @@ def page(current, title, body, extra_head=''):
 <title>{escape(title)} · COMPSCI 301</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
+{THEME_BOOT}
 <script src="assets/app.js" defer></script>{extra_head}</head><body>
 {header(current)}<main id="main">{body}</main>{FOOTER}</body></html>'''

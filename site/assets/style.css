@@ -86,9 +86,10 @@
   --max-width: 1120px;
 }
 
-/* Dark theme follows the system setting; hero, footer and code keep their colors. */
+/* Dark theme: follows the system unless the header switch forces light or dark.
+   Hero, footer and code keep their colors. Keep both token lists identical. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #0d1420;
     --surface: #151e2c;
@@ -131,6 +132,49 @@
     --warn-accent: #e0a92e;
     --shadow-rgb: 0, 0, 0;
   }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1420;
+  --surface: #151e2c;
+  --surface-alt: #18222f;
+  --surface-hover: #1e2a3b;
+  --surface-sunken: #1f2b3c;
+  --text: #d4dde9;
+  --text-soft: #b3c0d0;
+  --heading: #f0f4fa;
+  --muted: #94a3b8;
+  --border: #253246;
+  --border-soft: #202c3e;
+  --border-strong: #354660;
+  --border-accent: #2f4f86;
+  --header-bg: rgba(13, 20, 32, 0.88);
+  --header-border: rgba(53, 70, 96, 0.8);
+  --menu-bg: rgba(21, 30, 44, 0.98);
+  --code-inline-bg: #1e2a3b;
+  --accent: #6f9eff;
+  --accent-rgb: 111, 158, 255;
+  --accent-dark: #93b6ff;
+  --accent-light: #5b8def;
+  --accent-soft: rgba(111, 158, 255, 0.14);
+  --btn-primary: #2f62d8;
+  --btn-primary-hover: #3a6fe6;
+  --teal: #2dd4bf;
+  --green: #4ade80;
+  --green-soft: rgba(74, 222, 128, 0.12);
+  --amber: #fbbf24;
+  --amber-soft: rgba(251, 191, 36, 0.12);
+  --red: #f87171;
+  --red-soft: rgba(248, 113, 113, 0.12);
+  --info-bg: rgba(111, 158, 255, 0.08);
+  --info-border: rgba(111, 158, 255, 0.22);
+  --tip-bg: rgba(74, 222, 128, 0.07);
+  --tip-border: rgba(74, 222, 128, 0.2);
+  --tip-accent: #34c77b;
+  --warn-bg: rgba(251, 191, 36, 0.07);
+  --warn-border: rgba(251, 191, 36, 0.2);
+  --warn-accent: #e0a92e;
+  --shadow-rgb: 0, 0, 0;
 }
 
 * {
@@ -574,9 +618,11 @@ summary:focus-visible {
 .tool-logo img { width: 26px; height: 26px; object-fit: contain; display: block; }
 /* Some official marks are black; give every logo the same light chip in dark mode. */
 @media (prefers-color-scheme: dark) {
-  .tool-logo { width: 34px; height: 34px; border-radius: var(--r-sm); background: #f4f7fb; }
-  .tool-logo img { width: 24px; height: 24px; }
+  :root:not([data-theme="light"]) .tool-logo { width: 34px; height: 34px; border-radius: var(--r-sm); background: #f4f7fb; }
+  :root:not([data-theme="light"]) .tool-logo img { width: 24px; height: 24px; }
 }
+:root[data-theme="dark"] .tool-logo { width: 34px; height: 34px; border-radius: var(--r-sm); background: #f4f7fb; }
+:root[data-theme="dark"] .tool-logo img { width: 24px; height: 24px; }
 .tool-name { font-weight: 500; }
 
 .more-link {
@@ -1360,6 +1406,21 @@ details[open] { padding-bottom: 16px; }
 .site-nav .recitation-options a { display: block; white-space: normal; padding: 10px 12px; }
 .site-nav .recitation-options a.active { border-radius: var(--r-sm); }
 .menu-label { color: var(--muted); }
+.site-title { order: 0; }
+.theme-toggle { order: 1; margin-left: auto; }
+.site-nav { order: 2; }
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 36px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: var(--r-md);
+  background: transparent; color: var(--muted); cursor: pointer;
+}
+.theme-toggle[hidden] { display: none; }
+.theme-toggle:hover { background: var(--surface-hover); color: var(--heading); }
+.theme-toggle:focus-visible { outline: 3px solid var(--accent-dark); outline-offset: 2px; }
+.theme-toggle svg { display: none; width: 18px; height: 18px; }
+.theme-toggle[data-mode="auto"] .icon-auto,
+.theme-toggle[data-mode="light"] .icon-light,
+.theme-toggle[data-mode="dark"] .icon-dark { display: block; }
 html { scroll-padding-top: 152px; }
 /* Anchor the list to the full header so it also fits when navigation wraps. */
 .header-inner { position: relative; }

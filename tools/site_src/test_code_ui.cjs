@@ -116,7 +116,7 @@ const root = path.resolve(__dirname, '../..');
     await call('Page.reload');
     await ready('textarea.code-input');
     assert.equal(await evaluate('document.querySelector("#p1-stub-java textarea").value'), await evaluate('document.querySelector("#p1-stub-java pre:not(.code-preview) code").textContent'));
-    assert.equal(await evaluate(`Object.keys(localStorage).some(key => key !== 'cs301-week1-lang') || sessionStorage.length > 0`), false);
+    assert.equal(await evaluate(`Object.keys(localStorage).some(key => !['cs301-week1-lang', 'cs301-theme'].includes(key)) || sessionStorage.length > 0`), false);
     console.log('PASS refresh restores templates; no draft storage');
     await evaluate(`var field=document.querySelector('#p1-stub-java textarea');
       field.value = Array.from({length:80}, (_, i) => '    int line' + i + ' = 123; //' + 'x'.repeat(200)).join('\\n');

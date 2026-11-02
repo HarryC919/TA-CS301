@@ -28,7 +28,7 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 
 from problems import DEFAULT_LANG, LANGS, PROBLEMS, SIGNATURES  # noqa: E402
-from site_layout import FOOTER as SHARED_FOOTER, header, jump_bar
+from site_layout import FOOTER as SHARED_FOOTER, THEME_BOOT, header, jump_bar
 
 SOL = ROOT / "material" / "week1" / "solutions"
 SITE = ROOT / "site"
@@ -308,6 +308,7 @@ HEAD = (
   <noscript><style>"""
     + NOSCRIPT_STYLE
     + """  </style></noscript>
+  """ + THEME_BOOT + """
   <script src="assets/app.js" defer></script>
 </head>
 <body>

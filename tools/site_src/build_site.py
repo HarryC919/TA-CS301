@@ -6,7 +6,7 @@ from html import escape
 from build_exercises import build
 from build_notebooks import build_notebooks
 from build_recitation2 import build_recitation2
-from site_layout import header, page, RECITATIONS
+from site_layout import THEME_BOOT, header, page, RECITATIONS
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / 'site'
@@ -58,6 +58,8 @@ def main():
         p = SITE / name
         text = p.read_text(encoding='utf-8')
         text = re.sub(r'<header class="site-header">.*?</header>', lambda _: header(name), text, count=1, flags=re.S)
+        if THEME_BOOT not in text:
+            text = text.replace('  <script src="assets/app.js" defer></script>', '  ' + THEME_BOOT + '\n  <script src="assets/app.js" defer></script>', 1)
         if name == 'index.html':
             if '<!-- RECITATION_DIRECTORY -->' in text:
                 text = text.replace('<!-- RECITATION_DIRECTORY -->', directory())

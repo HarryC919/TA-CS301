@@ -57,8 +57,10 @@ Notebook Markdown fences must declare a language (`text` if unspecified,
 - Every page needs `lang="en"`, a title, `assets/style.css`, shared header/footer,
   `<main>`, and exactly one active navigation link. Reuse the design system:
   shared styles in `style.css`, notes-only styles in `notes.css`; resolve QA warnings.
-- Drafts stay temporary: never persist or transmit code. Only language choice may
-  use `localStorage["cs301-week1-lang"]`. Load/pageshow restores templates; reset
+- Drafts stay temporary: never persist or transmit code. Only the language choice
+  (`localStorage["cs301-week1-lang"]`) and the header theme switch
+  (`localStorage["cs301-theme"]`: `light` or `dark`; absent means follow the system)
+  may use storage. Load/pageshow restores templates; reset
   restores the current template; copy reads the current starter textarea.
 - Default to Java; synchronize language across all code tab groups (12 in Recitation 1,
   two in Recitation 2). Without JavaScript, reveal all panels. Keep highlighting/copy functional on pages without exercise tabs.

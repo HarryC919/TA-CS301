@@ -17,6 +17,40 @@
     });
   });
 
+  // Theme switch: follow system → light → dark. Only "light"/"dark" are stored.
+  var themeToggle = document.querySelector(".theme-toggle");
+  if (themeToggle) {
+    var THEME_KEY = "cs301-theme";
+    var themeModes = ["auto", "light", "dark"];
+    var themeLabels = { auto: "Theme: follow system", light: "Theme: light", dark: "Theme: dark" };
+    var currentTheme = function () {
+      var value = document.documentElement.getAttribute("data-theme");
+      return value === "light" || value === "dark" ? value : "auto";
+    };
+    var showTheme = function (mode) {
+      themeToggle.setAttribute("data-mode", mode);
+      themeToggle.setAttribute("aria-label", themeLabels[mode] + " (click to change)");
+      themeToggle.title = themeLabels[mode];
+    };
+    themeToggle.addEventListener("click", function () {
+      var mode = themeModes[(themeModes.indexOf(currentTheme()) + 1) % themeModes.length];
+      if (mode === "auto") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", mode);
+      }
+      try {
+        if (mode === "auto") window.localStorage.removeItem(THEME_KEY);
+        else window.localStorage.setItem(THEME_KEY, mode);
+      } catch (err) {
+        /* Storage may be unavailable; the choice then lasts for this page only. */
+      }
+      showTheme(mode);
+    });
+    showTheme(currentTheme());
+    themeToggle.hidden = false;
+  }
+
   // Sticky section bar: sit below the header and mark the section in view.
   var jump = document.querySelector(".page-jump");
   if (jump) {
