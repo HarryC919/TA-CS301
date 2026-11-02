@@ -818,6 +818,40 @@ details[open] { padding-bottom: 16px; }
 .week-row .week-topics { color: var(--muted); font-size: 0.87rem; margin-top: 4px; }
 .week-links { display: flex; gap: 8px; flex-wrap: wrap; }
 .week-links .btn { min-height: 38px; padding: 8px 14px; }
+/* Sticky in-page section bar on recitation pages; full-bleed via shadow. */
+.page-jump {
+  position: sticky;
+  top: var(--header-h, 77px);
+  z-index: 40;
+  margin-top: 8px;
+  background: var(--bg);
+  box-shadow: 0 0 0 100vmax var(--bg), 0 1px 0 100vmax var(--border);
+  clip-path: inset(0 -100vmax -1px);
+}
+.page-jump-inner {
+  display: flex;
+  gap: 6px;
+  padding: 10px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.page-jump-inner::-webkit-scrollbar { display: none; }
+.page-jump a {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.page-jump a:hover { background: var(--surface); color: var(--heading); }
+.page-jump a[aria-current="location"] { background: var(--accent-soft); color: var(--accent-dark); }
+/* app.js sets scroll padding to header + bar height, replacing the fixed margins. */
+.has-jump .section, .has-jump .algo, .has-jump .problem { scroll-margin-top: 0; }
+.sig-table td:first-child { width: 120px; white-space: nowrap; }
+.page-jump + .section,.page-jump + #notes > .section:first-child { margin-top: 40px; }
 .week-row.reserved { background: transparent; border-style: dashed; box-shadow: none; }
 .week-row.reserved:hover { transform: none; box-shadow: none; }
 .week-row.reserved::before { content: attr(data-range); width: auto; flex-basis: auto; padding: 0 10px; font-size: 0.72rem; }
@@ -869,7 +903,7 @@ details[open] { padding-bottom: 16px; }
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  margin-top: 10px;
+  margin: 10px 0 18px;
 }
 .difficulty.easy { background: var(--green-soft); color: var(--green); }
 .difficulty.medium { background: var(--amber-soft); color: var(--amber); }

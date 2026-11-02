@@ -17,6 +17,53 @@
     });
   });
 
+  // Sticky section bar: sit below the header and mark the section in view.
+  var jump = document.querySelector(".page-jump");
+  if (jump) {
+    var siteHeader = document.querySelector(".site-header");
+    var jumpLinks = Array.prototype.slice.call(jump.querySelectorAll("a[href^='#']"));
+    var jumpTargets = jumpLinks.map(function (link) {
+      return document.getElementById(link.getAttribute("href").slice(1));
+    });
+    var measureJump = function () {
+      var headerHeight = siteHeader ? siteHeader.getBoundingClientRect().height : 0;
+      document.documentElement.style.setProperty("--header-h", headerHeight + "px");
+      document.documentElement.style.scrollPaddingTop = (headerHeight + jump.offsetHeight + 12) + "px";
+      document.documentElement.classList.add("has-jump");
+    };
+    var markJump = function () {
+      var line = jump.getBoundingClientRect().bottom + 24;
+      var current = -1;
+      jumpTargets.forEach(function (target, index) {
+        if (target && target.getBoundingClientRect().top <= line) current = index;
+      });
+      // At the very bottom, a short last section can never reach the line.
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = jumpLinks.length - 1;
+      }
+      jumpLinks.forEach(function (link, index) {
+        if (index === current) {
+          if (link.getAttribute("aria-current") !== "location") {
+            link.setAttribute("aria-current", "location");
+            var inner = link.parentElement;
+            inner.scrollLeft = link.offsetLeft - (inner.clientWidth - link.offsetWidth) / 2;
+          }
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    };
+    var jumpQueued = false;
+    window.addEventListener("scroll", function () {
+      if (jumpQueued) return;
+      jumpQueued = true;
+      window.requestAnimationFrame(function () { jumpQueued = false; markJump(); });
+    }, { passive: true });
+    window.addEventListener("resize", function () { measureJump(); markJump(); });
+    measureJump();
+    markJump();
+  }
+
   var STORAGE_KEY = "cs301-week1-lang";
   var DEFAULT_LANG = "java";
 
@@ -140,10 +187,18 @@
     });
   }
 
+  // Signature tables list every language without JavaScript; show only the chosen one.
+  function showSignatures(lang) {
+    document.querySelectorAll(".sig-table tr[data-sig-lang]").forEach(function (row) {
+      row.hidden = row.getAttribute("data-sig-lang") !== lang;
+    });
+  }
+
   function selectLang(lang) {
     groups.forEach(function (group) {
       setGroupLang(group, lang);
     });
+    showSignatures(lang);
     try {
       window.localStorage.setItem(STORAGE_KEY, lang);
     } catch (err) {
@@ -315,6 +370,7 @@
   groups.forEach(function (group) {
     setGroupLang(group, initialLang);
   });
+  showSignatures(initialLang);
 
   // --- copy button ----------------------------------------------------------
   function copyText(text) {

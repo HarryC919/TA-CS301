@@ -10,7 +10,7 @@ from build_exercises import (LANG_EXT, LANG_LABEL, BANNED_IN_SOLUTIONS,
 from problems import LANGS
 from build_notebooks import (KERNELS, Node, code_cell, md_cell, parse_fragment,
                              render_block, render_section, SITE_URL, LANG_NAME)
-from site_layout import page
+from site_layout import jump_bar, page
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = Path(__file__).with_name('recitation2-content.html')
@@ -144,10 +144,10 @@ def build_recitation2():
         raise BuildError('Recitation 2 sections are missing, duplicated, or out of order')
     stubs = {lang: read_code('stub', lang) for lang, _, _ in LANGS}
     solutions = {lang: read_code('solution', lang) for lang, _, _ in LANGS}
-    signature_rows = ''.join(f'<tr><td>{LANG_LABEL[lang]}</td><td><code>{esc(sig)}</code></td></tr>'
+    signature_rows = ''.join(f'<tr data-sig-lang="{lang}"><td>{LANG_LABEL[lang]}</td><td><code>{esc(sig)}</code></td></tr>'
                              for lang, sig in SIGNATURES.items())
     replacements = {
-        '<!-- MERGE_SIGNATURES -->': '<div class="table-wrap"><table class="data"><thead><tr><th>Language</th><th>Exact interface</th></tr></thead><tbody>' + signature_rows + '</tbody></table></div>',
+        '<!-- MERGE_SIGNATURES -->': '<div class="table-wrap"><table class="data sig-table"><thead><tr><th>Language</th><th>Exact interface</th></tr></thead><tbody>' + signature_rows + '</tbody></table></div>',
         '<!-- MERGE_STARTER -->': render_tabs('r2-p3-stub', 'Merge starter template', stubs),
         '<!-- MERGE_SOLUTION -->': render_tabs('r2-p3-solution', 'Merge reference solution', solutions),
     }
@@ -170,7 +170,10 @@ def build_recitation2():
 <div class="hero-actions"><a class="btn primary" href="notebooks/recitation2-python.ipynb" download>Download Python notebook (.ipynb)</a><a class="btn ghost" href="notebooks/recitation2-java.ipynb" download>Download Java notebook (.ipynb)</a></div></section>'''
     # Notes anchor groups the review; exercise sections remain directly linkable.
     split = source.index('<section class="section" id="exercises">')
-    body = hero + '<div class="container"><div id="notes">' + source[:split] + '</div>' + source[split:] + downloads + '</div>'
+    jump = jump_bar([('overview', 'Overview'), ('notation', 'Bounds'), ('divide-conquer', 'Recursive work'),
+                     ('exercise-1', 'Ex 1'), ('exercise-2', 'Ex 2'), ('exercise-3', 'Ex 3'),
+                     ('optional-practice', 'Optional'), ('discussion', 'Discussion'), ('notebooks', 'Notebooks')])
+    body = hero + '<div class="container">' + jump + '<div id="notes">' + source[:split] + '</div>' + source[split:] + downloads + '</div>'
     head = '<link rel="stylesheet" href="assets/notes.css"><noscript><style>' + NOSCRIPT_STYLE + '</style></noscript>'
     (ROOT / 'site/recitation2.html').write_text(page('recitation2.html', 'Recitation 2 · ' + TITLE, body, head))
     print('Built Recitation 2 notes, core/optional exercises, and Python/Java notebooks.')

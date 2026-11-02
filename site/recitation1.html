@@ -42,7 +42,7 @@
 <p class="hero-meta">Read the notes, try the exercises, and use Problem 6 for independent exploration.</p>
 <div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Exercises</a><a class="btn ghost" href="#notebooks">Notebooks</a></div>
 <div class="callout info"><span class="callout-title">Course materials</span><p>These materials support the recitation; instructor announcements remain authoritative.</p></div>
-</div></section><div class="container"><section class="section" id="notes"><div class="section-title"><h2>Notes</h2></div>      <nav class="toc" aria-label="On this page">
+</div></section><div class="container"><nav class="page-jump" aria-label="On this page"><div class="page-jump-inner"><a href="#notes">Notes</a><a href="#problem-index">Problems</a><a href="#problem-1">P1</a><a href="#problem-2">P2</a><a href="#problem-3">P3</a><a href="#problem-4">P4</a><a href="#problem-5">P5</a><a href="#problem-6">P6</a><a href="#finished-early">Finished early?</a></div></nav><section class="section" id="notes"><div class="section-title"><h2>Notes</h2></div>      <nav class="toc" aria-label="On this page">
         <h2>On this page</h2>
         <ol>
           <li><a href="#big-picture">The big picture</a></li>
@@ -816,15 +816,15 @@ partition(a, lo, hi):
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>void bubbleSort(int* nums, int numsSize)</code></td></tr>
-        <tr><td>C++</td><td><code>void bubbleSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
-        <tr><td>C#</td><td><code>public static void BubbleSort(int[] nums)</code></td></tr>
-        <tr><td>Java</td><td><code>public static void bubbleSort(int[] nums)</code></td></tr>
-        <tr><td>Python</td><td><code>def bubble_sort(nums: list[int]) -&gt; None</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function bubbleSort(nums)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>void bubbleSort(int* nums, int numsSize)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>void bubbleSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static void BubbleSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static void bubbleSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def bubble_sort(nums: list[int]) -&gt; None</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function bubbleSort(nums)</code></td></tr>
     </tbody>
   </table>
 </div>
@@ -1091,15 +1091,15 @@ module.exports = { bubbleSort };
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>int insertionSort(int* nums, int numsSize)</code></td></tr>
-        <tr><td>C++</td><td><code>int insertionSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
-        <tr><td>C#</td><td><code>public static int InsertionSort(int[] nums)</code></td></tr>
-        <tr><td>Java</td><td><code>public static int insertionSort(int[] nums)</code></td></tr>
-        <tr><td>Python</td><td><code>def insertion_sort(nums: list[int]) -&gt; int</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function insertionSort(nums)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>int insertionSort(int* nums, int numsSize)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>int insertionSort(std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static int InsertionSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static int insertionSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def insertion_sort(nums: list[int]) -&gt; int</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function insertionSort(nums)</code></td></tr>
     </tbody>
   </table>
 </div>
@@ -1377,15 +1377,15 @@ module.exports = { insertionSort };
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>void sortByLength(char** words, int wordsSize)</code></td></tr>
-        <tr><td>C++</td><td><code>std::vector&lt;std::string&gt; sortByLength(std::vector&lt;std::string&gt; words)</code></td></tr>
-        <tr><td>C#</td><td><code>public static string[] SortByLength(string[] words)</code></td></tr>
-        <tr><td>Java</td><td><code>public static String[] sortByLength(String[] words)</code></td></tr>
-        <tr><td>Python</td><td><code>def sort_by_length(words: list[str]) -&gt; list[str]</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function sortByLength(words)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>void sortByLength(char** words, int wordsSize)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>std::vector&lt;std::string&gt; sortByLength(std::vector&lt;std::string&gt; words)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static string[] SortByLength(string[] words)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static String[] sortByLength(String[] words)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def sort_by_length(words: list[str]) -&gt; list[str]</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function sortByLength(words)</code></td></tr>
     </tbody>
   </table>
 </div>
@@ -1683,15 +1683,15 @@ module.exports = { sortByLength };
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>long long countInversions(const int* nums, int numsSize)</code></td></tr>
-        <tr><td>C++</td><td><code>long long countInversions(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
-        <tr><td>C#</td><td><code>public static long CountInversions(int[] nums)</code></td></tr>
-        <tr><td>Java</td><td><code>public static long countInversions(int[] nums)</code></td></tr>
-        <tr><td>Python</td><td><code>def count_inversions(nums: list[int]) -&gt; int</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function countInversions(nums)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>long long countInversions(const int* nums, int numsSize)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>long long countInversions(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static long CountInversions(int[] nums)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static long countInversions(int[] nums)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def count_inversions(nums: list[int]) -&gt; int</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function countInversions(nums)</code></td></tr>
     </tbody>
   </table>
 </div>
@@ -2300,15 +2300,15 @@ module.exports = { countInversions };
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>int* quickSort(const int* nums, int numsSize, int* returnSize)</code></td></tr>
-        <tr><td>C++</td><td><code>std::vector&lt;int&gt; quickSort(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
-        <tr><td>C#</td><td><code>public static int[] QuickSort(int[] nums)</code></td></tr>
-        <tr><td>Java</td><td><code>public static int[] quickSort(int[] nums)</code></td></tr>
-        <tr><td>Python</td><td><code>def quick_sort(nums: list[int]) -&gt; list[int]</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function quickSort(nums)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>int* quickSort(const int* nums, int numsSize, int* returnSize)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>std::vector&lt;int&gt; quickSort(const std::vector&lt;int&gt;&amp; nums)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static int[] QuickSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static int[] quickSort(int[] nums)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def quick_sort(nums: list[int]) -&gt; list[int]</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function quickSort(nums)</code></td></tr>
     </tbody>
   </table>
 </div>
@@ -2856,15 +2856,15 @@ module.exports = { quickSort };
 
       <h3>Function signature</h3>
 <div class="table-wrap">
-  <table class="data">
+  <table class="data sig-table">
     <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>
     <tbody>
-        <tr><td>C</td><td><code>int findKthLargest(int* nums, int numsSize, int k)</code></td></tr>
-        <tr><td>C++</td><td><code>int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k)</code></td></tr>
-        <tr><td>C#</td><td><code>public static int FindKthLargest(int[] nums, int k)</code></td></tr>
-        <tr><td>Java</td><td><code>public static int findKthLargest(int[] nums, int k)</code></td></tr>
-        <tr><td>Python</td><td><code>def find_kth_largest(nums: list[int], k: int) -&gt; int</code></td></tr>
-        <tr><td>JavaScript</td><td><code>function findKthLargest(nums, k)</code></td></tr>
+        <tr data-sig-lang="c"><td>C</td><td><code>int findKthLargest(int* nums, int numsSize, int k)</code></td></tr>
+        <tr data-sig-lang="cpp"><td>C++</td><td><code>int findKthLargest(const std::vector&lt;int&gt;&amp; nums, int k)</code></td></tr>
+        <tr data-sig-lang="cs"><td>C#</td><td><code>public static int FindKthLargest(int[] nums, int k)</code></td></tr>
+        <tr data-sig-lang="java"><td>Java</td><td><code>public static int findKthLargest(int[] nums, int k)</code></td></tr>
+        <tr data-sig-lang="py"><td>Python</td><td><code>def find_kth_largest(nums: list[int], k: int) -&gt; int</code></td></tr>
+        <tr data-sig-lang="js"><td>JavaScript</td><td><code>function findKthLargest(nums, k)</code></td></tr>
     </tbody>
   </table>
 </div>

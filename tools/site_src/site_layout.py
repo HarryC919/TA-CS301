@@ -27,6 +27,12 @@ def header(current: str) -> str:
 </header>'''
 
 
+def jump_bar(items) -> str:
+    """Sticky in-page section links; items are (anchor id, label) in page order."""
+    links = ''.join(f'<a href="#{anchor}">{label}</a>' for anchor, label in items)
+    return f'<nav class="page-jump" aria-label="On this page"><div class="page-jump-inner">{links}</div></nav>'
+
+
 FOOTER = '''<footer class="site-footer"><div class="container">
 <p>COMPSCI 301 · course materials for the recitation sessions.</p>
 <p class="muted small">If you spot a mistake, tell the TA.</p>

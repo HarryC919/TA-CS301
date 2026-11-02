@@ -28,7 +28,7 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 
 from problems import DEFAULT_LANG, LANGS, PROBLEMS, SIGNATURES  # noqa: E402
-from site_layout import header
+from site_layout import header, jump_bar
 
 SOL = ROOT / "material" / "week1" / "solutions"
 SITE = ROOT / "site"
@@ -167,12 +167,12 @@ def render_tabs(group_id: str, title: str, codes: dict[str, str]) -> str:
 def render_signature_table(problem: dict) -> str:
     sigs = SIGNATURES[problem["number"]]
     rows = "\n".join(
-        f"        <tr><td>{LANG_LABEL[key]}</td><td><code>{esc(sigs[key])}</code></td></tr>"
+        f'        <tr data-sig-lang="{key}"><td>{LANG_LABEL[key]}</td><td><code>{esc(sigs[key])}</code></td></tr>'
         for key, _label, _ext in LANGS
     )
     return (
         '<div class="table-wrap">\n'
-        '  <table class="data">\n'
+        '  <table class="data sig-table">\n'
         "    <thead><tr><th>Language</th><th>Exact signature (the tests call this)</th></tr></thead>\n"
         f"    <tbody>\n{rows}\n    </tbody>\n"
         "  </table>\n"
@@ -434,7 +434,10 @@ FOOTER = """  <footer class="site-footer">
 
 def build(allow_missing: bool) -> str:
     notes = (ROOT / "tools/site_src/recitation1-notes.html").read_text(encoding="utf-8")
-    parts = [HEAD, HEADER, '<main id="main">', HERO, '<div class="container">',
+    jump = jump_bar([('notes', 'Notes'), ('problem-index', 'Problems')]
+                    + [(problem['slug'], f"P{problem['number']}") for problem in PROBLEMS]
+                    + [('finished-early', 'Finished early?')])
+    parts = [HEAD, HEADER, '<main id="main">', HERO, '<div class="container">', jump,
              '<section class="section" id="notes"><div class="section-title"><h2>Notes</h2></div>',
              notes, '</section>',
              '<section class="section" id="exercises"><div class="section-title"><h2>Exercises</h2></div>',
