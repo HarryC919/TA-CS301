@@ -21,7 +21,7 @@ def directory():
             continue
         rows.append(f'''<div class="week-row available"><div>
 <div class="week-name">Recitation {n} — {title} <span class="pill blue">{status}</span></div>
-<div class="week-topics">{'Environment setup and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise'}</div></div>
+<div class="week-topics">{'Terminal basics, environment setup, and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise'}</div></div>
 <div class="week-links"><a class="btn primary" href="recitation{n}.html">Open</a></div></div>''')
     if reserved:
         first, last = reserved[0], reserved[-1]

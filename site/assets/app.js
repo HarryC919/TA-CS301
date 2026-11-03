@@ -132,7 +132,7 @@
         type = "string";
       } else if (/^[0-9]/.test(token)) {
         type = "number";
-      } else if (isShell && ["uv", "mise", "curl", "sh", "powershell", "winget", "mkdir", "cd", "python", "java", "javac", "irm", "iex", "setopt"].indexOf(token) !== -1) {
+      } else if (isShell && ["uv", "mise", "curl", "sh", "powershell", "winget", "mkdir", "cd", "python", "java", "javac", "irm", "iex", "setopt", "pwd", "ls", "cat", "cp", "mv", "rm", "echo", "which", "open", "explorer", "tr", "man", "clear"].indexOf(token) !== -1) {
         type = "function";
       } else if (keywords.indexOf(token) !== -1 || token[0] === "#") {
         type = "keyword";
