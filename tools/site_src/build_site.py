@@ -6,6 +6,7 @@ from html import escape
 from build_exercises import build
 from build_notebooks import build_notebooks
 from build_recitation2 import build_recitation2
+from build_recitation3 import build_recitation3
 from site_layout import THEME_BOOT, header, page, RECITATIONS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,7 +22,7 @@ def directory():
             continue
         rows.append(f'''<div class="week-row available"><div>
 <div class="week-name">Recitation {n} — {title} <span class="pill blue">{status}</span></div>
-<div class="week-topics">{'Terminal basics, environment setup, and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise'}</div></div>
+<div class="week-topics">{'Terminal basics, environment setup, and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise' if n == 2 else 'DP recurrences, greedy proofs, an LCS exercise, and Huffman coding as extra content'}</div></div>
 <div class="week-links"><a class="btn primary" href="recitation{n}.html">Open</a></div></div>''')
     if reserved:
         first, last = reserved[0], reserved[-1]
@@ -47,7 +48,8 @@ def main():
     body = (SOURCE / 'recitation0-content.html').read_text(encoding='utf-8')
     (SITE / 'recitation0.html').write_text(page('recitation0.html', 'Recitation 0 · Environment & kernels', body), encoding='utf-8')
     build_recitation2()
-    for n in range(3, 8):
+    build_recitation3()
+    for n in range(4, 8):
         body = f'''<section class="page-hero"><div class="container"><span class="eyebrow">Recitation {n} · Coming soon</span>
 <h1>Recitation {n}</h1><p class="subtitle">This session is reserved. Topics and materials will be announced here.</p></div></section>
 <div class="container"><section class="section"><div class="callout info"><span class="callout-title">Materials to follow</span>
@@ -67,7 +69,7 @@ def main():
                 text = re.sub(r'<section class="section" id="recitations">.*?</section>', lambda _: directory(), text, flags=re.S)
             text = re.sub(r'<div class="hero-slots">.*?</div>', lambda _: hero_slots(), text, count=1, flags=re.S)
         p.write_text(text, encoding='utf-8')
-    print('Built Home/Introduction navigation, Recitations 0–7, and the Recitation 1–2 notebooks.')
+    print('Built Home/Introduction navigation, Recitations 0–7, and the Recitation 1–3 notebooks.')
 
 
 if __name__ == '__main__':

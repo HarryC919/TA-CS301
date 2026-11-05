@@ -14,12 +14,12 @@ TA-CS301/
 │   ├── recitation0.html               environment and Python/Java kernel guide
 │   ├── recitation1.html               sorting notes and six exercises, plus notebook downloads
 │   ├── recitation2.html               asymptotic notation, divide and conquer, and core practice
-│   ├── recitation3.html               reserved session placeholders
+│   ├── recitation3.html               dynamic programming, greedy algorithms, and Huffman extra
 │   ├── recitation4.html               reserved session placeholders
 │   ├── recitation5.html               reserved session placeholders
 │   ├── recitation6.html               reserved session placeholders
 │   ├── recitation7.html               reserved session placeholders
-│   ├── notebooks/                     generated Recitation 1–2 Python and Java notebooks
+│   ├── notebooks/                     generated Recitation 1–3 Python and Java notebooks
 │   └── assets/                        local CSS, JavaScript, icons, and brand marks
 ├── material/
 │   ├── week1/
@@ -28,11 +28,13 @@ TA-CS301/
 │   │       ├── CONTRACTS.md           function contracts and edge-case requirements
 │   │       └── p1 … p6/               solutions, starter templates, and tests in six languages
 │   ├── week2/                         approved layout, merge contracts, code, and self-checks
+│   ├── week3/                         approved layout, LCS/Huffman contracts, code, and self-checks
 │   ├── WeeklyContent.md               syllabus outline and optional non-exam enrichment
 │   └── DesignPrincipal.md             recitation material design principles
 ├── tools/
 │   ├── verify_all.sh                  runner for all 36 solution harnesses
 │   ├── verify_week2.sh                runner for the six Recitation 2 merge harnesses
+│   ├── verify_week3.sh                runner for the twelve Recitation 3 LCS/Huffman harnesses
 │   ├── verify_notebooks.sh            rebuilds the notebooks and re-runs their self-check cells
 │   └── site_src/                      site sources, generators, and structural/browser QA helpers
 ├── docs/
@@ -48,7 +50,7 @@ TA-CS301/
 ## Recitation materials
 
 Recitation materials are generally prepared as **Jupyter Notebooks** and distributed
-through Canvas. Recitations 1–2 additionally ship generated Python and Java practice
+through Canvas. Recitations 1–3 additionally ship generated Python and Java practice
 notebooks in `site/notebooks/`, offered as downloads on their pages; the website
 mirrors the same notes and exercises in the browser.
 
@@ -62,7 +64,12 @@ mirrors the same notes and exercises in the browser.
 - **Recitation 2** connects asymptotic notation with divide and conquer: three core
   exercises (written bounds, recursion-tree analysis, and a merge implementation),
   optional practice, six-language merge references, and Python/Java notebooks.
-- **Recitations 3–7** are reserved placeholders. Later topics and the database
+- **Recitation 3** reviews a common path for DP problems and when greedy is correct
+  (coin change), with two core exercises: an EDD exchange-argument proof for
+  `1 || Lmax` and LCS (recurrence, then a six-language implementation that returns the
+  string). An optional Extra section, new this session, introduces Huffman coding
+  with pseudocode and a six-language build exercise. Python/Java notebooks included.
+- **Recitations 4–7** are reserved placeholders. Later topics and the database
   environment have not been assigned to a session. The SQL notebook document under
   `docs/planning/` is a recommendation, not published course material.
 
@@ -79,6 +86,10 @@ sources as the page.
 Recitation 2 uses `recitation2-python.ipynb` and `recitation2-java.ipynb`, with the
 same notes and written prompts as its page, response cells, a merge starter, and
 runnable self-checks. Reference answers stay on the website.
+
+Recitation 3 uses `recitation3-python.ipynb` and `recitation3-java.ipynb`, with its
+notes, written prompts and response cells, the LCS starter and self-check, and the
+optional Huffman starter and self-check at the end.
 
 The current session outline reserves 15–20 minutes for concept review, 25–30 minutes
 for practice, 15 minutes for discussing approaches, and the remaining time for

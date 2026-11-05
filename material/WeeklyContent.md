@@ -15,12 +15,14 @@
 - Dynamic Programming
   - Sum of Products
   - Matrix Chain Multiplication
-  - Longest Common Subsequence
+  - Longest Common Subsequence (Recitation)
 
 ## Week 3
 
 - Greedy Algorithms
   - Activity Selection Problem
+  - Coin Change
+  - Huffman Coding (Recitation extra content, see `Extra Content` below)
 - Elementary Graph Algorithms
   - BFS
   - DFS
@@ -35,6 +37,7 @@
 - Shortest Path Algorithms
   - Dijkstra's Algorithm
   - Bellman-Ford Algorithm
+  - ASAP (Recitation extra content, see `Extra Content` below)
 
 ## Week 5
 

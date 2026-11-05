@@ -24,7 +24,7 @@ class NotebookFormatTests(unittest.TestCase):
 
     def test_shipped_notebook_cells(self):
         paths = sorted((ROOT / 'site/notebooks').glob('*.ipynb'))
-        self.assertEqual(len(paths), 4)
+        self.assertEqual(len(paths), 6)
         for path in paths:
             nb = json.loads(path.read_text())
             for cell in nb['cells']:
@@ -48,7 +48,8 @@ class NotebookFormatTests(unittest.TestCase):
                         in_fence = not in_fence
                     self.assertFalse(in_fence, 'unclosed fence')
                     if cell['id'] in ['notes-bubble-sort', 'notes-insertion-sort',
-                                      'notes-merge-sort', 'notes-quick-sort', 'optional-practice']:
+                                      'notes-merge-sort', 'notes-quick-sort', 'optional-practice'] or (
+                            path.name.startswith('recitation3-') and cell['id'] in ['greedy-review', 'exercise-1', 'extra']):
                         self.assertIn('```pseudocode\n', source)
 
 
