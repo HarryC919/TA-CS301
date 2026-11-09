@@ -37,7 +37,7 @@
 - Shortest Path Algorithms
   - Dijkstra's Algorithm
   - Bellman-Ford Algorithm
-  - ASAP (Recitation extra content, see `Extra Content` below)
+  - APSP (Recitation extra content, see `Extra Content` below)
 
 ## Week 5
 

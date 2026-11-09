@@ -121,7 +121,7 @@ path (see open question 1).
   - Because several LCSs may exist, checks verify the length and that the result is
     a subsequence of both inputs, not a specific string.
   - Edge cases: empty strings, no common character, identical strings, one string a
-    subsequence of the other, repeated characters, and a ~2,000 × 2,000 input for
+    subsequence of the other, repeated characters, and a 1,000 × 1,000 input for
     Θ(mn) time. Inputs are not modified.
   - Expected evidence: working code plus Θ(mn) time / Θ(mn) space explanation; mention
     that length-only needs just two rows, but reconstruction needs the full table

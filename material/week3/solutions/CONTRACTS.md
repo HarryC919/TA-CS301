@@ -5,7 +5,9 @@
 Inputs are two non-null strings of 0–1,000 ASCII characters each; comparison is
 case-sensitive. Return one longest common subsequence as a new string. Several
 answers may be valid; checks compare the length and that the result is a
-subsequence of both inputs, not a particular string. The reference traceback
+subsequence of both inputs, not a particular string. The one exception is
+`("ABCB", "BDCAB")`, whose only LCS is `"BCB"`: harnesses assert that exact string
+to pin the traceback, which cannot reject a valid answer. The reference traceback
 prefers moving up (dropping the last character of `a`) on ties, so it returns
 `"BCB"` for `("ABCB", "BDCAB")`. Do not modify the inputs.
 

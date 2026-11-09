@@ -22,16 +22,17 @@
 - Site organization: Home, Introduction, and a Recitation 0–7 dropdown
 - Recitation 0: environment and Python/Java kernel setup; Recitation 1: notes and exercises combined
 - Recitation 2: asymptotic notation and divide and conquer, with written and coding practice
-- Recitations 3–7: reserved placeholders; database planning remains open
+- Recitation 3: dynamic programming and greedy algorithms; LCS practice plus an optional Huffman extra
+- Recitations 4–7: reserved placeholders; database planning remains open
 - This is the permanent recitation website; instructor announcements remain authoritative for course logistics and assessment.
 - Current website: [https://harryc919.github.io/TA-CS301/](https://harryc919.github.io/TA-CS301/)
 - Introduction: 5–10 minutes (TA, website, session format, AI policy)
-- Concept review: 10–15 minutes (sorting ideas, stability, complexity)
-- Practice: 30 minutes; choose problems at your level, without an expectation to finish all six
-  - Problem 6 is optional exploration and is not covered in class
-  - Problem sample solutions provided in C, C++, Java, C#, Python and JavaScript
+- Concept review: about 15 minutes (short notes on the lectures since the last recitation)
+- Practice: about 25–40 minutes, varying by session; work through the core exercises at your own pace, without an expectation to finish everything
+  - Optional practice goes beyond the core path; Extra sections are TA-provided enrichment, not on the final exam
+  - Sample solutions provided in C, C++, Java, C#, Python and JavaScript
   - Other languages are welcome, but not supported in sample solutions
-- Discuss approaches: 15 minutes (key ideas, correctness, complexity; no line-by-line code walkthrough)
+- Discuss approaches: 10–15 minutes (key ideas, correctness, complexity; no line-by-line code walkthrough)
 - Questions: remaining time; bring attempts, homework questions, or lecture topics to revisit
 - Recommended IDEs (choose either):
   - Visual Studio Code: lightweight, customizable editor with extensions for all six recitation languages.

@@ -67,7 +67,7 @@ mirrors the same notes and exercises in the browser.
 - **Recitation 3** reviews a common path for DP problems and when greedy is correct
   (coin change), with two core exercises: an EDD exchange-argument proof for
   `1 || Lmax` and LCS (recurrence, then a six-language implementation that returns the
-  string). An optional Extra section, new this session, introduces Huffman coding
+  string). An optional Extra section introduces Huffman coding
   with pseudocode and a six-language build exercise. Python/Java notebooks included.
 - **Recitations 4–7** are reserved placeholders. Later topics and the database
   environment have not been assigned to a session. The SQL notebook document under
@@ -91,6 +91,6 @@ Recitation 3 uses `recitation3-python.ipynb` and `recitation3-java.ipynb`, with 
 notes, written prompts and response cells, the LCS starter and self-check, and the
 optional Huffman starter and self-check at the end.
 
-The current session outline reserves 15–20 minutes for concept review, 25–30 minutes
-for practice, 15 minutes for discussing approaches, and the remaining time for
-questions. The recitation and exercises are optional and ungraded.
+A session typically spends about 15 minutes on concept review, 25–40 minutes on core
+practice (the length varies by session; Recitation 3 uses about 40), 10–15 minutes on
+discussing approaches, and the remaining time on questions. The recitation and exercises are optional and ungraded.
