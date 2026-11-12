@@ -91,3 +91,51 @@
 #comparison table.data td:nth-child(5) {
   white-space: nowrap;
 }
+
+/* Small inline graph diagrams (Recitation 4); colors follow the theme tokens. */
+.graph-figure {
+  margin: 18px 0;
+  text-align: center;
+}
+
+.graph-figure svg {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+}
+
+.graph-figure .g-edge {
+  fill: none;
+  stroke: var(--text-soft);
+  stroke-width: 2;
+}
+
+.graph-figure .g-arrow {
+  fill: var(--text-soft);
+}
+
+.graph-figure .g-node {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+.graph-figure .g-label,
+.graph-figure .g-weight {
+  fill: var(--text);
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.graph-figure .g-label {
+  font-size: 15px;
+}
+
+.graph-figure .g-weight {
+  font-size: 13px;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}

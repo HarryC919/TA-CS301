@@ -15,11 +15,11 @@ TA-CS301/
 │   ├── recitation1.html               sorting notes and six exercises, plus notebook downloads
 │   ├── recitation2.html               asymptotic notation, divide and conquer, and core practice
 │   ├── recitation3.html               dynamic programming, greedy algorithms, and Huffman extra
-│   ├── recitation4.html               reserved session placeholders
+│   ├── recitation4.html               graph algorithms: search review, MSTs, shortest paths, Floyd–Warshall extra
 │   ├── recitation5.html               reserved session placeholders
 │   ├── recitation6.html               reserved session placeholders
 │   ├── recitation7.html               reserved session placeholders
-│   ├── notebooks/                     generated Recitation 1–3 Python and Java notebooks
+│   ├── notebooks/                     generated Recitation 1–4 Python and Java notebooks
 │   └── assets/                        local CSS, JavaScript, icons, and brand marks
 ├── material/
 │   ├── week1/
@@ -29,12 +29,14 @@ TA-CS301/
 │   │       └── p1 … p6/               solutions, starter templates, and tests in six languages
 │   ├── week2/                         approved layout, merge contracts, code, and self-checks
 │   ├── week3/                         approved layout, LCS/Huffman contracts, code, and self-checks
+│   ├── week4/                         approved layout, cheapest-route/Floyd–Warshall contracts, code, and self-checks
 │   ├── WeeklyContent.md               syllabus outline and optional non-exam enrichment
 │   └── DesignPrincipal.md             recitation material design principles
 ├── tools/
 │   ├── verify_all.sh                  runner for all 36 solution harnesses
 │   ├── verify_week2.sh                runner for the six Recitation 2 merge harnesses
 │   ├── verify_week3.sh                runner for the twelve Recitation 3 LCS/Huffman harnesses
+│   ├── verify_week4.sh                runner for the twelve Recitation 4 cheapest-route/Floyd–Warshall harnesses
 │   ├── verify_notebooks.sh            rebuilds the notebooks and re-runs their self-check cells
 │   └── site_src/                      site sources, generators, and structural/browser QA helpers
 ├── docs/
@@ -50,7 +52,7 @@ TA-CS301/
 ## Recitation materials
 
 Recitation materials are generally prepared as **Jupyter Notebooks** and distributed
-through Canvas. Recitations 1–3 additionally ship generated Python and Java practice
+through Canvas. Recitations 1–4 additionally ship generated Python and Java practice
 notebooks in `site/notebooks/`, offered as downloads on their pages; the website
 mirrors the same notes and exercises in the browser.
 
@@ -69,7 +71,14 @@ mirrors the same notes and exercises in the browser.
   `1 || Lmax` and LCS (recurrence, then a six-language implementation that returns the
   string). An optional Extra section introduces Huffman coding
   with pseudocode and a six-language build exercise. Python/Java notebooks included.
-- **Recitations 4–7** are reserved placeholders. Later topics and the database
+- **Recitation 4** covers graph algorithms: a one-table review of BFS, DFS, UCS, and
+  IDDFS, then minimum spanning trees and single-source shortest paths. Three core
+  exercises: Kruskal/Prim traces with true/false claims about MST edges, a Dijkstra
+  trace that fails on a negative edge compared with Bellman-Ford, and a six-language
+  "cheapest route with at most k stops" implementation (Bellman-Ford with limited
+  rounds). Optional written practice, and an Extra section on Floyd–Warshall as a DP
+  with a six-language build exercise. Python/Java notebooks included.
+- **Recitations 5–7** are reserved placeholders. Later topics and the database
   environment have not been assigned to a session. The SQL notebook document under
   `docs/planning/` is a recommendation, not published course material.
 
@@ -91,6 +100,11 @@ Recitation 3 uses `recitation3-python.ipynb` and `recitation3-java.ipynb`, with 
 notes, written prompts and response cells, the LCS starter and self-check, and the
 optional Huffman starter and self-check at the end.
 
+Recitation 4 uses `recitation4-python.ipynb` and `recitation4-java.ipynb`, with its
+notes, written prompts and response cells, the cheapest-route starter and self-check,
+and the optional Floyd–Warshall starter and self-check at the end. Graph diagrams appear
+on the page only; the notebooks give the same edge lists in text.
+
 A session typically spends about 15 minutes on concept review, 25–40 minutes on core
-practice (the length varies by session; Recitation 3 uses about 40), 10–15 minutes on
+practice (the length varies by session; Recitations 3 and 4 use about 40), 10–15 minutes on
 discussing approaches, and the remaining time on questions. The recitation and exercises are optional and ungraded.

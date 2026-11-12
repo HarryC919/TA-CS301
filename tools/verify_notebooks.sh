@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rebuild Recitation 1–3 notebooks, then run every self-check cell against
+# Rebuild Recitation 1–4 notebooks, then run every self-check cell against
 # the reference solution students will meet on the website. This keeps the
 # shipped .ipynb files honest: a check cell that no longer matches the
 # published examples or reference answers fails here.
@@ -52,6 +52,7 @@ mkdir -p "$LOGS"
 python3 "$ROOT/tools/site_src/build_notebooks.py" || exit 1
 python3 "$ROOT/tools/site_src/build_recitation2.py" || exit 1
 python3 "$ROOT/tools/site_src/build_recitation3.py" || exit 1
+python3 "$ROOT/tools/site_src/build_recitation4.py" || exit 1
 
 if python3 - <<'PY'
 import json
@@ -124,5 +125,6 @@ if [ "$fail" -ne 0 ]; then
 fi
 python3 "$ROOT/tools/site_src/verify_recitation2.py" || exit 1
 python3 "$ROOT/tools/site_src/verify_recitation3.py" || exit 1
+python3 "$ROOT/tools/site_src/verify_recitation4.py" || exit 1
 python3 "$ROOT/tools/site_src/test_notebook_format.py" || exit 1
 echo "ALL NOTEBOOK CHECKS PASSED"

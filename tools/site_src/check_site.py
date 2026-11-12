@@ -271,6 +271,28 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
         if any("open" in a for a in parser.attrs_by_tag["details"] if a.get("data-kind") == "answer"):
             errors.append(f"{rel}: reference answers should start collapsed")
 
+    if rel.name == "recitation4.html":
+        required = {"overview", "notes", "search-review", "mst-review", "sp-review", "exercises",
+                    "exercise-1", "exercise-2", "exercise-3", "optional-practice", "discussion",
+                    "extra", "extra-build", "references", "notebooks"}
+        missing = required - parser.ids.keys()
+        if missing:
+            errors.append(f"{rel}: missing Recitation 4 sections: {sorted(missing)}")
+        panels = [a for a in parser.attrs_by_tag["div"] if a.get("role") == "tabpanel"]
+        if len(panels) != 24 or any(sum(a.get("data-lang") == lang for a in panels) != 4 for lang in LANGS):
+            errors.append(f"{rel}: expected four six-language code groups (cheapest route and Floyd–Warshall)")
+        selected = [a for a in parser.attrs_by_tag["button"] if a.get("aria-selected") == "true"]
+        if len(selected) != 4 or any(a.get("data-lang") != "java" for a in selected):
+            errors.append(f"{rel}: all four code groups must default to Java")
+        for name in ("python", "java"):
+            href = f"notebooks/recitation4-{name}.ipynb"
+            if not any(a.get("href") == href and "download" in a for a in parser.attrs_by_tag["a"]):
+                errors.append(f"{rel}: missing downloadable {name} notebook")
+        if any("open" in a for a in parser.attrs_by_tag["details"] if a.get("data-kind") == "answer"):
+            errors.append(f"{rel}: reference answers should start collapsed")
+        if raw.count('<figure class="graph-figure"') != 3:
+            errors.append(f"{rel}: expected three graph figures (Exercise 1, Exercise 2, Floyd–Warshall)")
+
     # aria-controls / aria-labelledby integrity.
     ids = parser.ids
     for tag, attrs_list in parser.attrs_by_tag.items():
