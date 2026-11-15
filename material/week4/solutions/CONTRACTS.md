@@ -11,8 +11,9 @@ such route exists. `src == dst` costs 0. Every answer is at most
 100 · 10,000 = 1,000,000, so 32-bit integers suffice. Do not modify `flights`.
 
 Method: Bellman-Ford with k + 1 rounds. Each round relaxes every flight while
-reading the distances of the previous round (a copy), so round t extends routes by
-exactly one more flight. Time: O(k · m). Working space: O(n) for two distance
+reading the distances of the previous round (a copy), so round t extends a
+round-(t − 1) route by at most one flight. Time: O(k(n + m)), which is O(k · m)
+when m is at least about n. Working space: O(n) for two distance
 arrays.
 
 - C: `int cheapestRoute(int n, const int* flights, int m, int src, int dst, int k)`
@@ -22,7 +23,7 @@ arrays.
 - C++: `int cheapestRoute(int n, const std::vector<std::vector<int>>& flights, int src, int dst, int k)`
 - C#: `public static int CheapestRoute(int n, int[][] flights, int src, int dst, int k)` in `Solution`.
 - Java: `public static int cheapestRoute(int n, int[][] flights, int src, int dst, int k)` in `Solution`.
-- Python: `def cheapest_route(n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int`
+- Python: `def cheapest_route(n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int:`
 - JavaScript: `function cheapestRoute(n, flights, src, dst, k)`; export via `module.exports = { cheapestRoute };`.
 
 Harnesses cover `src == dst`, an unreachable destination, k = 0, the in-place
@@ -54,7 +55,7 @@ updated in place.
 - C++: `std::vector<std::vector<int>> floydWarshall(int n, const std::vector<std::vector<int>>& edges)`
 - C#: `public static int[][] FloydWarshall(int n, int[][] edges)` in `Solution`.
 - Java: `public static int[][] floydWarshall(int n, int[][] edges)` in `Solution`.
-- Python: `def floyd_warshall(n: int, edges: list[list[int]]) -> list[list[int]]`
+- Python: `def floyd_warshall(n: int, edges: list[list[int]]) -> list[list[int]]:`
 - JavaScript: `function floydWarshall(n, edges)`; export via `module.exports = { floydWarshall, INF };`.
 
 Every starter and reference defines `INF = 1,000,000,000` as a named constant.

@@ -158,8 +158,8 @@ Directed graph: S→A 2, S→B 5, B→A −4, A→T 1. Source S.
 - Checks: `src == dst` (0), unreachable destination (−1), `k = 0`, cheapest route
   overall needs too many stops (the example above), parallel flights between the
   same cities, cycles in the flight graph, input list not modified, and a large
-  input (e.g., n = 100, ~5,000 flights, k = 99) for O(k·E) time and O(n) extra space.
-- Expected evidence: working code plus an explanation of O(k · E) time and O(n)
+  input (e.g., n = 100, ~5,000 flights, k = 99) for O(k(n + m)) time and O(n) extra space.
+- Expected evidence: working code plus an explanation of O(k(n + m)) time (O(k · m) when m is at least about n) and O(n)
   working space (two distance arrays), and why the copy is needed.
 - Six languages (c, cpp, cs, java, py, js). No priority queue is needed, so no
   helper code.

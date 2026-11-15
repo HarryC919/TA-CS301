@@ -24,7 +24,7 @@ TASKS = {
             'cpp': 'int cheapestRoute(int n, const std::vector<std::vector<int>>& flights, int src, int dst, int k)',
             'cs': 'public static int CheapestRoute(int n, int[][] flights, int src, int dst, int k)',
             'java': 'public static int cheapestRoute(int n, int[][] flights, int src, int dst, int k)',
-            'py': 'def cheapest_route(n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int',
+            'py': 'def cheapest_route(n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int:',
             'js': 'function cheapestRoute(n, flights, src, dst, k)',
         },
     },
@@ -35,7 +35,7 @@ TASKS = {
             'cpp': 'std::vector<std::vector<int>> floydWarshall(int n, const std::vector<std::vector<int>>& edges)',
             'cs': 'public static int[][] FloydWarshall(int n, int[][] edges)',
             'java': 'public static int[][] floydWarshall(int n, int[][] edges)',
-            'py': 'def floyd_warshall(n: int, edges: list[list[int]]) -> list[list[int]]',
+            'py': 'def floyd_warshall(n: int, edges: list[list[int]]) -> list[list[int]]:',
             'js': 'function floydWarshall(n, edges)',
         },
     },
@@ -72,7 +72,7 @@ WRITTEN_RESPONSES = {
 """,
     'exercise-3': """### Your explanation — Exercise 3
 
-- **The copy:** Why does reading from a copy mean round t adds exactly one more flight?
+- **The copy:** Why does reading from a copy mean round t extends a round-(t − 1) route by at most one flight, while the old value keeps shorter routes?
 - **Rounds:** Why are k + 1 rounds the right number?
 - **Cost:** Time and extra space.
 - **Plain Dijkstra:** Why does it fail on the trap example with k = 0?
@@ -218,6 +218,8 @@ def build_recitation4():
     sections = {node.attrs.get('id'): node for node in root.find_all('section')}
     if list(sections) != SECTION_IDS:
         raise BuildError('Recitation 4 sections are missing, duplicated, or out of order')
+    # Notebook-only paragraphs stay in `sections` (parsed above) but not on the page.
+    source = re.sub(r'<p data-notebook-only>.*?</p>\n?', '', source)
     for task, spec in TASKS.items():
         stubs = {lang: read_code(task, 'stub', lang) for lang, _, _ in LANGS}
         solutions = {lang: read_code(task, 'solution', lang) for lang, _, _ in LANGS}

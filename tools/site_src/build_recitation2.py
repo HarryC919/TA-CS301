@@ -77,8 +77,17 @@ def read_code(kind, lang):
     return text
 
 
+def strip_web_only(node):
+    node.children = [child for child in node.children
+                     if not (isinstance(child, Node) and 'data-web-only' in child.attrs)]
+    for child in node.children:
+        if isinstance(child, Node):
+            strip_web_only(child)
+
+
 def notebook_section(section, lang):
     section = deepcopy(section)
+    strip_web_only(section)
     # Notebook heading anchors differ from webpage ids. Preserve labels as text.
     for link in section.find_all('a'):
         if link.attrs.get('href', '').startswith('#'):
@@ -142,6 +151,8 @@ def build_recitation2():
     sections = {node.attrs.get('id'): node for node in root.find_all('section')}
     if list(sections) != SECTION_IDS:
         raise BuildError('Recitation 2 sections are missing, duplicated, or out of order')
+    # Notebook-only paragraphs stay in `sections` (parsed above) but not on the page.
+    source = re.sub(r'<p data-notebook-only>.*?</p>\n?', '', source)
     stubs = {lang: read_code('stub', lang) for lang, _, _ in LANGS}
     solutions = {lang: read_code('solution', lang) for lang, _, _ in LANGS}
     signature_rows = ''.join(f'<tr data-sig-lang="{lang}"><td>{LANG_LABEL[lang]}</td><td><code>{esc(sig)}</code></td></tr>'

@@ -219,6 +219,8 @@ def build_recitation3():
     sections = {node.attrs.get('id'): node for node in root.find_all('section')}
     if list(sections) != SECTION_IDS:
         raise BuildError('Recitation 3 sections are missing, duplicated, or out of order')
+    # Notebook-only paragraphs stay in `sections` (parsed above) but not on the page.
+    source = re.sub(r'<p data-notebook-only>.*?</p>\n?', '', source)
     for task, spec in TASKS.items():
         stubs = {lang: read_code(task, 'stub', lang) for lang, _, _ in LANGS}
         solutions = {lang: read_code(task, 'solution', lang) for lang, _, _ in LANGS}
