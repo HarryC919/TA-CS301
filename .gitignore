@@ -16,3 +16,7 @@ tests/
 
 # OS noise.
 .DS_Store
+
+# IDE generated files.
+.idea/
+.vscode/

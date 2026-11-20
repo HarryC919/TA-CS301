@@ -38,10 +38,10 @@
   - Dijkstra's Algorithm
   - Bellman-Ford Algorithm
   - APSP (Recitation extra content, see `Extra Content` below)
+- Hash Tables
 
 ## Week 5
 
-- Hash Tables
 - Introduction to Databases
 - Relational Model
   - Relational Algebra
