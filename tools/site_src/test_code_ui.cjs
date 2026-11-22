@@ -156,7 +156,7 @@ const root = path.resolve(__dirname, '../..');
         assert.equal(await evaluate('document.querySelector(".recitation-menu").open'),true, name+" @"+width+" menu opened by keyboard; focus="+await evaluate('document.activeElement.outerHTML'));
         assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
         assert.equal(await evaluate('var rect=document.querySelector(".recitation-options").getBoundingClientRect();rect.left>=0 && rect.right<=innerWidth'),true,name+' @'+width+' bounds='+await evaluate('JSON.stringify({left:rect.left,right:rect.right,width:innerWidth})'));
-        if (['index.html','recitation0.html','recitation1.html','recitation2.html','recitation3.html','recitation4.html','recitation7.html'].includes(name)) {
+        if (['index.html','recitation0.html','recitation1.html','recitation2.html','recitation3.html','recitation4.html','recitation5.html','recitation7.html'].includes(name)) {
           const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
           fs.writeFileSync(path.join(root,`.tmp/${name}-menu-${width}.png`),Buffer.from(data,'base64'));
         }
@@ -313,6 +313,53 @@ const root = path.resolve(__dirname, '../..');
     }
     console.log('PASS Recitation 4 synchronized cheapest-route/Floyd–Warshall tabs, drafts/copy/reload, collapsed answers, figures, desktop/mobile layout');
 
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/index.html')});
+    await ready('.hero-slots');
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".hero-slots a")).map(a=>a.getAttribute("href")).join()'),
+      ['0','1','2','3','4','5'].map(n=>`recitation${n}.html`).join(),'Home hero badges link Recitations 0–5');
+    assert.equal(await evaluate('document.querySelectorAll(".hero-slots span").length'),2,'Recitations 6–7 stay placeholders');
+    assert.equal(await evaluate('!!document.querySelector(".week-row.available a[href=\'recitation5.html\']") && document.querySelector(".week-row.reserved").dataset.range'),'06–07');
+    await evaluate('localStorage.removeItem("cs301-week1-lang")');
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation5.html')});
+    await ready('#r5-hashtable-stub-java textarea');
+    assert.equal(await evaluate('document.querySelectorAll("textarea.code-input").length'),6);
+    assert.equal(await evaluate('document.querySelectorAll("[id*=solution] textarea").length'),0);
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-btn[aria-selected=true]")).every(b=>b.dataset.lang==="java")'),true);
+    assert.equal(await evaluate('document.querySelectorAll("details[data-kind=answer][open]").length'),0);
+    assert.equal(await evaluate('document.querySelectorAll(".graph-figure svg").length'),1);
+    for (const lang of ['c','cpp','cs','java','py','js']) {
+      await evaluate(`document.querySelector('#r5-hashtable-stub-${lang}-tab').click()`);
+      for (const group of ['hashtable-stub','hashtable-solution'])
+        assert.equal(await evaluate(`document.querySelector('#r5-${group}-${lang}').hidden`),false,`Recitation 5 ${group} follows ${lang}`);
+      assert.equal(await evaluate(`document.querySelector('tr[data-sig-lang="${lang}"]') !== null`),true);
+    }
+    await evaluate(`document.querySelector('#r5-hashtable-stub-java-tab').click();var field=document.querySelector('#r5-hashtable-stub-java textarea');field.value='// temporary <table> & draft';field.dispatchEvent(new Event('input'));document.querySelector('a[href="#extra"]').click();`);
+    assert.equal(await evaluate('document.querySelector("#r5-hashtable-stub-java textarea").value'),'// temporary <table> & draft');
+    await evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:text=>{window.tableCopied=text;return Promise.resolve();}}});document.querySelector('#r5-hashtable-stub-java').closest('.tabs').querySelector('.copy-btn').click();`);
+    assert.equal(await evaluate('window.tableCopied'),'// temporary <table> & draft');
+    await evaluate(`document.querySelector('#r5-hashtable-stub-java').closest('.tabs').querySelector('.reset-btn').click()`);
+    assert.equal(await evaluate('document.querySelector("#r5-hashtable-stub-java textarea").value.includes("UnsupportedOperationException")'),true,'Recitation 5 reset restores the hash-table template');
+    await evaluate(`var field=document.querySelector('#r5-hashtable-stub-java textarea');field.value='// draft before reload';field.dispatchEvent(new Event('input'));`);
+    await call('Page.reload');
+    await ready('#r5-hashtable-stub-java textarea');
+    assert.equal(await evaluate('document.querySelector("#r5-hashtable-stub-java textarea").value.includes("UnsupportedOperationException")'),true);
+    for (const width of [1440,390]) {
+      await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:width===390});
+      for (const anchor of ['top','hash-review','ra-review','exercise-1','exercise-2','optional-practice','discussion','extra','notebooks']) {
+        await evaluate(`document.documentElement.style.scrollBehavior='auto';document.getElementById('${anchor}').scrollIntoView({behavior:'instant',block:'start'})`);
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,`Recitation 5 ${anchor} @${width}`);
+        const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+        fs.writeFileSync(path.join(root,`.tmp/rec5-${anchor}-${width}.png`),Buffer.from(data,'base64'));
+      }
+      for (const target of ['#r5-hashtable-solution-java','.sig-table','.graph-figure']) {
+        await evaluate(`var el=document.querySelector('${target}');var d=el.closest('details');if(d)d.open=true;(el.closest('.tabs')||el).scrollIntoView({behavior:'instant',block:'start'});`);
+        assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,`Recitation 5 ${target} @${width}`);
+        const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+        fs.writeFileSync(path.join(root,`.tmp/rec5-detail-${target.replace(/[^a-z0-9]+/gi,'')}-${width}.png`),Buffer.from(data,'base64'));
+      }
+    }
+    console.log('PASS Recitation 5 Home availability, synchronized hash-table tabs, drafts/copy/reload, collapsed answers, figure, desktop/mobile layout');
+
     await call('Emulation.setScriptExecutionDisabled', {value:true});
     await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation1.html')});
     await ready('#p1-stub-java');
@@ -339,6 +386,11 @@ const root = path.resolve(__dirname, '../..');
     assert.equal(await evaluate('document.querySelectorAll("textarea").length'),0);
     assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-panel")).filter(panel=>getComputedStyle(panel).display!=="none").length'),24);
     console.log('PASS Recitation 4 no-JavaScript fallback: all 24 code panels accessible');
+    await call('Page.navigate', {url:'file://' + path.join(root,'site/recitation5.html')});
+    await ready('#r5-hashtable-stub-java');
+    assert.equal(await evaluate('document.querySelectorAll("textarea").length'),0);
+    assert.equal(await evaluate('Array.from(document.querySelectorAll(".tab-panel")).filter(panel=>getComputedStyle(panel).display!=="none").length'),12);
+    console.log('PASS Recitation 5 no-JavaScript fallback: all 12 code panels accessible');
     console.log('ALL CODE UI CHECKS PASSED');
   } finally {
     if (socket) socket.close();

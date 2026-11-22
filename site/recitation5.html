@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recitation 5 · COMPSCI 301</title>
+<title>Recitation 5 · Hash Tables &amp; Relational Algebra · COMPSCI 301</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 <script>try{var t=localStorage.getItem("cs301-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<script src="assets/app.js" defer></script></head><body>
+<script src="assets/app.js" defer></script><link rel="stylesheet" href="assets/notes.css"><noscript><style>
+    .tab-btn, .copy-btn { display: none !important; }
+    .tab-panel[hidden] { display: block !important; }
+    .tab-panel { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    .tab-panel:first-child { border-top: 0; }
+</style></noscript></head><body>
 <header class="site-header">
   <div class="container header-inner">
     <a class="site-title" href="index.html"><span class="course-mark" aria-hidden="true">301</span><span class="site-title-copy"><span class="site-title-course">COMPSCI 301</span><span class="site-title-sub">Algorithms &amp; Databases</span></span></a>
@@ -18,18 +23,953 @@
 <a href="recitation2.html">Recitation 2 — Asymptotic notation & divide and conquer</a>
 <a href="recitation3.html">Recitation 3 — Dynamic programming & greedy algorithms</a>
 <a href="recitation4.html">Recitation 4 — Graph algorithms</a>
-<a href="recitation5.html" class="active" aria-current="page">Recitation 5 — Content to be announced</a>
+<a href="recitation5.html" class="active" aria-current="page">Recitation 5 — Hash tables & relational algebra</a>
 <a href="recitation6.html">Recitation 6 — Content to be announced</a>
 <a href="recitation7.html">Recitation 7 — Content to be announced</a></div>
       </details>
     </nav>
     <button class="theme-toggle" type="button" hidden aria-label="Color theme"><svg class="icon-auto" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg><svg class="icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   </div>
-</header><main id="main"><section class="page-hero"><div class="container"><span class="eyebrow">Recitation 5 · Coming soon</span>
-<h1>Recitation 5</h1><p class="subtitle">This session is reserved. Topics and materials will be announced here.</p></div></section>
-<div class="container"><section class="section"><div class="callout info"><span class="callout-title">Materials to follow</span>
-<p>No notes, exercises, or notebook downloads have been published for this session yet.</p></div>
-<div class="hero-actions"><a class="btn" href="recitation4.html">Previous recitation</a><a class="btn" href="recitation6.html">Next recitation</a><a class="btn ghost" href="index.html#recitations">All recitations</a></div></section></div></main><footer class="site-footer"><div class="container footer-inner">
+</header><main id="main"><section class="page-hero" id="top"><div class="container">
+<span class="eyebrow">Recitation 5 · Notes &amp; practice</span><h1>Hash Tables &amp; Relational Algebra</h1>
+<p class="subtitle">See why open addressing needs tombstones, build a double-hashing table from plain arrays, and read, write, and debug relational algebra.</p>
+<div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Core practice</a><a class="btn ghost" href="#extra">Extra · Red-Black Trees</a><a class="btn ghost" href="#notebooks">Notebooks</a></div>
+</div></section><div class="container"><nav class="page-jump" aria-label="On this page"><div class="page-jump-inner"><a href="#overview">Overview</a><a href="#hash-review">Hashing</a><a href="#ra-review">Relational algebra</a><a href="#exercise-1">Ex 1</a><a href="#exercise-2">Ex 2</a><a href="#optional-practice">Optional</a><a href="#discussion">Discussion</a><a href="#extra">Extra</a><a href="#notebooks">Notebooks</a></div></nav><div id="notes"><section class="section" id="overview">
+<div class="section-title"><h2>What we are practicing</h2></div>
+<p>This Tuesday session covers the hash-table lectures from the second half of Week 4 and the first Week 5 lectures on databases: the relational model and relational algebra. The Red-Black Tree appears only in the optional Extra section at the end.</p>
+<ul><li>Explain what a hash function must do, compare the division and multiplication methods, and say what problem universal hashing solves.</li><li>Trace insertions under linear probing and double hashing, and explain primary clustering using probe counts.</li><li>Explain why deleting from an open-addressing table must leave a DELETED marker instead of an empty slot, and what that costs later.</li><li>Implement an open-addressing map with double hashing using only plain arrays, and state its expected and worst-case costs.</li><li>Compute the result of a relational algebra expression on a small instance, and write expressions for English queries.</li><li>Diagnose wrong queries, and decide which algebraic rewrites are valid, with a counterexample when one is not.</li></ul>
+<p>Prerequisites: arrays and modular arithmetic, expected cost from earlier weeks, and sets and tuples. No SQL and no database software are used in this session.</p>
+<div class="callout info"><span class="callout-title">Suggested session path</span><p>Spend about 12 minutes on the two review sections, then about 45 minutes on the core practice: Exercise 1 (15 minutes) and Exercise 2 (30 minutes: 7 for the trace, 23 for the code). Leave about 10 minutes for discussion. Timing is a guide, not a completion requirement. The optional practice and the Red-Black Tree section at the end are for after the session or for students who finish early.</p></div>
+<p>These exercises are optional and ungraded. Use hints when needed. AI tools are allowed during recitation, but you should be able to explain, verify, and modify your answer. Follow the instructor's separate assignment and exam policies.</p>
+</section>
+<section class="section" id="hash-review">
+<div class="section-title"><h2>1. Hash functions and open addressing</h2></div>
+<p>A hash table stores n keys in an array of m slots. A <em>hash function</em> h maps each key to a slot, and the goal is to spread keys evenly so that each operation looks at only a few slots. The <em>load factor</em> is α = n / m.</p>
+<h3>Hash functions</h3>
+<ul><li><strong>Division:</strong> h(k) = k mod m. Choose m prime and not close to a power of 2. With m = 2<sup>p</sup>, only the lowest p bits of the key matter, so keys that differ only in their high bits all collide.</li><li><strong>Multiplication:</strong> h(k) = ⌊m · (kA mod 1)⌋ for a constant 0 &lt; A &lt; 1, where kA mod 1 is the fractional part of kA. The choice of m matters much less, so a power of 2 is fine; A ≈ (√5 − 1) / 2 is a common choice.</li><li><strong>Universal hashing:</strong> pick the hash function <em>at random</em>, when the table is created, from a family in which any two distinct keys collide with probability at most 1 / m. For example, h<sub>a,b</sub>(k) = ((ak + b) mod p) mod m, with p a prime larger than every key, a chosen from 1 … p − 1, and b from 0 … p − 1. No fixed input is bad for most choices, so the expected cost holds for every input, even one chosen by an adversary.</li></ul>
+<h3>Open addressing</h3>
+<p>In open addressing every key lives in the table itself. To insert k, try the slots h(k, 0), h(k, 1), h(k, 2), … (the <em>probe sequence</em>) until one is free. A search follows the same sequence and stops when it finds k or reaches an <strong>empty</strong> slot: if k had been inserted, it would have been placed there or earlier.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Probing</th><th>h(k, i)</th><th>Strength</th><th>Weakness</th></tr></thead><tbody><tr><td>Linear</td><td>(h′(k) + i) mod m</td><td>Simple; neighboring slots are cache-friendly</td><td>Primary clustering: occupied slots form long runs, and any key landing in a run extends it</td></tr><tr><td>Quadratic</td><td>(h′(k) + c<sub>1</sub>i + c<sub>2</sub>i<sup>2</sup>) mod m</td><td>Breaks up long runs</td><td>Keys with the same start share a sequence (secondary clustering); for bad c<sub>1</sub>, c<sub>2</sub>, m it misses some slots</td></tr><tr><td>Double hashing</td><td>(h<sub>1</sub>(k) + i · h<sub>2</sub>(k)) mod m</td><td>Different keys get different step sizes; close to uniform hashing</td><td>Two hash computations; h<sub>2</sub>(k) must never be 0 and must share no factor with m</td></tr></tbody></table></div>
+<p>With m prime and 1 ≤ h<sub>2</sub>(k) ≤ m − 1, h<sub>2</sub>(k) and m share no factor, so the first m probes of double hashing visit every slot exactly once.</p>
+<p><strong>Delete.</strong> Emptying a slot would cut the probe sequences that passed through it, so a later search would stop early and miss keys stored further along. Instead, delete marks the slot DELETED (a <em>tombstone</em>): search treats it as occupied and keeps going, and insert may reuse it.</p>
+<p><strong>Cost.</strong> Under the uniform hashing assumption, an unsuccessful search makes at most 1 / (1 − α) probes in expectation, and a successful search at most (1 / α) ln(1 / (1 − α)). At α = 0.5 these are 2 and about 1.4; at α = 0.9 they are 10 and about 2.6. The worst case is Θ(m). Tombstones are not empty, so they lengthen searches as if they were keys; a table with many deletions is eventually rebuilt.</p>
+<p><strong>Perfect hashing.</strong> When the set of keys is fixed in advance, two levels of universal hashing give O(1) worst-case search with O(n) expected space: the first level splits the keys into buckets, and each bucket gets its own collision-free second-level table whose size is the square of the bucket's size.</p>
+</section>
+<section class="section" id="ra-review">
+<div class="section-title"><h2>2. The relational model and relational algebra</h2></div>
+<p>A <strong>relation</strong> is a set of tuples that all have the same attributes, its <em>schema</em>. A <em>key</em> is a set of attributes whose values identify a tuple. Relations are sets: there are no duplicate tuples and no order. Relational algebra is a small set of operators that each take relations and return a new relation, so expressions can be nested like arithmetic.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Operator</th><th>Notation</th><th>Result</th><th>Attributes of the result</th></tr></thead><tbody><tr><td>Selection</td><td>σ<sub>c</sub>(R)</td><td>Tuples of R that satisfy condition c</td><td>Same as R</td></tr><tr><td>Projection</td><td>π<sub>A</sub>(R)</td><td>Each tuple cut down to the attributes in A; duplicates removed</td><td>A</td></tr><tr><td>Rename</td><td>ρ<sub>S</sub>(R)</td><td>R under a new name S (attributes may be renamed too)</td><td>Same values, new names</td></tr><tr><td>Union, difference</td><td>R ∪ S, R − S</td><td>Tuples in either; tuples in R but not in S</td><td>Same as R and S (they must match)</td></tr><tr><td>Cartesian product</td><td>R × S</td><td>Every pair of a tuple from R and a tuple from S</td><td>All of R's and all of S's</td></tr><tr><td>Theta-join (derived)</td><td>R ⋈<sub>θ</sub> S</td><td>σ<sub>θ</sub>(R × S)</td><td>All of R's and all of S's</td></tr><tr><td>Natural join (derived)</td><td>R ⋈ S</td><td>Pairs that agree on <em>every</em> attribute name R and S share</td><td>Union of both, shared ones once</td></tr><tr><td>Intersection (derived)</td><td>R ∩ S</td><td>R − (R − S)</td><td>Same as R and S</td></tr></tbody></table></div>
+<p>Two reading habits help. First, read an expression as a tree and evaluate it from the inside out. Second, English words such as "no", "never", or "only" usually call for a set difference: first find the tuples that <em>do</em> have the property, then subtract them. A condition such as dept ≠ 'CS' inside σ looks at one tuple at a time and cannot express "none of them".</p>
+<p class="note">Typing notation: in plain text you can write σ<sub>dept = 'CS'</sub>(Course) as <code>sigma[dept = 'CS'](Course)</code>, and use <code>pi[...]</code>, <code>rho[...]</code>, <code>join</code>, <code>union</code>, and <code>minus</code> the same way.</p>
+</section>
+</div><section class="section" id="exercises">
+<div class="section-title"><h2>Core practice · about 45 minutes</h2></div>
+<p data-web-only>Try each prompt before opening the reference explanation. Written answers can be short lists, small tables, or sentences. Use your IDE or the downloadable notebook to run code: the editors on this page display and copy code but do not run or grade it.</p>
+<ol class="steps"><li><a href="#exercise-1">Exercise 1 · relational algebra: read, write, diagnose</a> — about 15 minutes.</li><li><a href="#exercise-2">Exercise 2 · build an open-addressing hash table</a> — about 30 minutes: a 7-minute trace, then the code.</li></ol>
+<p class="note" data-web-only>Browser code drafts are temporary. Copy your work before leaving the page. Tab indents, Shift+Tab unindents, and Escape then Tab leaves the editor. Refresh restores templates; Reset code restores the selected language's template.</p>
+</section>
+<section class="section" id="exercise-1">
+<div class="section-title"><h2>Exercise 1 · Relational algebra: read, write, diagnose</h2></div>
+<p><strong>Four short parts · about 15 minutes.</strong> A small course database has three relations. Keys are <code>sid</code> for Student, <code>cid</code> for Course, and (<code>sid</code>, <code>cid</code>) for Takes.</p>
+<p><strong>Student</strong></p>
+<div class="table-wrap"><table class="data"><thead><tr><th>sid</th><th>sname</th><th>major</th></tr></thead><tbody><tr><td>1</td><td>Ana</td><td>CS</td></tr><tr><td>2</td><td>Ben</td><td>Math</td></tr><tr><td>3</td><td>Chen</td><td>CS</td></tr><tr><td>4</td><td>Dana</td><td>Physics</td></tr><tr><td>5</td><td>Eli</td><td>Math</td></tr></tbody></table></div>
+<p><strong>Course</strong></p>
+<div class="table-wrap"><table class="data"><thead><tr><th>cid</th><th>title</th><th>dept</th></tr></thead><tbody><tr><td>C1</td><td>Algorithms</td><td>CS</td></tr><tr><td>C2</td><td>Databases</td><td>CS</td></tr><tr><td>M1</td><td>Linear Algebra</td><td>Math</td></tr><tr><td>P1</td><td>Mechanics</td><td>Physics</td></tr></tbody></table></div>
+<p><strong>Takes</strong></p>
+<div class="table-wrap"><table class="data"><thead><tr><th>sid</th><th>cid</th><th>grade</th></tr></thead><tbody><tr><td>1</td><td>C1</td><td>A</td></tr><tr><td>1</td><td>C2</td><td>B</td></tr><tr><td>2</td><td>C1</td><td>B</td></tr><tr><td>2</td><td>M1</td><td>A</td></tr><tr><td>3</td><td>M1</td><td>B</td></tr><tr><td>3</td><td>P1</td><td>A</td></tr><tr><td>4</td><td>P1</td><td>B</td></tr></tbody></table></div>
+<ol><li><strong>Read.</strong> How many tuples and how many attributes do Student × Takes and Student ⋈ Takes have? Then compute π<sub>sname</sub>(Student ⋈ Takes ⋈ σ<sub>dept = 'CS'</sub>(Course)), and name the attributes each natural join matches on. Chen is a CS major: does Chen appear, and why?</li><li><strong>Write.</strong> Write an expression for "names of students who have taken <em>no</em> CS course", and give its result on this instance.</li><li><strong>Diagnose.</strong> A classmate answers part 2 with π<sub>sname</sub>(Student ⋈ Takes ⋈ σ<sub>dept ≠ 'CS'</sub>(Course)). Name one student it wrongly includes and one it wrongly leaves out, and explain each.</li><li><strong>Valid rewrite?</strong> R and S below are relations; A is a set of attributes. For each claim, say true or false. Give a short reason if true, and a counterexample with one or two tuples per relation if false.</li></ol>
+<ul><li><strong>4a.</strong> σ<sub>c</sub>(R ⋈ S) = σ<sub>c</sub>(R) ⋈ S, when c uses only attributes of R.</li><li><strong>4b.</strong> π<sub>A</sub>(R ∪ S) = π<sub>A</sub>(R) ∪ π<sub>A</sub>(S), when R and S have the same attributes.</li><li><strong>4c.</strong> π<sub>A</sub>(R − S) = π<sub>A</sub>(R) − π<sub>A</sub>(S), when R and S have the same attributes.</li></ul>
+<details data-kind="hint"><summary>Hint 1 · Find who did, then subtract</summary><p>For part 2, first write the set of <code>sid</code>s of students who took at least one CS course. Every student's <code>sid</code> minus that set leaves exactly the students you want, including anyone who took no course at all. Join back to Student to get names.</p></details>
+<details data-kind="hint"><summary>Hint 2 · Make two tuples collide</summary><p>For 4c, use attributes (A, B). Choose one tuple for R and one for S that have the same A value but different B values. What is R − S, and what are π<sub>A</sub>(R) and π<sub>A</sub>(S)?</p></details>
+<details data-kind="answer"><summary>Reference explanation · open after attempting</summary><p><strong>1. Read.</strong> Student × Takes pairs every student with every enrollment: 5 × 7 = 35 tuples with 6 attributes, because <code>sid</code> appears twice (Student.sid and Takes.sid). Student ⋈ Takes keeps only the pairs with equal <code>sid</code> and one copy of it: each enrollment matches exactly one student, so 7 tuples with 5 attributes (sid, sname, major, cid, grade). The first join matches on <code>sid</code>, and the second on <code>cid</code>, the only attribute shared with Course.</p><p>σ<sub>dept = 'CS'</sub>(Course) keeps C1 and C2. The enrollments in them are (1, C1), (1, C2), and (2, C1), so the result is {Ana, Ben}. Ana appears once, because a relation is a set. Chen does not appear: the condition is about the <em>course's</em> department, not the student's major, and Chen took only M1 and P1.</p><p><strong>2. Write.</strong></p><div class="code-block"><div class="code-head"><span class="lang-tag">Relational algebra</span><button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code" hidden><img src="assets/icons/file-copy-2-line.svg" alt=""></button></div><pre><code>TookCS  = π[sid](Takes ⋈ σ[dept = 'CS'](Course))     -- {1, 2}
+NoCS    = π[sid](Student) − TookCS                   -- {3, 4, 5}
+Answer  = π[sname](Student ⋈ NoCS)                   -- {Chen, Dana, Eli}</code></pre></div><p>The difference must be taken on <code>sid</code> alone. Subtracting whole Takes tuples, or names, would go wrong: two different students may share a name, and a student's non-CS enrollments are not "the same tuple" as their CS enrollments. Starting from π<sub>sid</sub>(Student) rather than π<sub>sid</sub>(Takes) is what includes Eli, who took nothing.</p><p><strong>3. Diagnose.</strong> The classmate's expression returns students who took <em>at least one</em> non-CS course: {Ben, Chen, Dana}. It wrongly includes Ben, who took M1 but also C1, a CS course. It wrongly leaves out Eli, who took no course at all and so never appears in Takes. A selection decides about one tuple at a time; "no CS course" is a statement about <em>all</em> of a student's tuples, which needs a difference.</p><p><strong>4a. True.</strong> Every tuple of R ⋈ S is a tuple r of R joined with a matching tuple of S. Because c mentions only R's attributes, it holds for the joined tuple exactly when it holds for r. So filtering R first keeps the same joined tuples. Database systems use this rewrite ("push selections down") to make the join smaller.</p><p><strong>4b. True.</strong> A value list is in π<sub>A</sub>(R ∪ S) exactly when it comes from some tuple of R or some tuple of S, which is the meaning of the right side.</p><p><strong>4c. False.</strong> Let R = {(1, x)} and S = {(1, y)} over (A, B). Then R − S = {(1, x)}, so the left side is {1}. On the right, π<sub>A</sub>(R) = π<sub>A</sub>(S) = {1}, so the difference is empty. Projection forgets B, which was the only thing telling the tuples apart; after that, the difference removes too much. This is the same reason part 2 subtracts sets of <code>sid</code>s and not names.</p><p><strong>Discussion · shared names.</strong> If Course had an attribute <code>name</code> for its title and Student also had <code>name</code>, the natural join Student ⋈ Takes ⋈ Course would also require the student's name to equal the course's name, and would almost always be empty. Natural join matches on <em>every</em> shared name, intended or not. Rename first, for example ρ<sub>Course(cid, title, dept)</sub>(Course), or project away the clashing attribute before joining.</p></details>
+</section>
+<section class="section" id="exercise-2">
+<div class="section-title"><h2>Exercise 2 · Build an open-addressing hash table</h2></div>
+<p><strong>A trace, then the code · about 30 minutes.</strong> Both parts use double hashing with h<sub>1</sub>(k) = k mod m and h<sub>2</sub>(k) = 1 + (k mod (m − 1)), so probe i looks at slot (h<sub>1</sub>(k) + i · h<sub>2</sub>(k)) mod m.</p>
+<h3>Part A · Trace (about 7 minutes)</h3>
+<ol><li>Take m = 11 and insert the keys 22, 1, 13, 11, 24, 33 in this order. Do it twice: once with <strong>linear probing</strong>, (h<sub>1</sub>(k) + i) mod 11, and once with <strong>double hashing</strong>. For each, write the final slot of every key and the number of probes each insertion needed.</li><li>Compare the total number of probes. Where did linear probing lose, and why?</li><li>In the double-hashing table, delete 11 by simply making its slot <em>empty</em>. Then search for 33. What happens, and what should delete have done instead?</li></ol>
+<details data-kind="hint"><summary>Hint · Compute h₁ and h₂ first</summary><p>Write h<sub>1</sub> and h<sub>2</sub> for every key before you start: for example, 11 has h<sub>1</sub> = 0 and h<sub>2</sub> = 1 + (11 mod 10) = 2, so double hashing tries slots 0, 2, 4, 6, …</p></details>
+<details data-kind="answer"><summary>Part A reference explanation · open after attempting</summary><div class="table-wrap"><table class="data"><thead><tr><th>Key</th><th>h<sub>1</sub></th><th>h<sub>2</sub></th><th>Linear: slots tried</th><th>Double: slots tried</th></tr></thead><tbody><tr><td>22</td><td>0</td><td>3</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td></tr><tr><td>13</td><td>2</td><td>4</td><td>2</td><td>2</td></tr><tr><td>11</td><td>0</td><td>2</td><td>0, 1, 2, 3</td><td>0, 2, 4</td></tr><tr><td>24</td><td>2</td><td>5</td><td>2, 3, 4</td><td>2, 7</td></tr><tr><td>33</td><td>0</td><td>4</td><td>0, 1, 2, 3, 4, 5</td><td>0, 4, 8</td></tr></tbody></table></div><p><strong>1.</strong> Linear probing ends with slots 0–5 holding 22, 1, 13, 11, 24, 33. Double hashing ends with 22 in slot 0, 1 in slot 1, 13 in slot 2, 11 in slot 4, 24 in slot 7, and 33 in slot 8.</p><p><strong>2.</strong> Linear probing needs 1 + 1 + 1 + 4 + 3 + 6 = 16 probes; double hashing needs 1 + 1 + 1 + 3 + 2 + 3 = 11. With linear probing, the first three keys form a run in slots 0–2. Every later key that lands anywhere in the run walks to its end and makes it longer: 11 extends it to slot 3, 24 to slot 4, and 33 has to cross all five occupied slots. That is primary clustering. With double hashing, 11, 24, and 33 also collide, but they jump by different step sizes (2, 5, 4) and leave the run quickly.</p><p><strong>3.</strong> 33 probes slot 0 (22), then slot 4. Slot 4 is now empty, so the search concludes that 33 is not in the table, although it sits in slot 8. Delete should mark slot 4 DELETED instead: search skips over DELETED slots and reaches 33 at slot 8, while a later insertion may reuse slot 4.</p></details>
+<h3>Part B · Implement (about 23 minutes)</h3>
+<p>Implement a fixed-capacity map from non-negative integer keys to non-negative integer values, using open addressing with the double hashing above. <strong>Use only plain arrays:</strong> no dictionaries, sets, or maps from the language library (for example, Python <code>dict</code> or <code>set</code>, Java <code>HashMap</code>, C# <code>Dictionary</code>, C++ <code>unordered_map</code>, or JavaScript <code>Map</code>).</p>
+<ul><li><code>HashTable(m)</code> creates an empty table with m slots; m is a prime with 3 ≤ m ≤ 200,003.</li><li><code>put(key, value)</code> inserts the key, or updates its value if it is already stored, and returns true. It returns false only when the key is new and no EMPTY or DELETED slot is left.</li><li><code>get(key)</code> returns the stored value, or −1 if the key is absent.</li><li><code>remove(key)</code> marks the key's slot DELETED and returns true, or returns false if the key is absent.</li><li><code>size()</code> returns the number of keys stored (DELETED slots do not count).</li><li>0 ≤ key, value ≤ 1,000,000,000. The starter already has the three slot arrays, the slot states EMPTY, OCCUPIED, and DELETED, <code>size</code>, and <code>probe(key, i)</code>; you write <code>put</code>, <code>get</code>, and <code>remove</code>. No operation may probe more than m slots.</li></ul>
+<p>Two bugs are easy to write. The self-checks test both, and the written explanation asks about them.</p>
+<ol><li><strong>Bug 1 · Delete writes EMPTY.</strong> With m = 7, put 10 (slot 3), then put 17: it collides at slot 3 and goes to slot 2. Remove 10. If slot 3 becomes EMPTY, <code>get(17)</code> stops at slot 3 and wrongly returns −1.</li><li><strong>Bug 2 · Put stops at the first DELETED slot.</strong> Continue the example: slot 3 is now DELETED and 17 is still in slot 2. If <code>put(17, 3)</code> stores 17 in slot 3 right away, the table now holds 17 twice. Put should remember the first DELETED slot but keep probing until an EMPTY slot (or m probes) to make sure the key is not already stored further along.</li></ol>
+<h3>Examples and checks</h3>
+<div class="table-wrap"><table class="data"><thead><tr><th>Operations (m = 7 unless stated)</th><th>Expected</th><th>What to check</th></tr></thead><tbody><tr><td>get(3) on a new table</td><td>−1</td><td>Empty table</td></tr><tr><td>put(10, 100), put(10, 111), get(10), size()</td><td>true, true, 111, 1</td><td>Update changes the value, not the size</td></tr><tr><td>put(10, 1), put(17, 2), remove(10), get(17)</td><td>…, true, 2</td><td>Bug 1</td></tr><tr><td>…then put(17, 3), size()</td><td>true, 1</td><td>Bug 2: no duplicate key</td></tr><tr><td>m = 5: put five keys, then put a new one</td><td>false</td><td>Full table; updating a stored key still returns true</td></tr><tr><td>m = 5: put five keys, remove all five, get(10)</td><td>−1</td><td>Only DELETED slots: the search must stop after m probes</td></tr></tbody></table></div>
+<h3>Function interfaces</h3>
+<div class="table-wrap"><table class="data sig-table"><thead><tr><th>Language</th><th>Exact interface</th></tr></thead><tbody><tr data-sig-lang="c"><td>C</td><td><code class="sig-block">HashTable* htCreate(int m);
+bool htPut(HashTable* t, int key, int value);
+int htGet(const HashTable* t, int key);
+bool htRemove(HashTable* t, int key);
+int htSize(const HashTable* t);
+void htFree(HashTable* t);</code></td></tr><tr data-sig-lang="cpp"><td>C++</td><td><code class="sig-block">class HashTable {
+    explicit HashTable(int m);
+    bool put(int key, int value);
+    int get(int key) const;
+    bool remove(int key);
+    int size() const;
+};</code></td></tr><tr data-sig-lang="cs"><td>C#</td><td><code class="sig-block">public class HashTable {
+    public HashTable(int m)
+    public bool Put(int key, int value)
+    public int Get(int key)
+    public bool Remove(int key)
+    public int Size()
+}</code></td></tr><tr data-sig-lang="java"><td>Java</td><td><code class="sig-block">public class HashTable {
+    public HashTable(int m)
+    public boolean put(int key, int value)
+    public int get(int key)
+    public boolean remove(int key)
+    public int size()
+}</code></td></tr><tr data-sig-lang="py"><td>Python</td><td><code class="sig-block">class HashTable:
+    def __init__(self, m: int)
+    def put(self, key: int, value: int) -&gt; bool
+    def get(self, key: int) -&gt; int
+    def remove(self, key: int) -&gt; bool
+    def size(self) -&gt; int</code></td></tr><tr data-sig-lang="js"><td>JavaScript</td><td><code class="sig-block">class HashTable {
+    constructor(m)
+    put(key, value)   // returns a boolean
+    get(key)          // returns the value or -1
+    remove(key)       // returns a boolean
+    size()
+}</code></td></tr></tbody></table></div>
+<p data-web-only>In C, the table is a struct created by <code>htCreate</code> and released by <code>htFree</code>; both are in the starter. <code>htCreate</code> returns NULL if memory runs out.</p>
+<h3>Starter template · edit or copy</h3>
+<div class="tabs" data-tabs data-editable>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-c-tab" data-lang="c" aria-controls="r5-hashtable-stub-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-cpp-tab" data-lang="cpp" aria-controls="r5-hashtable-stub-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-cs-tab" data-lang="cs" aria-controls="r5-hashtable-stub-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-java-tab" data-lang="java" aria-controls="r5-hashtable-stub-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-py-tab" data-lang="py" aria-controls="r5-hashtable-stub-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-stub-js-tab" data-lang="js" aria-controls="r5-hashtable-stub-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
+    </div>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-c" aria-labelledby="r5-hashtable-stub-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">C</span></div><pre><code>#include &lt;stdbool.h&gt;
+#include &lt;stdlib.h&gt;
+enum { EMPTY = 0, OCCUPIED = 1, DELETED = 2 };
+typedef struct HashTable {
+    int m;
+    int count;  // number of OCCUPIED slots
+    int* keys;
+    int* values;
+    unsigned char* state;
+} HashTable;
+
+HashTable* htCreate(int m) {
+    // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+    HashTable* t = malloc(sizeof(HashTable));
+    if (t == NULL) return NULL;
+    t-&gt;m = m;
+    t-&gt;count = 0;
+    t-&gt;keys = calloc((size_t)m, sizeof(int));
+    t-&gt;values = calloc((size_t)m, sizeof(int));
+    t-&gt;state = calloc((size_t)m, 1);  // all EMPTY
+    if (t-&gt;keys == NULL || t-&gt;values == NULL || t-&gt;state == NULL) {
+        free(t-&gt;keys);
+        free(t-&gt;values);
+        free(t-&gt;state);
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+void htFree(HashTable* t) {
+    if (t == NULL) return;
+    free(t-&gt;keys);
+    free(t-&gt;values);
+    free(t-&gt;state);
+    free(t);
+}
+
+static int probe(const HashTable* t, int key, int i) {
+    // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+    return (int)((key % t-&gt;m + (long long)i * (1 + key % (t-&gt;m - 1))) % t-&gt;m);
+}
+
+bool htPut(HashTable* t, int key, int value) {
+    // TODO: for i = 0 .. m - 1, look at slot probe(t, key, i).
+    // - OCCUPIED with this key: update the value and return true.
+    // - DELETED: remember the first one, but keep probing.
+    // - EMPTY: stop probing.
+    // Then store the new key in the first DELETED slot if there was one,
+    // otherwise in the EMPTY slot (update t-&gt;count); return false if neither exists.
+    (void)t;
+    (void)key;
+    (void)value;
+    return false;  // placeholder
+}
+
+int htGet(const HashTable* t, int key) {
+    // TODO: probe until the key is found (return its value) or an EMPTY
+    // slot is reached; stop after m probes. Return -1 if absent.
+    (void)probe;  // silences an unused-function warning; delete this line
+    (void)t;
+    (void)key;
+    return -1;  // placeholder
+}
+
+bool htRemove(HashTable* t, int key) {
+    // TODO: find the key as in htGet. Mark its slot DELETED (not EMPTY),
+    // update t-&gt;count, and return true. Return false if absent.
+    (void)t;
+    (void)key;
+    return false;  // placeholder
+}
+
+int htSize(const HashTable* t) {
+    return t-&gt;count;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-cpp" aria-labelledby="r5-hashtable-stub-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">C++</span></div><pre><code>#include &lt;vector&gt;
+class HashTable {
+public:
+    explicit HashTable(int m) : m(m), keys(m), values(m), state(m, EMPTY) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+    }
+
+    bool put(int key, int value) {
+        // TODO: for i = 0 .. m - 1, look at slot probe(key, i).
+        // - OCCUPIED with this key: update the value and return true.
+        // - DELETED: remember the first one, but keep probing.
+        // - EMPTY: stop probing.
+        // Then store the new key in the first DELETED slot if there was one,
+        // otherwise in the EMPTY slot; return false if neither exists.
+        (void)key;
+        (void)value;
+        return false;  // placeholder
+    }
+
+    int get(int key) const {
+        // TODO: probe until the key is found (return its value) or an EMPTY
+        // slot is reached; stop after m probes. Return -1 if absent.
+        (void)key;
+        return -1;  // placeholder
+    }
+
+    bool remove(int key) {
+        // TODO: find the key as in get. Mark its slot DELETED (not EMPTY),
+        // update count, and return true. Return false if absent.
+        (void)key;
+        return false;  // placeholder
+    }
+
+    int size() const { return count; }
+
+private:
+    enum State : unsigned char { EMPTY, OCCUPIED, DELETED };
+    int m;
+    int count = 0;  // number of OCCUPIED slots
+    std::vector&lt;int&gt; keys, values;
+    std::vector&lt;State&gt; state;
+
+    int probe(int key, int i) const {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int)((key % m + (long long)i * (1 + key % (m - 1))) % m);
+    }
+};
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-cs" aria-labelledby="r5-hashtable-stub-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">C#</span></div><pre><code>public class HashTable {
+    const byte EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+    private readonly int m;
+    private int count = 0;  // number of OCCUPIED slots
+    private readonly int[] keys, values;
+    private readonly byte[] state;
+
+    public HashTable(int m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        keys = new int[m];
+        values = new int[m];
+        state = new byte[m];  // all EMPTY
+    }
+
+    private int Probe(int key, int i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int)((key % m + (long)i * (1 + key % (m - 1))) % m);
+    }
+
+    public bool Put(int key, int value) {
+        // TODO: for i = 0 .. m - 1, look at slot Probe(key, i).
+        // - OCCUPIED with this key: update the value and return true.
+        // - DELETED: remember the first one, but keep probing.
+        // - EMPTY: stop probing.
+        // Then store the new key in the first DELETED slot if there was one,
+        // otherwise in the EMPTY slot; return false if neither exists.
+        throw new System.NotImplementedException();
+    }
+
+    public int Get(int key) {
+        // TODO: probe until the key is found (return its value) or an EMPTY
+        // slot is reached; stop after m probes. Return -1 if absent.
+        throw new System.NotImplementedException();
+    }
+
+    public bool Remove(int key) {
+        // TODO: find the key as in Get. Mark its slot DELETED (not EMPTY),
+        // update count, and return true. Return false if absent.
+        throw new System.NotImplementedException();
+    }
+
+    public int Size() {
+        return count;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-java" aria-labelledby="r5-hashtable-stub-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">Java</span></div><pre><code>public class HashTable {
+    static final byte EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+    private final int m;
+    private int count = 0;  // number of OCCUPIED slots
+    private final int[] keys, values;
+    private final byte[] state;
+
+    public HashTable(int m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        keys = new int[m];
+        values = new int[m];
+        state = new byte[m];  // all EMPTY
+    }
+
+    private int probe(int key, int i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int) ((key % m + (long) i * (1 + key % (m - 1))) % m);
+    }
+
+    public boolean put(int key, int value) {
+        // TODO: for i = 0 .. m - 1, look at slot probe(key, i).
+        // - OCCUPIED with this key: update the value and return true.
+        // - DELETED: remember the first one, but keep probing.
+        // - EMPTY: stop probing.
+        // Then store the new key in the first DELETED slot if there was one,
+        // otherwise in the EMPTY slot; return false if neither exists.
+        throw new UnsupportedOperationException();
+    }
+
+    public int get(int key) {
+        // TODO: probe until the key is found (return its value) or an EMPTY
+        // slot is reached; stop after m probes. Return -1 if absent.
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean remove(int key) {
+        // TODO: find the key as in get. Mark its slot DELETED (not EMPTY),
+        // update count, and return true. Return false if absent.
+        throw new UnsupportedOperationException();
+    }
+
+    public int size() {
+        return count;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-py" aria-labelledby="r5-hashtable-stub-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">Python</span></div><pre><code>EMPTY, OCCUPIED, DELETED = 0, 1, 2
+
+
+class HashTable:
+    def __init__(self, m: int):
+        # m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        self.m = m
+        self.count = 0  # number of OCCUPIED slots
+        self.keys = [0] * m
+        self.values = [0] * m
+        self.state = [EMPTY] * m
+
+    def probe(self, key: int, i: int) -&gt; int:
+        # Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (key % self.m + i * (1 + key % (self.m - 1))) % self.m
+
+    def put(self, key: int, value: int) -&gt; bool:
+        # TODO: for i = 0 .. m - 1, look at slot probe(key, i).
+        # - OCCUPIED with this key: update the value and return True.
+        # - DELETED: remember the first one, but keep probing.
+        # - EMPTY: stop probing.
+        # Then store the new key in the first DELETED slot if there was one,
+        # otherwise in the EMPTY slot; return False if neither exists.
+        pass
+
+    def get(self, key: int) -&gt; int:
+        # TODO: probe until the key is found (return its value) or an EMPTY
+        # slot is reached; stop after m probes. Return -1 if absent.
+        pass
+
+    def remove(self, key: int) -&gt; bool:
+        # TODO: find the key as in get. Mark its slot DELETED (not EMPTY),
+        # update count, and return True. Return False if absent.
+        pass
+
+    def size(self) -&gt; int:
+        return self.count
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-stub-js" aria-labelledby="r5-hashtable-stub-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Hash table starter template</span><span class="lang-tag">JavaScript</span></div><pre><code>const EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+
+class HashTable {
+    constructor(m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        this.count = 0;  // number of OCCUPIED slots
+        this.keys = new Array(m).fill(0);
+        this.values = new Array(m).fill(0);
+        this.state = new Array(m).fill(EMPTY);
+    }
+
+    probe(key, i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (key % this.m + i * (1 + key % (this.m - 1))) % this.m;
+    }
+
+    put(key, value) {
+        // TODO: for i = 0 .. m - 1, look at slot this.probe(key, i).
+        // - OCCUPIED with this key: update the value and return true.
+        // - DELETED: remember the first one, but keep probing.
+        // - EMPTY: stop probing.
+        // Then store the new key in the first DELETED slot if there was one,
+        // otherwise in the EMPTY slot; return false if neither exists.
+    }
+
+    get(key) {
+        // TODO: probe until the key is found (return its value) or an EMPTY
+        // slot is reached; stop after m probes. Return -1 if absent.
+    }
+
+    remove(key) {
+        // TODO: find the key as in get. Mark its slot DELETED (not EMPTY),
+        // update this.count, and return true. Return false if absent.
+    }
+
+    size() {
+        return this.count;
+    }
+}
+module.exports = { HashTable };
+</code></pre></div>
+  </div>
+</div>
+<details data-kind="hint"><summary>Hint 1 · Write get first</summary><p>Loop i from 0 to m − 1 and compute slot = probe(key, i). If the slot is EMPTY, return −1. If it is OCCUPIED with this key, return its value. Otherwise (DELETED, or a different key) keep going. If the loop ends, return −1. Remove is the same loop, except that it marks the slot DELETED, decreases the count, and returns true.</p></details>
+<details data-kind="hint"><summary>Hint 2 · Put needs two pieces of memory</summary><p>Keep <code>firstDeleted</code> (the first DELETED slot seen, or −1) and stop at the first EMPTY slot. If the loop finds the key, update it and return. Otherwise store the key in <code>firstDeleted</code> if there is one, else in the EMPTY slot where the loop stopped; if there is neither, the table is full.</p></details>
+<p><strong>Explain your answer:</strong> in your own words, why must remove leave a DELETED marker, and why must put keep probing past the first DELETED slot? Give the expected and the worst-case number of probes per operation, and the space used. Why does double hashing need m to be prime here (or, more generally, h<sub>2</sub>(k) to share no factor with m)? What happens to performance after many insertions and removals, even if size() stays small?</p>
+<details data-kind="answer"><summary>Reference explanation and code · open after attempting</summary><p><strong>DELETED, not EMPTY.</strong> A search may stop at an EMPTY slot only because that slot was empty when every later key was inserted, so no key's probe sequence continues past it. Removing a key does not move the keys that probed past its slot, so emptying it would hide them (bug 1). DELETED keeps the sequence connected for searches, while still letting insert reuse the slot.</p><p><strong>Put keeps probing.</strong> A DELETED slot says nothing about what lies further along: the same key may have been inserted after that slot was occupied, so it can be stored later in the sequence. Only an EMPTY slot proves the key is absent. Put therefore remembers the first DELETED slot for reuse, but looks for the key until it reaches an EMPTY slot or has made m probes (bug 2).</p><p><strong>Cost.</strong> Under uniform hashing, each operation makes O(1 / (1 − α)) probes in expectation, which is O(1) while α stays below a constant such as 0.7; here α counts DELETED slots too. In the worst case an operation probes all m slots, Θ(m). Every loop is bounded by m probes, so a table with no EMPTY slot (full, or full of tombstones) still terminates. The table uses three arrays of m entries, Θ(m) space, and each operation uses O(1) extra space.</p><p><strong>Why prime.</strong> Slot i is (h<sub>1</sub> + i · h<sub>2</sub>) mod m. If h<sub>2</sub> and m share a factor d, the sequence repeats after m / d steps and visits only m / d slots; for example, with m = 10 and h<sub>2</sub> = 5 it alternates between two slots, so put could fail with eight empty slots. With m prime, every h<sub>2</sub> from 1 to m − 1 is coprime with m, so the first m probes visit every slot exactly once.</p><p><strong>Many removals.</strong> Tombstones never turn back into EMPTY slots. After many insertions and removals the table can fill with DELETED slots, and unsuccessful searches approach m probes even though size() is small. The usual fix is to rebuild: when OCCUPIED plus DELETED slots exceed a threshold, insert all stored keys into a fresh table (larger if needed), which removes every tombstone in O(m) time.</p>
+<div class="tabs" data-tabs>
+  <div class="tab-bar">
+    <div class="tab-btns" role="tablist" aria-label="Choose a language">
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-c-tab" data-lang="c" aria-controls="r5-hashtable-solution-c" aria-selected="false" tabindex="-1"><span>C</span><img class="lang-icon" src="assets/icons/c.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-cpp-tab" data-lang="cpp" aria-controls="r5-hashtable-solution-cpp" aria-selected="false" tabindex="-1"><span>C++</span><img class="lang-icon" src="assets/icons/c-plusplus.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-cs-tab" data-lang="cs" aria-controls="r5-hashtable-solution-cs" aria-selected="false" tabindex="-1"><span>C#</span><img class="lang-icon" src="assets/icons/csharp.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-java-tab" data-lang="java" aria-controls="r5-hashtable-solution-java" aria-selected="true" tabindex="0"><span>Java</span><img class="lang-icon" src="assets/icons/java.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-py-tab" data-lang="py" aria-controls="r5-hashtable-solution-py" aria-selected="false" tabindex="-1"><span>Python</span><img class="lang-icon" src="assets/icons/python.svg" alt="" width="16" height="16"></button>
+      <button class="tab-btn" type="button" role="tab" id="r5-hashtable-solution-js-tab" data-lang="js" aria-controls="r5-hashtable-solution-js" aria-selected="false" tabindex="-1"><span>JavaScript</span><img class="lang-icon" src="assets/icons/javascript.svg" alt="" width="16" height="16"></button>
+    </div>
+    <div class="code-actions">
+      <button class="copy-btn icon-btn" type="button" aria-label="Copy code" data-tooltip="Copy code"><img src="assets/icons/file-copy-2-line.svg" alt=""></button>
+    </div>
+  </div>
+  <div class="tab-panels">
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-c" aria-labelledby="r5-hashtable-solution-c-tab" data-lang="c" hidden><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">C</span></div><pre><code>// Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+// Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+#include &lt;stdbool.h&gt;
+#include &lt;stdlib.h&gt;
+enum { EMPTY = 0, OCCUPIED = 1, DELETED = 2 };
+typedef struct HashTable {
+    int m;
+    int count;
+    int* keys;
+    int* values;
+    unsigned char* state;
+} HashTable;
+
+HashTable* htCreate(int m) {
+    // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+    HashTable* t = malloc(sizeof(HashTable));
+    if (t == NULL) return NULL;
+    t-&gt;m = m;
+    t-&gt;count = 0;
+    t-&gt;keys = calloc((size_t)m, sizeof(int));
+    t-&gt;values = calloc((size_t)m, sizeof(int));
+    t-&gt;state = calloc((size_t)m, 1);  // all EMPTY
+    if (t-&gt;keys == NULL || t-&gt;values == NULL || t-&gt;state == NULL) {
+        free(t-&gt;keys);
+        free(t-&gt;values);
+        free(t-&gt;state);
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+void htFree(HashTable* t) {
+    if (t == NULL) return;
+    free(t-&gt;keys);
+    free(t-&gt;values);
+    free(t-&gt;state);
+    free(t);
+}
+
+static int probe(const HashTable* t, int key, int i) {
+    // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+    return (int)((key % t-&gt;m + (long long)i * (1 + key % (t-&gt;m - 1))) % t-&gt;m);
+}
+
+bool htPut(HashTable* t, int key, int value) {
+    int firstDeleted = -1, emptySlot = -1;
+    for (int i = 0; i &lt; t-&gt;m; i++) {
+        int slot = probe(t, key, i);
+        if (t-&gt;state[slot] == EMPTY) {
+            emptySlot = slot;  // the key cannot be stored further along
+            break;
+        }
+        if (t-&gt;state[slot] == DELETED) {
+            if (firstDeleted == -1) firstDeleted = slot;  // reuse later, keep looking
+        } else if (t-&gt;keys[slot] == key) {
+            t-&gt;values[slot] = value;  // update; size is unchanged
+            return true;
+        }
+    }
+    int target = firstDeleted != -1 ? firstDeleted : emptySlot;
+    if (target == -1) return false;  // new key, and every slot is OCCUPIED
+    t-&gt;keys[target] = key;
+    t-&gt;values[target] = value;
+    t-&gt;state[target] = OCCUPIED;
+    t-&gt;count++;
+    return true;
+}
+
+int htGet(const HashTable* t, int key) {
+    for (int i = 0; i &lt; t-&gt;m; i++) {
+        int slot = probe(t, key, i);
+        if (t-&gt;state[slot] == EMPTY) return -1;  // an EMPTY slot ends the search
+        if (t-&gt;state[slot] == OCCUPIED &amp;&amp; t-&gt;keys[slot] == key) return t-&gt;values[slot];
+    }
+    return -1;
+}
+
+bool htRemove(HashTable* t, int key) {
+    for (int i = 0; i &lt; t-&gt;m; i++) {
+        int slot = probe(t, key, i);
+        if (t-&gt;state[slot] == EMPTY) return false;
+        if (t-&gt;state[slot] == OCCUPIED &amp;&amp; t-&gt;keys[slot] == key) {
+            // DELETED, not EMPTY: later keys may have probed past this slot.
+            t-&gt;state[slot] = DELETED;
+            t-&gt;count--;
+            return true;
+        }
+    }
+    return false;
+}
+
+int htSize(const HashTable* t) {
+    return t-&gt;count;
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-cpp" aria-labelledby="r5-hashtable-solution-cpp-tab" data-lang="cpp" hidden><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">C++</span></div><pre><code>// Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+// Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+#include &lt;vector&gt;
+class HashTable {
+public:
+    explicit HashTable(int m) : m(m), keys(m), values(m), state(m, EMPTY) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+    }
+
+    bool put(int key, int value) {
+        int firstDeleted = -1, emptySlot = -1;
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) {
+                emptySlot = slot;  // the key cannot be stored further along
+                break;
+            }
+            if (state[slot] == DELETED) {
+                if (firstDeleted == -1) firstDeleted = slot;  // reuse later, keep looking
+            } else if (keys[slot] == key) {
+                values[slot] = value;  // update; size is unchanged
+                return true;
+            }
+        }
+        int target = firstDeleted != -1 ? firstDeleted : emptySlot;
+        if (target == -1) return false;  // new key, and every slot is OCCUPIED
+        keys[target] = key;
+        values[target] = value;
+        state[target] = OCCUPIED;
+        count++;
+        return true;
+    }
+
+    int get(int key) const {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) return -1;  // an EMPTY slot ends the search
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) return values[slot];
+        }
+        return -1;
+    }
+
+    bool remove(int key) {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) return false;
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) {
+                // DELETED, not EMPTY: later keys may have probed past this slot.
+                state[slot] = DELETED;
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int size() const { return count; }
+
+private:
+    enum State : unsigned char { EMPTY, OCCUPIED, DELETED };
+    int m;
+    int count = 0;
+    std::vector&lt;int&gt; keys, values;
+    std::vector&lt;State&gt; state;
+
+    int probe(int key, int i) const {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int)((key % m + (long long)i * (1 + key % (m - 1))) % m);
+    }
+};
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-cs" aria-labelledby="r5-hashtable-solution-cs-tab" data-lang="cs" hidden><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">C#</span></div><pre><code>// Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+// Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+public class HashTable {
+    const byte EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+    private readonly int m;
+    private int count = 0;
+    private readonly int[] keys, values;
+    private readonly byte[] state;
+
+    public HashTable(int m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        keys = new int[m];
+        values = new int[m];
+        state = new byte[m];  // all EMPTY
+    }
+
+    private int Probe(int key, int i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int)((key % m + (long)i * (1 + key % (m - 1))) % m);
+    }
+
+    public bool Put(int key, int value) {
+        int firstDeleted = -1, emptySlot = -1;
+        for (int i = 0; i &lt; m; i++) {
+            int slot = Probe(key, i);
+            if (state[slot] == EMPTY) {
+                emptySlot = slot;  // the key cannot be stored further along
+                break;
+            }
+            if (state[slot] == DELETED) {
+                if (firstDeleted == -1) firstDeleted = slot;  // reuse later, keep looking
+            } else if (keys[slot] == key) {
+                values[slot] = value;  // update; size is unchanged
+                return true;
+            }
+        }
+        int target = firstDeleted != -1 ? firstDeleted : emptySlot;
+        if (target == -1) return false;  // new key, and every slot is OCCUPIED
+        keys[target] = key;
+        values[target] = value;
+        state[target] = OCCUPIED;
+        count++;
+        return true;
+    }
+
+    public int Get(int key) {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = Probe(key, i);
+            if (state[slot] == EMPTY) return -1;  // an EMPTY slot ends the search
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) return values[slot];
+        }
+        return -1;
+    }
+
+    public bool Remove(int key) {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = Probe(key, i);
+            if (state[slot] == EMPTY) return false;
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) {
+                // DELETED, not EMPTY: later keys may have probed past this slot.
+                state[slot] = DELETED;
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int Size() {
+        return count;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-java" aria-labelledby="r5-hashtable-solution-java-tab" data-lang="java"><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">Java</span></div><pre><code>// Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+// Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+public class HashTable {
+    static final byte EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+    private final int m;
+    private int count = 0;
+    private final int[] keys, values;
+    private final byte[] state;
+
+    public HashTable(int m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        keys = new int[m];
+        values = new int[m];
+        state = new byte[m];  // all EMPTY
+    }
+
+    private int probe(int key, int i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (int) ((key % m + (long) i * (1 + key % (m - 1))) % m);
+    }
+
+    public boolean put(int key, int value) {
+        int firstDeleted = -1, emptySlot = -1;
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) {
+                emptySlot = slot;  // the key cannot be stored further along
+                break;
+            }
+            if (state[slot] == DELETED) {
+                if (firstDeleted == -1) firstDeleted = slot;  // reuse later, keep looking
+            } else if (keys[slot] == key) {
+                values[slot] = value;  // update; size is unchanged
+                return true;
+            }
+        }
+        int slot = firstDeleted != -1 ? firstDeleted : emptySlot;
+        if (slot == -1) return false;  // new key, and every slot is OCCUPIED
+        keys[slot] = key;
+        values[slot] = value;
+        state[slot] = OCCUPIED;
+        count++;
+        return true;
+    }
+
+    public int get(int key) {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) return -1;  // an EMPTY slot ends the search
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) return values[slot];
+        }
+        return -1;
+    }
+
+    public boolean remove(int key) {
+        for (int i = 0; i &lt; m; i++) {
+            int slot = probe(key, i);
+            if (state[slot] == EMPTY) return false;
+            if (state[slot] == OCCUPIED &amp;&amp; keys[slot] == key) {
+                // DELETED, not EMPTY: later keys may have probed past this slot.
+                state[slot] = DELETED;
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int size() {
+        return count;
+    }
+}
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-py" aria-labelledby="r5-hashtable-solution-py-tab" data-lang="py" hidden><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">Python</span></div><pre><code># Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+# Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+EMPTY, OCCUPIED, DELETED = 0, 1, 2
+
+
+class HashTable:
+    def __init__(self, m: int):
+        # m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        self.m = m
+        self.count = 0
+        self.keys = [0] * m
+        self.values = [0] * m
+        self.state = [EMPTY] * m
+
+    def probe(self, key: int, i: int) -&gt; int:
+        # Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (key % self.m + i * (1 + key % (self.m - 1))) % self.m
+
+    def put(self, key: int, value: int) -&gt; bool:
+        first_deleted = -1
+        for i in range(self.m):
+            slot = self.probe(key, i)
+            if self.state[slot] == EMPTY:
+                break  # the key cannot be stored further along
+            if self.state[slot] == DELETED:
+                if first_deleted == -1:
+                    first_deleted = slot  # reuse later, but keep looking for key
+            elif self.keys[slot] == key:
+                self.values[slot] = value  # update; size is unchanged
+                return True
+        else:
+            slot = -1  # m probes and no EMPTY slot
+        if first_deleted != -1:
+            slot = first_deleted
+        if slot == -1:
+            return False  # new key, and every slot is OCCUPIED
+        self.keys[slot], self.values[slot], self.state[slot] = key, value, OCCUPIED
+        self.count += 1
+        return True
+
+    def get(self, key: int) -&gt; int:
+        for i in range(self.m):
+            slot = self.probe(key, i)
+            if self.state[slot] == EMPTY:
+                return -1  # an EMPTY slot ends every probe sequence through it
+            if self.state[slot] == OCCUPIED and self.keys[slot] == key:
+                return self.values[slot]
+        return -1
+
+    def remove(self, key: int) -&gt; bool:
+        for i in range(self.m):
+            slot = self.probe(key, i)
+            if self.state[slot] == EMPTY:
+                return False
+            if self.state[slot] == OCCUPIED and self.keys[slot] == key:
+                # DELETED, not EMPTY: later keys may have probed past this slot.
+                self.state[slot] = DELETED
+                self.count -= 1
+                return True
+        return False
+
+    def size(self) -&gt; int:
+        return self.count
+</code></pre></div>
+    <div class="tab-panel" role="tabpanel" id="r5-hashtable-solution-js" aria-labelledby="r5-hashtable-solution-js-tab" data-lang="js" hidden><div class="code-head"><span class="code-title">Hash table reference solution</span><span class="lang-tag">JavaScript</span></div><pre><code>// Expected O(1 / (1 - alpha)) probes per operation under uniform hashing,
+// Theta(m) in the worst case. Space: O(m) for three arrays of length m.
+const EMPTY = 0, OCCUPIED = 1, DELETED = 2;
+
+class HashTable {
+    constructor(m) {
+        // m is a prime &gt;= 3, so every probe sequence visits all m slots.
+        this.m = m;
+        this.count = 0;
+        this.keys = new Array(m).fill(0);
+        this.values = new Array(m).fill(0);
+        this.state = new Array(m).fill(EMPTY);
+    }
+
+    probe(key, i) {
+        // Double hashing: h1(k) = k mod m, h2(k) = 1 + (k mod (m - 1)).
+        return (key % this.m + i * (1 + key % (this.m - 1))) % this.m;
+    }
+
+    put(key, value) {
+        let firstDeleted = -1, emptySlot = -1;
+        for (let i = 0; i &lt; this.m; i++) {
+            const slot = this.probe(key, i);
+            if (this.state[slot] === EMPTY) {
+                emptySlot = slot;  // the key cannot be stored further along
+                break;
+            }
+            if (this.state[slot] === DELETED) {
+                if (firstDeleted === -1) firstDeleted = slot;  // reuse later, keep looking
+            } else if (this.keys[slot] === key) {
+                this.values[slot] = value;  // update; size is unchanged
+                return true;
+            }
+        }
+        const target = firstDeleted !== -1 ? firstDeleted : emptySlot;
+        if (target === -1) return false;  // new key, and every slot is OCCUPIED
+        this.keys[target] = key;
+        this.values[target] = value;
+        this.state[target] = OCCUPIED;
+        this.count++;
+        return true;
+    }
+
+    get(key) {
+        for (let i = 0; i &lt; this.m; i++) {
+            const slot = this.probe(key, i);
+            if (this.state[slot] === EMPTY) return -1;  // an EMPTY slot ends the search
+            if (this.state[slot] === OCCUPIED &amp;&amp; this.keys[slot] === key) return this.values[slot];
+        }
+        return -1;
+    }
+
+    remove(key) {
+        for (let i = 0; i &lt; this.m; i++) {
+            const slot = this.probe(key, i);
+            if (this.state[slot] === EMPTY) return false;
+            if (this.state[slot] === OCCUPIED &amp;&amp; this.keys[slot] === key) {
+                // DELETED, not EMPTY: later keys may have probed past this slot.
+                this.state[slot] = DELETED;
+                this.count--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    size() {
+        return this.count;
+    }
+}
+module.exports = { HashTable };
+</code></pre></div>
+  </div>
+</div>
+</details>
+</section>
+<section class="section" id="optional-practice">
+<div class="section-title"><h2>Optional practice</h2></div>
+<p>Short written questions for after the session, or for students who finish early. They are not on the core path.</p>
+<ol><li><strong>Division with a power of 2.</strong> With h(k) = k mod 16, where do the keys 16, 32, 48, 64 go? Where do they go with m = 17, and why does a prime help?</li><li><strong>Quadratic probing that gets stuck.</strong> With h(k, i) = (h′(k) + i<sup>2</sup>) mod 8 and h′(k) = 0, list the slots tried for i = 0, 1, …, 7. Can an insertion fail even though the table still has empty slots?</li><li><strong>Why random?</strong> Explain why choosing the hash function at random from a universal family protects against an adversary who picks the keys, when no single fixed hash function can.</li><li><strong>Self-join.</strong> Using Exercise 1's instance, write an expression for "pairs of students (by <code>sid</code>) who have taken at least one course together". List each pair once, and never pair a student with themself.</li><li><strong>"Every" without division.</strong> Write "students (by <code>sid</code>) who have taken <em>every</em> CS course" using only σ, π, ×, and −, and give its result on Exercise 1's instance. (If your lecture covered the division operator ÷, compare with π<sub>sid, cid</sub>(Takes) ÷ π<sub>cid</sub>(σ<sub>dept = 'CS'</sub>(Course)).)</li></ol>
+<details data-kind="hint"><summary>Hint · Rename, and build what is missing</summary><p>For question 4, two copies of Takes are needed: rename them, for example T1 and T2, and join them on the course with a condition that orders the two <code>sid</code>s. For question 5, build every (student, CS course) pair with ×, subtract the pairs that exist in Takes, and see which students are left with a missing pair.</p></details>
+<details data-kind="answer"><summary>Optional practice answers</summary><p><strong>1.</strong> All four keys are multiples of 16, so with m = 16 they all land in slot 0: k mod 16 keeps only the lowest 4 bits, which are 0 for all of them. With m = 17 they go to slots 16, 15, 14, 13, all different. A prime modulus depends on every bit of the key, so regular patterns in the input (such as multiples of a power of 2) do not line up with it.</p><p><strong>2.</strong> i<sup>2</sup> mod 8 for i = 0 … 7 is 0, 1, 4, 1, 0, 1, 4, 1, so only slots 0, 1, and 4 are ever tried. If those three are occupied, the insertion fails even though five slots are empty. That is why quadratic probing needs a careful choice of c<sub>1</sub>, c<sub>2</sub>, and m (for example, c<sub>1</sub> = c<sub>2</sub> = 1/2 with m a power of 2 does visit every slot).</p><p><strong>3.</strong> For any fixed h, there are m slots and many more possible keys, so some slot receives at least |U| / m keys; an adversary who knows h can insert only those and make every operation Θ(n). With universal hashing, the function is chosen after the keys are fixed (or at least without the adversary seeing it). For every pair of distinct keys, the chance of a collision is at most 1/m over that random choice, so the expected number of collisions for <em>any</em> key set is at most n / m per key. The guarantee is over our coin flips, not over a hoped-for "nice" input.</p><p><strong>4.</strong> π<sub>T1.sid, T2.sid</sub>(ρ<sub>T1</sub>(Takes) ⋈<sub>T1.cid = T2.cid ∧ T1.sid &lt; T2.sid</sub> ρ<sub>T2</sub>(Takes)). The condition T1.sid &lt; T2.sid removes self-pairs and lists each pair in one order only. Result: (1, 2) from C1, (2, 3) from M1, (3, 4) from P1.</p><p><strong>5.</strong> Let CS = π<sub>cid</sub>(σ<sub>dept = 'CS'</sub>(Course)) = {C1, C2} and S = π<sub>sid</sub>(Takes) = {1, 2, 3, 4}. Then Missing = (S × CS) − π<sub>sid, cid</sub>(Takes) = {(2, C2), (3, C1), (3, C2), (4, C1), (4, C2)}, and the answer is S − π<sub>sid</sub>(Missing) = {1}: only Ana took every CS course. This is exactly what π<sub>sid, cid</sub>(Takes) ÷ CS means. (Starting from π<sub>sid</sub>(Takes) leaves out Eli, who took nothing; that only matters if there are no CS courses at all, when "every CS course" is true for everyone.)</p></details>
+</section>
+<section class="section" id="discussion">
+<div class="section-title"><h2>Discussion and exit check</h2></div>
+<p>In Part A, linear and double hashing put the same six keys into the same table. Which one needed fewer probes, and would the difference grow or shrink as the table fills?</p>
+<p>Compare bug 1 and bug 2 from Exercise 2. Each comes from reasoning about a single slot when the correct answer depends on the whole probe sequence. Where else in this session did a decision about one item need information about a whole set?</p>
+<p><strong>Exit check:</strong> a hash table and the query "students who took no CS course" both have to handle something that is <em>absent</em>. How does each one decide that something is absent?</p>
+<details data-kind="answer"><summary>Discussion notes</summary><p>Double hashing needed 11 probes against 16 for linear probing. The gap grows as α increases: linear probing's runs merge into longer runs, and its expected cost for an unsuccessful search is about (1 + 1 / (1 − α)<sup>2</sup>) / 2 (Knuth's analysis), while double hashing stays close to the uniform-hashing bound 1 / (1 − α).</p><p>The same pattern appears in Exercise 1: the classmate's dept ≠ 'CS' condition looks at one enrollment at a time, while "no CS course" is a property of all of a student's enrollments, which needs a difference.</p><p>Exit check: hash search decides a key is absent only when it reaches a truly EMPTY slot (or has probed every slot), so removal must never create a false EMPTY slot. Relational algebra expresses absence with set difference: compute everything that <em>is</em> present, then subtract it from the full set, rather than filtering tuples with ≠.</p></details>
+<p>Before leaving, keep your own copy of the notebook or code, and write down one remaining question for the TA.</p>
+</section>
+<section class="section" id="extra">
+<div class="section-title"><h2>Extra · Red-Black Trees</h2></div>
+<div class="callout tip"><span class="callout-title">Optional extra content</span><p>This section is provided by the TA for students who want to go further. It is not covered in lectures or on the final exam, and the core exercises do not depend on it.</p></div>
+<h3>Why balance a search tree?</h3>
+<p>A hash table gives expected O(1) operations but keeps no order: it cannot efficiently report the smallest key, the next key after k, or all keys in a range. A binary search tree (BST) can do all of these, but each operation costs O(h) for a tree of height h, and inserting keys in sorted order makes h = n. A <strong>red-black tree</strong> is a BST that stays balanced, with h ≤ 2 log<sub>2</sub>(n + 1), so search, insert, and delete all take O(log n) time in the worst case.</p>
+<h3>The five properties</h3>
+<ol><li>Every node is red or black.</li><li>The root is black.</li><li>Every leaf (the empty NIL child below a node) is black.</li><li>A red node has two black children: no two red nodes are adjacent on a path.</li><li>For each node, every path from it down to a NIL leaf contains the same number of black nodes, its <em>black-height</em>.</li></ol>
+<p><strong>Why the height is at most 2 log<sub>2</sub>(n + 1).</strong> By induction, a subtree whose root has black-height b contains at least 2<sup>b</sup> − 1 keys. By property 4, at least half the nodes on any root-to-leaf path are black, so the root's black-height is at least h / 2. Therefore n ≥ 2<sup>h/2</sup> − 1, which gives h ≤ 2 log<sub>2</sub>(n + 1).</p>
+<h3>Rotations</h3>
+<p>A <em>left rotation</em> at node x, whose right child is y, makes y the root of that subtree and x its left child; y's old left subtree becomes x's right subtree. A right rotation is the mirror image. A rotation changes O(1) pointers and keeps the BST order, because every key keeps the same position in an in-order traversal.</p>
+<h3>Insertion</h3>
+<p>Insert the new key z as in an ordinary BST and color it <strong>red</strong>. This keeps property 5, but property 4 breaks if z's parent is also red. While that happens, look at z's <em>uncle</em> (the parent's sibling). The table describes the case where z's parent is a left child; the other case is the mirror image.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Case</th><th>Situation</th><th>Fix</th></tr></thead><tbody><tr><td>1</td><td>Uncle is red</td><td>Color the parent and uncle black and the grandparent red, then continue from the grandparent (two levels up)</td></tr><tr><td>2</td><td>Uncle is black, and z is a right child (a "triangle")</td><td>Left-rotate at the parent, and let z be the old parent; this turns the triangle into case 3</td></tr><tr><td>3</td><td>Uncle is black, and z is a left child (a "line")</td><td>Right-rotate at the grandparent, then swap the colors of the old parent and grandparent; done</td></tr></tbody></table></div>
+<p>At the end, color the root black. Case 1 may repeat up the tree, but cases 2 and 3 happen at most once, so insertion makes at most two rotations and O(log n) recolorings. Deletion also takes O(log n) time with at most three rotations; it has more cases and is not covered here.</p>
+<h3>Worked example</h3>
+<p>Insert 10, 20, 30, 15, 25, 27 into an empty tree. Trees are written as key and color, then the left and right subtrees in parentheses; · is an empty child.</p>
+<div class="table-wrap"><table class="data"><thead><tr><th>Insert</th><th>What happens</th><th>Tree afterwards</th></tr></thead><tbody><tr><td>10</td><td>New root, colored black</td><td>10B</td></tr><tr><td>20</td><td>Red child of a black node: nothing to fix</td><td>10B(·, 20R)</td></tr><tr><td>30</td><td>Parent 20 is red, uncle is NIL (black), 30 is in a line with 20 and 10 (mirror of case 3): left-rotate at 10, swap colors</td><td>20B(10R, 30R)</td></tr><tr><td>15</td><td>Parent 10 is red, uncle 30 is red (case 1): recolor 10 and 30 black, 20 red; the root turns black again</td><td>20B(10B(·, 15R), 30B)</td></tr><tr><td>25</td><td>Parent 30 is black: nothing to fix</td><td>20B(10B(·, 15R), 30B(25R, ·))</td></tr><tr><td>27</td><td>Parent 25 is red, uncle is NIL, 27 is a right child of a left child (case 2): left-rotate at 25; then case 3: right-rotate at 30, color 27 black and 30 red</td><td>20B(10B(·, 15R), 27B(25R, 30R))</td></tr></tbody></table></div>
+<figure class="graph-figure" data-web-only><svg viewBox="0 0 440 220" role="img" aria-label="Red-black tree after inserting 10, 20, 30, 15, 25, 27: black root 20; black 10 with red right child 15; black 27 with red children 25 and 30"><path class="g-edge" d="M204.7,45.5 L125.3,94.5"/><path class="g-edge" d="M235.3,45.5 L314.7,94.5"/><path class="g-edge" d="M121.3,118.0 L153.7,158.0"/><path class="g-edge" d="M318.7,118.0 L286.3,158.0"/><path class="g-edge" d="M341.3,118.0 L373.7,158.0"/><circle class="g-node rb-black" cx="220" cy="36" r="18"/><text class="g-label rb-on-black" x="220" y="36">20</text><circle class="g-node rb-black" cx="110" cy="104" r="18"/><text class="g-label rb-on-black" x="110" y="104">10</text><circle class="g-node rb-black" cx="330" cy="104" r="18"/><text class="g-label rb-on-black" x="330" y="104">27</text><circle class="g-node rb-red" cx="165" cy="172" r="18"/><text class="g-label" x="165" y="172">15</text><circle class="g-node rb-red" cx="275" cy="172" r="18"/><text class="g-label" x="275" y="172">25</text><circle class="g-node rb-red" cx="385" cy="172" r="18"/><text class="g-label" x="385" y="172">30</text><text class="g-weight" x="220" y="210">Dark: black · light red: red</text></svg></figure>
+<p><strong>Try it:</strong> insert 13 into the final tree 20B(10B(·, 15R), 27B(25R, 30R)). Which cases apply, and what is the tree afterwards? Check that every path from the root to a NIL leaf has the same number of black nodes.</p>
+<details data-kind="answer"><summary>Red-Black Tree answer</summary><p>13 goes left of 20, right of 10, and left of 15, as a red node. Its parent 15 is red and its uncle (10's left child) is NIL, so black. 15 is a <em>right</em> child and 13 a <em>left</em> child: a triangle, the mirror of case 2. Right-rotate at 15, so 13 takes its place with 15 as its right child. Now 15 is in a line with 13 and 10, the mirror of case 3: left-rotate at 10 and swap colors, so 13 becomes black with red children 10 and 15.</p><p>Result: 20B(13B(10R, 15R), 27B(25R, 30R)). Every root-to-NIL path passes through exactly two black nodes (20, then 13 or 27), and no red node has a red child.</p></details>
+</section>
+<section class="section" id="references">
+<div class="section-title"><h2>References and related material</h2></div>
+<ul><li>T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein, <em>Introduction to Algorithms</em>, 4th ed. (MIT Press, 2022): Chapter 11 (Hash Tables) and Chapter 13 (Red-Black Trees).</li><li>A. Silberschatz, H. F. Korth, and S. Sudarshan, <em>Database System Concepts</em>, 7th ed. (McGraw-Hill, 2019): Chapter 2 (Introduction to the Relational Model), including relational algebra.</li><li><a href="recitation2.html">Recitation 2 · growth bounds</a> — for reading the expected and worst-case costs.</li><li><a href="recitation0.html">Recitation 0 · notebook environment and kernels</a></li></ul>
+</section>
+<section class="section" id="notebooks"><div class="section-title"><h2>Practice notebooks</h2></div>
+<p>Choose Python or Java. Each notebook contains these notes, written-response cells, and the Exercise 2 starter with runnable self-checks. The tree diagram appears on this page only; the notebooks describe the same trees in text. Reference answers stay on this page. Save the notebook in your course project and open it directly in your IDE with the matching kernel.</p>
+<div class="hero-actions"><a class="btn primary" href="notebooks/recitation5-python.ipynb" download>Download Python notebook (.ipynb)</a><a class="btn ghost" href="notebooks/recitation5-java.ipynb" download>Download Java notebook (.ipynb)</a></div></section></div></main><footer class="site-footer"><div class="container footer-inner">
 <p>COMPSCI 301 recitation materials · Instructor announcements remain authoritative.</p>
 <p class="muted">If you spot a mistake, tell the TA.</p>
 </div></footer></body></html>

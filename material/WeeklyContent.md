@@ -39,6 +39,17 @@
   - Bellman-Ford Algorithm
   - APSP (Recitation extra content, see `Extra Content` below)
 - Hash Tables
+  - Hash Functions
+    - Division
+    - Multiplication
+    - Universal Hashing
+  - Open Addressing
+    - Insert
+    - Delete
+    - Probing: Linear, Quadratic
+    - Double Hashing
+  - Perfect Hashing
+- Red-Black Tree (Recitation extra content, see `Extra Content` below)
 
 ## Week 5
 

@@ -293,6 +293,27 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
         if raw.count('<figure class="graph-figure"') != 3:
             errors.append(f"{rel}: expected three graph figures (Exercise 1, Exercise 2, Floyd–Warshall)")
 
+    if rel.name == "recitation5.html":
+        required = {"overview", "notes", "hash-review", "ra-review", "exercises", "exercise-1",
+                    "exercise-2", "optional-practice", "discussion", "extra", "references", "notebooks"}
+        missing = required - parser.ids.keys()
+        if missing:
+            errors.append(f"{rel}: missing Recitation 5 sections: {sorted(missing)}")
+        panels = [a for a in parser.attrs_by_tag["div"] if a.get("role") == "tabpanel"]
+        if len(panels) != 12 or any(sum(a.get("data-lang") == lang for a in panels) != 2 for lang in LANGS):
+            errors.append(f"{rel}: expected two six-language code groups (hash-table starter and reference)")
+        selected = [a for a in parser.attrs_by_tag["button"] if a.get("aria-selected") == "true"]
+        if len(selected) != 2 or any(a.get("data-lang") != "java" for a in selected):
+            errors.append(f"{rel}: both code groups must default to Java")
+        for name in ("python", "java"):
+            href = f"notebooks/recitation5-{name}.ipynb"
+            if not any(a.get("href") == href and "download" in a for a in parser.attrs_by_tag["a"]):
+                errors.append(f"{rel}: missing downloadable {name} notebook")
+        if any("open" in a for a in parser.attrs_by_tag["details"] if a.get("data-kind") == "answer"):
+            errors.append(f"{rel}: reference answers should start collapsed")
+        if raw.count('<figure class="graph-figure"') != 1:
+            errors.append(f"{rel}: expected one tree figure (Red-Black Tree extra)")
+
     # aria-controls / aria-labelledby integrity.
     ids = parser.ids
     for tag, attrs_list in parser.attrs_by_tag.items():

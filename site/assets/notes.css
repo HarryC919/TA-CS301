@@ -139,3 +139,26 @@
   stroke-width: 5px;
   stroke-linejoin: round;
 }
+
+/* Red-black tree nodes (Recitation 5 Extra); the caption names the colors, too. */
+.graph-figure .g-node.rb-black {
+  fill: #1c2a3d;
+  stroke: var(--text);
+}
+
+.graph-figure .g-node.rb-red {
+  fill: var(--red-soft);
+  stroke: var(--red);
+}
+
+.graph-figure .g-label.rb-on-black {
+  fill: #ffffff;
+}
+
+/* Multi-line class interfaces in a signature table (Recitation 5). */
+.sig-table code.sig-block {
+  display: block;
+  white-space: pre;
+  overflow-x: auto;
+  padding: 6px 8px;
+}
