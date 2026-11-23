@@ -54,6 +54,13 @@
 ## Week 5
 
 - Introduction to Databases
+  - Data
+  - Database
+  - Database Systems
+    - DMs
+    - DDL
+    - DML
+  - Database Management Systems
 - Relational Model
   - Relational Algebra
 

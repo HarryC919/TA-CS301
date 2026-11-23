@@ -16,7 +16,7 @@ TA-CS301/
 │   ├── recitation2.html               asymptotic notation, divide and conquer, and core practice
 │   ├── recitation3.html               dynamic programming, greedy algorithms, and Huffman extra
 │   ├── recitation4.html               graph algorithms: search review, MSTs, shortest paths, Floyd–Warshall extra
-│   ├── recitation5.html               hash tables and relational algebra, Red-Black Tree extra
+│   ├── recitation5.html               hash tables and an introduction to databases, Red-Black Tree extra
 │   ├── recitation6.html               reserved session placeholders
 │   ├── recitation7.html               reserved session placeholders
 │   ├── notebooks/                     generated Recitation 1–5 Python and Java notebooks
@@ -80,14 +80,13 @@ mirrors the same notes and exercises in the browser.
   "cheapest route with at most k stops" implementation (Bellman-Ford with limited
   rounds). Optional written practice, and an Extra section on Floyd–Warshall as a DP
   with a six-language build exercise. Python/Java notebooks included.
-- **Recitation 5** pairs hash tables with relational algebra. It reviews hash
-  functions (division, multiplication, universal hashing), open addressing with linear
-  and quadratic probing and double hashing, deletion with tombstones, and perfect
-  hashing, then the relational model and its operators. Two core exercises: relational
-  algebra questions on a small course database (evaluate, write a "no CS course" query
-  with set difference, diagnose a wrong query, and judge algebraic rewrites), and an
-  open-addressing hash table, first traced by hand and then implemented in six languages
-  from plain arrays. Optional written practice, and an Extra section on Red-Black Trees
+- **Recitation 5** pairs hash tables with an introduction to databases. It reviews
+  hash functions (division, multiplication, universal hashing), open addressing with
+  linear and quadratic probing and double hashing, deletion with tombstones, and perfect
+  hashing, then data, databases, database systems (data models, DDL, DML), and DBMSs.
+  Two core exercises: database concepts (DDL vs DML, schema vs instance, and the
+  problems of file-based storage), and an open-addressing hash table, first traced by
+  hand and then implemented in six languages from plain arrays. Optional written practice, and an Extra section on Red-Black Trees
   with a worked insertion example. Python/Java notebooks included.
 - **Recitations 6–7** are reserved placeholders. Later topics and the database
   environment have not been assigned to a session. The SQL notebook document under
@@ -117,10 +116,9 @@ and the optional Floyd–Warshall starter and self-check at the end. Graph diagr
 on the page only; the notebooks give the same edge lists in text.
 
 Recitation 5 uses `recitation5-python.ipynb` and `recitation5-java.ipynb`, with its
-notes, written prompts and response cells (relational algebra written in plain-text
-bracket notation, such as σ[dept = 'CS'](Course)), and the hash-table starter and
+notes, written prompts and response cells, and the hash-table starter and
 self-check. The Red-Black Tree section has a written trace question only.
 
 A session typically spends about 15 minutes on concept review, 25–40 minutes on core
-practice (the length varies by session; Recitations 3 and 4 use about 40, Recitation 5 about 45), 10–15 minutes on
+practice (the length varies by session; Recitations 3 and 4 use about 40, Recitation 5 about 40), 10–15 minutes on
 discussing approaches, and the remaining time on questions. The recitation and exercises are optional and ungraded.

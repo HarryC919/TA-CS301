@@ -50,9 +50,7 @@ site builders live in `tools/site_src/`.
   section is optional Extra Content.
 - **Recitation 5:** edit `tools/site_src/recitation5-content.html` for shared notes,
   prompts, hints, explanations, and the inline SVG Red-Black Tree figure (`data-web-only`;
-  prose must describe the same tree in text). Write relational algebra subscripts as
-  `σ<sub>…</sub>` (also π, ρ, ⋈): the builder turns them into `σ[…]` in notebooks.
-  Hash-table code/contracts live in `material/week5/solutions/hashtable/` (a class,
+  prose must describe the same tree in text). Hash-table code/contracts live in `material/week5/solutions/hashtable/` (a class,
   `HashTable`, in every language; reference code must not use library hash structures),
   notebook checks in `material/week5/checks/`. `build_recitation5.py` generates the page
   and Python/Java notebooks. The Red-Black Tree section is optional Extra Content.

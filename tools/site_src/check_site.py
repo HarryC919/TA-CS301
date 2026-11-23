@@ -294,7 +294,7 @@ def check_page(path: Path, site: Path, strict_links: bool) -> tuple[list[str], l
             errors.append(f"{rel}: expected three graph figures (Exercise 1, Exercise 2, Floyd–Warshall)")
 
     if rel.name == "recitation5.html":
-        required = {"overview", "notes", "hash-review", "ra-review", "exercises", "exercise-1",
+        required = {"overview", "notes", "hash-review", "db-review", "exercises", "exercise-1",
                     "exercise-2", "optional-practice", "discussion", "extra", "references", "notebooks"}
         missing = required - parser.ids.keys()
         if missing:

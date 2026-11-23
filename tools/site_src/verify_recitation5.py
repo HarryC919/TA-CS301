@@ -23,7 +23,7 @@ def main():
         cells = {cell['id']: cell for cell in notebook['cells']}
         assert len(cells) == len(notebook['cells']), 'duplicate cell ids'
         assert notebook['nbformat'] == 4 and notebook['nbformat_minor'] == 5
-        for name in ['hash-review', 'ra-review', 'exercise-1', 'exercise-2', 'exercise-1-response',
+        for name in ['hash-review', 'db-review', 'exercise-1', 'exercise-2', 'exercise-1-response',
                      'exercise-2-response', 'optional-practice', 'optional-practice-response',
                      'discussion-response', 'extra', 'extra-response', 'hashtable-stub', 'hashtable-check']:
             assert name in cells, name
@@ -34,17 +34,17 @@ def main():
             assert 'Reference explanation' not in text, 'reference answer leaked'
             assert 'Optional practice answers' not in text and 'Discussion notes' not in text, 'answer leaked'
             assert 'Red-Black Tree answer' not in text and '20B(13B' not in text, 'Extra answer leaked'
-            assert 'Chen, Dana, Eli' not in text, 'Exercise 1 answer leaked'
+            assert 'DDL: (a), (d), and (f)' not in text and 'lost update' not in text, 'Exercise 1 answer leaked'
             assert '1 + 1 + 1 + 4 + 3 + 6' not in text, 'Exercise 2 Part A answer leaked'
             assert 'In C, the table is a struct' not in text, 'web-only C note leaked'
             assert '<svg' not in text, 'web-only figure leaked'
             assert '<sub>' not in text and '<sup>' not in text, 'raw sub/superscript left in notebook'
         markdown = '\n'.join(source(cell) for cell in notebook['cells'] if cell['cell_type'] == 'markdown')
         assert '$h_{1}$' in markdown and '$\\log_{2}$' in markdown, 'scripts must render as KaTeX math'
-        assert "σ[dept = 'CS'](Course)" in markdown and 'π[sname]' in markdown, 'relational algebra must use bracket subscripts'
         assert '\\_' not in markdown and '$$' not in markdown, 'escaped or empty math left in notebook'
-        assert '| sid | sname | major |' in markdown, 'relation tables need their column headers'
-        for expected_label in ['Exercise 1 · relational algebra: read, write, diagnose',
+        assert '| Problem with separate files | What the DBMS provides |' in markdown, 'review table needs its header'
+        assert '\n- (a) Create the Student' in markdown and '\n- (n) The dean' in markdown, 'Exercise 1 items must stay separate list items'
+        for expected_label in ['Exercise 1 · database concepts',
                                'Exercise 2 · build an open-addressing hash table']:
             assert expected_label in source(cells['exercises']), 'core-path label lost: ' + expected_label
         for task in TASKS:
