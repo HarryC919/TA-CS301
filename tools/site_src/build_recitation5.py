@@ -54,24 +54,21 @@ BANNED_HASH = [
     (r'Dictionary<|HashSet<|Hashtable|GetHashCode', ('cs',), 'C# hash collections'),
     (r'unordered_map|unordered_set|std::map|std::set|std::hash', ('cpp',), 'C++ associative containers'),
 ]
-TITLE = 'Hash Tables & Introduction to Databases'
-SECTION_IDS = ['overview', 'hash-review', 'db-review', 'exercises', 'exercise-1', 'exercise-2',
+TITLE = 'Hash Tables & Relational Algebra'
+SECTION_IDS = ['overview', 'hash-review', 'ra-review', 'exercises', 'exercise-1', 'exercise-2',
                'optional-practice', 'discussion', 'extra', 'references']
 
 
 WRITTEN_RESPONSES = {
     'exercise-1': """### Your answer — Exercise 1
 
-1. **DDL or DML:**
-   - DDL:
-   - DML:
-   - Reasons for any you were unsure about:
-2. **Schema or instance:** (h), (i), (j), and what request (b) changes.
-3. **File-based problems:**
-   - (k)
-   - (l)
-   - (m)
-   - (n)
+1. **Read:** Tuples and attributes of Student × Takes and of Student ⋈ Takes; the result of the expression; the attributes each join matches on; whether Chen appears, and why.
+2. **Write:** Your expression, and its result on this instance.
+3. **Diagnose:** One student wrongly included, one wrongly left out, and why.
+4. **Valid rewrite?**
+   - 4a.
+   - 4b.
+   - 4c.
 """,
     'exercise-2': """### Your answer — Exercise 2
 
@@ -102,15 +99,16 @@ WRITTEN_RESPONSES = {
 1. **Division with m = 16 and m = 17:**
 2. **Quadratic probing slots:**
 3. **Why random:**
-4. **Physical data independence:**
+4. **Self-join:**
+5. **Every CS course:**
 """,
     'discussion': """### Your reflection
 
 **Linear vs double hashing:** Which needed fewer probes, and how does the gap change as the table fills?
 
-**Catching the bugs:** What would a test need to contain to catch bug 1, and bug 2?
+**One slot vs the whole sequence:** Where else did a decision about one item need information about a whole set?
 
-**Exit check:** Which structure could a DBMS use to find a student by sid quickly, and what could it not answer quickly?
+**Exit check:** How do a hash table and the "no CS course" query each decide that something is absent?
 """,
     'extra': """### Your answer — Red-Black Tree (optional)
 
@@ -130,6 +128,11 @@ def read_code(task, kind, lang):
             if lang in langs and re.search(pattern, text):
                 raise BuildError(f'library hash structure ({label}) in {path}')
     return text
+
+
+# Notebook Markdown has no subscripts outside math, so σ<sub>c</sub>(R) becomes σ[c](R),
+# the same plain-text notation the page suggests for typing answers.
+RA_SUBSCRIPT = re.compile(r'([σπρ⋈])<sub>(.*?)</sub>')
 
 
 def notebook_section(section, lang):
@@ -176,6 +179,7 @@ Use the {'project .venv Python / Python (CS301)' if lang == 'py' else 'Java (IJa
 See [Recitation 0]({SITE_URL}/recitation0.html) for setup.
 
 Write your reasoning in the Markdown answer cells (double-click to edit, Shift+Enter to render).
+Relational algebra subscripts are written in brackets here: σ[dept = 'CS'](Course) is σ with the subscript dept = 'CS'.
 For Exercise 2, edit and run the starter definition, then run its self-check.
 An untouched starter fails the check; that is expected. Keep the interface unchanged.
 The Red-Black Tree section at the end is optional extra content.
@@ -206,7 +210,8 @@ def sections_of(source):
 
 def build_recitation5():
     source = SOURCE.read_text(encoding='utf-8')
-    notebook_sections = sections_of(source)
+    sections_of(source)
+    notebook_sections = sections_of(RA_SUBSCRIPT.sub(r'\1[\2]', source))
     # Notebook-only paragraphs stay in the notebook sections but not on the page.
     source = re.sub(r'<p data-notebook-only>.*?</p>\n?', '', source)
     for task, spec in TASKS.items():
@@ -230,7 +235,7 @@ def build_recitation5():
         (notebooks / f'recitation5-{name}.ipynb').write_text(json.dumps(notebook, indent=1, ensure_ascii=False) + '\n')
     hero = f'''<section class="page-hero" id="top"><div class="container">
 <span class="eyebrow">Recitation 5 · Notes &amp; practice</span><h1>{esc(TITLE)}</h1>
-<p class="subtitle">See why open addressing needs tombstones, build a double-hashing table from plain arrays, and sort out the basic vocabulary of database systems.</p>
+<p class="subtitle">See why open addressing needs tombstones, build a double-hashing table from plain arrays, and read, write, and debug relational algebra.</p>
 <div class="hero-actions"><a class="btn primary" href="#notes">Notes</a><a class="btn ghost" href="#exercises">Core practice</a><a class="btn ghost" href="#extra">Extra · Red-Black Trees</a><a class="btn ghost" href="#notebooks">Notebooks</a></div>
 </div></section>'''
     downloads = '''<section class="section" id="notebooks"><div class="section-title"><h2>Practice notebooks</h2></div>
@@ -238,7 +243,7 @@ def build_recitation5():
 <div class="hero-actions"><a class="btn primary" href="notebooks/recitation5-python.ipynb" download>Download Python notebook (.ipynb)</a><a class="btn ghost" href="notebooks/recitation5-java.ipynb" download>Download Java notebook (.ipynb)</a></div></section>'''
     # Notes anchor groups the review; exercise sections remain directly linkable.
     split = source.index('<section class="section" id="exercises">')
-    jump = jump_bar([('overview', 'Overview'), ('hash-review', 'Hashing'), ('db-review', 'Databases'),
+    jump = jump_bar([('overview', 'Overview'), ('hash-review', 'Hashing'), ('ra-review', 'Relational algebra'),
                      ('exercise-1', 'Ex 1'), ('exercise-2', 'Ex 2'), ('optional-practice', 'Optional'),
                      ('discussion', 'Discussion'), ('extra', 'Extra'), ('notebooks', 'Notebooks')])
     body = hero + '<div class="container">' + jump + '<div id="notes">' + source[:split] + '</div>' + source[split:] + downloads + '</div>'

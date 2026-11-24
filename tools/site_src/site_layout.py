@@ -1,7 +1,7 @@
 """Shared static page layout and fixed recitation navigation."""
 from html import escape
 
-RECITATIONS = [('Environment & kernels', 'Setup guide'), ('Sorting algorithms', 'Available')] + [('Asymptotic notation & divide and conquer', 'Available'), ('Dynamic programming & greedy algorithms', 'Available'), ('Graph algorithms', 'Available'), ('Hash tables & introduction to databases', 'Available')] + [('Content to be announced', 'Coming soon')] * 2
+RECITATIONS = [('Environment & kernels', 'Setup guide'), ('Sorting algorithms', 'Available')] + [('Asymptotic notation & divide and conquer', 'Available'), ('Dynamic programming & greedy algorithms', 'Available'), ('Graph algorithms', 'Available'), ('Hash tables & relational algebra', 'Available')] + [('Content to be announced', 'Coming soon')] * 2
 PAGES = ['index.html', 'intro.html'] + [f'recitation{n}.html' for n in range(8)]
 
 

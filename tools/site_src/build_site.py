@@ -24,7 +24,7 @@ def directory():
             continue
         rows.append(f'''<div class="week-row available"><div>
 <div class="week-name">Recitation {n} — {title} <span class="pill blue">{status}</span></div>
-<div class="week-topics">{'Terminal basics, environment setup, and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise' if n == 2 else 'DP recurrences, greedy proofs, an LCS exercise, and Huffman coding as extra content' if n == 3 else 'Graph-search review, MST and shortest-path reasoning, a limited-rounds Bellman-Ford exercise, and Floyd–Warshall as extra content' if n == 4 else 'Open addressing and tombstones, a double-hashing table from plain arrays, database-system concepts, and Red-Black Trees as extra content'}</div></div>
+<div class="week-topics">{'Terminal basics, environment setup, and language kernels' if n == 0 else 'Notes and six practice problems on one page' if n == 1 else 'Growth bounds, recursive work, and a linear merge exercise' if n == 2 else 'DP recurrences, greedy proofs, an LCS exercise, and Huffman coding as extra content' if n == 3 else 'Graph-search review, MST and shortest-path reasoning, a limited-rounds Bellman-Ford exercise, and Floyd–Warshall as extra content' if n == 4 else 'Open addressing and tombstones, a double-hashing table from plain arrays, relational algebra reasoning, and Red-Black Trees as extra content'}</div></div>
 <div class="week-links"><a class="btn primary" href="recitation{n}.html">Open</a></div></div>''')
     if reserved:
         first, last = reserved[0], reserved[-1]

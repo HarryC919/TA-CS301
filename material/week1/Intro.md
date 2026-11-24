@@ -24,7 +24,7 @@
 - Recitation 2: asymptotic notation and divide and conquer, with written and coding practice
 - Recitation 3: dynamic programming and greedy algorithms; LCS practice plus an optional Huffman extra
 - Recitation 4: graph algorithms (MSTs and shortest paths); a limited-rounds Bellman-Ford exercise plus an optional Floyd–Warshall extra
-- Recitation 5: hash tables and an introduction to databases; a double-hashing table exercise plus an optional Red-Black Tree extra
+- Recitation 5: hash tables and relational algebra; a double-hashing table exercise plus an optional Red-Black Tree extra
 - Recitations 6–7: reserved placeholders; database planning remains open
 - This is the permanent recitation website; instructor announcements remain authoritative for course logistics and assessment.
 - Current website: [https://harryc919.github.io/TA-CS301/](https://harryc919.github.io/TA-CS301/)

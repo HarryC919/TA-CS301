@@ -1,17 +1,16 @@
-# Recitation 5 — Hash Tables and Introduction to Databases
+# Recitation 5 — Hash Tables and Relational Algebra
 
-Status: approved layout, revised. First approved with relational algebra and a
-45-minute core (Exercise 2 gets 30 minutes, because students have needed more time
-for coding). Lectures have since reached only the introduction to databases (data,
-databases, database systems with data models, DDL, and DML, and DBMSs), so the
-owner asked to shorten the database part: the relational algebra review and
-exercise were replaced by an introduction-to-databases review and a 10-minute
-concept exercise, and the core is now about 40 minutes. The relational algebra
-version is in Git history (commit 4c33187) if a later session needs it.
+Status: approved layout. Approved with one change: the core practice runs about
+45 minutes, and Exercise 2 gets 30 of them, because students have needed more time
+for coding in earlier sessions. Open questions in §9 were left at their defaults.
 
-This session covers the latter half of Week 4 (hash tables) and the first Week 5
-lecture (introduction to databases). The Red-Black Tree, listed under Week 4 as
-recitation Extra Content, appears only in the separate optional Extra section.
+The owner set the topics and the two main practices: one written exercise on
+Relational Algebra concepts, and one coding exercise that implements a hash table
+without any hash-table library. This session covers the latter half of Week 4
+(hash tables) and the start of Week 5 (introduction to databases, the relational
+model, relational algebra). The Red-Black Tree, listed under Week 4 as recitation
+Extra Content, appears only in the separate optional Extra section (see §7 and the
+open questions in §9).
 
 ## 1. Scope and learning goals
 
@@ -26,19 +25,21 @@ Students should be able to:
   marker (tombstone) instead of an empty slot, and what that costs later.
 - Implement an open-addressing map with double hashing (`put`, `get`, `remove`)
   using only plain arrays, and state its expected and worst-case costs.
-- Distinguish data, a database, a database system, and a DBMS, and tell a schema
-  from an instance.
-- Classify operations as DDL or DML, and match the problems of file-based storage
-  to the DBMS features that solve them.
+- Read a relational algebra expression and compute its result on a small
+  instance; write expressions for English queries using σ, π, ⋈, ∪, −, ρ.
+- Diagnose wrong queries (a condition that should be a set difference, a
+  natural join that matches on an unintended shared attribute) and decide which
+  algebraic rewrites are valid, with a counterexample when one is not.
 
-Prerequisites: arrays and modular arithmetic; "expected cost" from earlier weeks. No SQL and no database software are used in this session.
+Prerequisites: arrays and modular arithmetic; "expected cost" from earlier weeks;
+sets and tuples. No SQL and no database software are used in this session.
 
 ## 2. Proposed page order
 
 1. **Overview:** scope, goals, prerequisites, suggested session path.
 2. **Review A — Hash functions and open addressing.**
-3. **Review B — Introduction to databases.**
-4. **Core practice:** two exercises, about 40 minutes in total.
+3. **Review B — The relational model and relational algebra.**
+4. **Core practice:** two exercises, about 45 minutes in total.
 5. **Optional practice** (written, collapsed answers).
 6. **Discussion and exit check.**
 7. **Extra · Red-Black Trees** (optional, not examined; separated as in
@@ -75,40 +76,49 @@ One page with direct anchors, following Recitations 1–4.
   two levels of universal hashing give O(1) worst-case search with O(n) expected
   space.
 
-### B. Introduction to databases (about 5 minutes)
+### B. Relational model and relational algebra (about 5 minutes)
 
-- Data, database, DBMS, and database system, each in one line.
-- Why not files: a table pairing each file-system problem (redundancy and
-  inconsistency, difficult access, integrity rules in code, partial updates after a
-  failure, concurrent-access anomalies, security) with the DBMS feature that removes it.
-- Data models (relational, entity-relationship, semi-structured); schema vs
-  instance; physical, logical, and view levels; physical data independence.
-- DDL (defines the schema; stored in the data dictionary) vs DML (queries and
-  changes the instance; mostly declarative); SQL (Week 6) contains both.
-- Inside a DBMS: storage manager (including indexes such as hash tables), query
-  processor, transaction manager.
+- A **relation** is a set of tuples over a fixed schema; keys identify tuples. Set
+  semantics: no duplicate tuples, no order.
+- Operators in one table with notation and result schema: selection σ, projection π,
+  union ∪, difference −, Cartesian product ×, rename ρ, and the derived natural
+  join ⋈, theta-join, and intersection ∩.
+- Two reading habits: an expression is a tree evaluated bottom-up; and "for every"
+  or "no …" in English usually means a difference (or division), not a
+  `≠` condition.
 
-## 4. Core practice — approximately 40 minutes
+## 4. Core practice — approximately 45 minutes
 
-### Exercise 1. Database concepts — 10 minutes (written)
+Schema used throughout Exercise 1 (the instance written during development has 5
+students, 4 courses, and 7 enrollments; every reference result was re-derived from it):
 
-Record types `Student(sid, sname, major)`, `Course(cid, title, dept)`, and
-`Takes(sid, cid, grade)`.
+- `Student(sid, sname, major)`
+- `Course(cid, title, dept)`
+- `Takes(sid, cid, grade)`
 
-1. **DDL or DML?** (3 min) Seven requests: create Student with key `sid`, add a
-   student, list CS majors, restrict grades to A–F, change a major, remove the
-   Takes record type, delete one student's enrollments. *Reference:* DDL (a), (d),
-   (f); DML (b), (c), (e), (g); the constraint is DDL, and dropping a record type
-   (DDL) differs from deleting its rows (DML).
-2. **Schema or instance?** (2 min) Student's attributes and the unique-`sid` rule
-   are schema; "student 3 is Chen" is instance; adding a student changes only the
-   instance.
-3. **Diagnose a file-based system** (5 min). Four stories: a major updated in one
-   of two files (redundancy and inconsistency → one integrated database), a crash
-   mid-transfer (atomicity → transactions and recovery), two editors overwriting
-   each other (lost update → concurrency control), and a question that needs a new
-   script (difficult access → declarative query language).
-- Staged hint: does the request change the design or the contents?
+### Exercise 1. Relational algebra: read, write, diagnose — 15 minutes (written)
+
+1. **Evaluate** (3 min). Compute the result of
+   `π_sname(Student ⋈ Takes ⋈ σ_dept='CS'(Course))` on the instance, and name the
+   attributes each natural join matches on.
+2. **Write** (4 min). "Names of students who have taken *no* CS course."
+   *Reference:* `π_sname(Student ⋈ (π_sid(Student) − π_sid(Takes ⋈ σ_dept='CS'(Course))))`.
+3. **Diagnose** (3 min). A classmate answers part 2 with
+   `π_sname(Student ⋈ Takes ⋈ σ_dept≠'CS'(Course))`. Give a student from the
+   instance who is wrongly included, and one who is wrongly left out.
+   *Reference:* a student who took both a CS and a Math course is included; a
+   student who took no course at all is missing.
+4. **Valid rewrite or not?** (5 min). True or false, with a reason or a
+   counterexample on two tiny relations:
+   - `σ_c(R ⋈ S) = σ_c(R) ⋈ S` when `c` uses only attributes of `R`. *True.*
+   - `π_A(R ∪ S) = π_A(R) ∪ π_A(S)`. *True.*
+   - `π_A(R − S) = π_A(R) − π_A(S)`. *False:* `R = {(1, x)}`, `S = {(1, y)}` over
+     `(A, B)`; the left side is `{1}`, the right side is empty.
+   - Follow-up for discussion: if `Course` had an attribute `name` and `Student`
+     also had `name`, what would `Student ⋈ Takes ⋈ Course` return, and how does ρ
+     fix it?
+- Staged hints: for part 2, first find the students who *did* take a CS course;
+  for part 4, try relations with one or two tuples whose projections collide.
 
 ### Exercise 2. Build an open-addressing hash table — 30 minutes
 
@@ -168,19 +178,21 @@ slot 4 and reports "not found".) This motivates the tombstone rule in Part B.
    slot?
 3. Why does a random choice from a universal family protect against an
    adversary, when no single fixed hash function can?
-4. Physical data independence: adding a hash index on `Student.sid` and moving to
-   faster disks changes no application program, only the physical level.
+4. Relational algebra with renaming: "pairs of students who have taken at least one
+   course in common" (a self-join with ρ, and how to avoid pairing a student with
+   themself and listing each pair twice).
 
 ## 6. Discussion, feedback, and exit check
 
 About 10–15 minutes: compare the linear and double-hashing probe counts from
-Exercise 2A, and discuss which test cases catch each bug. Staged hints, self-checks,
-and collapsed reference explanations provide the feedback path.
+Exercise 2A, discuss both bugs, and contrast the classmate's `≠` answer with the
+difference-based answer in Exercise 1. Staged hints, self-checks, and collapsed
+reference explanations provide the feedback path.
 
-Exit check: "A DBMS has to find a student by `sid` quickly. Which structure from
-today could it use, and what could that structure not answer quickly?" (A hash
-index gives expected O(1) lookups but no range or order queries; those need an
-ordered index such as a balanced search tree.)
+Exit check: "A hash table and the query 'students who took no CS course' both
+involve something that is *absent*. How does each handle absence?" (Hash search
+stops at a truly EMPTY slot, so removal must not create one; relational algebra
+expresses absence with set difference, not with a `≠` filter.)
 
 ## 7. Extra · Red-Black Trees (optional, not examined)
 
@@ -209,9 +221,12 @@ Proposed as a short, notes-only section:
 - Rebuild and run all checks listed in AGENTS, plus desktop/mobile screenshots.
   No commit without your authorization.
 
-## 9. Decisions
+## 9. Open questions for review
 
-1. **Database scope:** introduction to databases only; relational algebra moves to
-   a later session once it has been taught.
-2. **Red-Black Tree Extra:** included as notes plus a trace (default kept).
-3. **Core length:** about 40 minutes (Exercise 1: 10, Exercise 2: 30).
+1. **Operators taught** (default kept: division out of the core, ρ only in optional
+   practice): does the lecture include rename ρ, theta-join, and
+   division ÷? The draft keeps division out of the core and uses ρ only in the
+   optional practice.
+2. **Red-Black Tree Extra** (default kept: included as notes plus a trace): include
+   it in this session, or leave it for a later week?
+3. **Core length:** resolved — about 45 minutes (Exercise 1: 15, Exercise 2: 30).

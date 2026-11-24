@@ -345,7 +345,7 @@ const root = path.resolve(__dirname, '../..');
     assert.equal(await evaluate('document.querySelector("#r5-hashtable-stub-java textarea").value.includes("UnsupportedOperationException")'),true);
     for (const width of [1440,390]) {
       await call('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:width===390});
-      for (const anchor of ['top','hash-review','db-review','exercise-1','exercise-2','optional-practice','discussion','extra','notebooks']) {
+      for (const anchor of ['top','hash-review','ra-review','exercise-1','exercise-2','optional-practice','discussion','extra','notebooks']) {
         await evaluate(`document.documentElement.style.scrollBehavior='auto';document.getElementById('${anchor}').scrollIntoView({behavior:'instant',block:'start'})`);
         assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true,`Recitation 5 ${anchor} @${width}`);
         const {data}=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
